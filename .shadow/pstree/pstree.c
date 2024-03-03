@@ -75,10 +75,18 @@ int* traverseProcDirectory() {
 }
 
 
-void exe_n(int argc, char *argv[],int PID, int cntopt) {
+void exe_n(int argc, char *argv[],int cntopt) {
   printf("argv[%d] = %s %d\n", cntopt, argv[cntopt],PID);
+  
+  if(cntopt+1==argc){int targetPID = 1;}//default PID is 1
+  else{int targetPID = atoi(argv[cntopt+1]);}//targetPID is int(the next argument)
+
 }
 
+
+void exe_V(int argc, char*argv[],int cntopt){
+  printf("pstree (OS2024 - Ziyan Shi)\nCopyright (C) 2024-2024 NJU and Ziyan Shi\nPSmisc comes with ABSOLUTELY NO WARRANTY.\nThis is free software, and you are welcome to redistribute it under the terms of the GNU General Public License.\nFor more information about these matters, see the files named COPYING\n");
+}
 
 int main(int argc, char *argv[]) {
   for (int i = 0; i < argc; i++) {
@@ -86,23 +94,17 @@ int main(int argc, char *argv[]) {
     printf("argv[%d] = %s\n", i, argv[i]);
   }
   
-  
-  //try getopt()
-  int targetPID = 1;//default PID is 1
-  int cntopt=0;
   int opt;
+  int cntopt=0;
+  
   while((opt=getopt(argc,argv,"npV"))!=-1){
     switch (opt)
     {
     case 'n':
       printf("----exe_n----\n");
-      exe_n(argc, argv, targetPID, cntopt);
+      exe_n(argc, argv, cntopt);
       printf("----exe_n----\n");
       
-      cntopt++;
-      targetPID = atoi(argv[cntopt+1]);//targetPID is int(the next argument)
-      printf("argv[%d] = %s %d\n", cntopt, argv[cntopt],targetPID);
-
       int *PIDs = NULL;
       PIDs = traverseProcDirectory();
       printf("PIDs : \n");
@@ -111,7 +113,6 @@ int main(int argc, char *argv[]) {
       }
       puts("");
       
-      printf("PID = %d\n", targetPID);
 
       printf("-----try to open /proc/%d/stat-----\n", targetPID);
       char filename[100];
@@ -148,8 +149,7 @@ int main(int argc, char *argv[]) {
       printf("argv[%d] = %s\n", cntopt, argv[cntopt]);
       break;
     case 'V':
-      cntopt++;
-      printf("argv[%d] = %s\n", cntopt, argv[cntopt]);
+      exe_V(argc, argv, cntopt);
       break;
     default:
       printf("argv[%d] = %s\n", cntopt, argv[cntopt]);
