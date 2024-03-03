@@ -16,10 +16,10 @@ typedef struct {
 }Process;
 
 int isNumeric(const char* str) {
-    while (*str) {
-        if (!isdigit(*str))
+    for (int i = 0; str[i] != '\0'; i++) {
+        if (!isdigit(str[i])) {
             return 0;
-        str++;
+        }
     }
     return 1;
 }
@@ -33,25 +33,25 @@ int* traverseProcDirectory() {
   int cnt = 1;
   DIR* dir = opendir("/proc");
   if (dir == NULL) {
-      perror("opendir");
-      return NULL;
+    perror("opendir");
+    return NULL;
   }
 
   struct dirent* entry;
   while ((entry = readdir(dir)) != NULL) {
-      if (entry->d_type == DT_DIR) {
-          if (isNumeric(entry->d_name)) {
-              PIDs[0]++;
-              if(cnt>=MaxPID){
-                  MaxPID*=2;
-                  PIDs = (int*)realloc(PIDs, MaxPID * sizeof(int));
-              }
-              PIDs[cnt] = atoi(entry->d_name);
+    if (entry->d_type == DT_DIR) {
+      if (isNumeric(entry->d_name)) {
+        PIDs[0]++;
+        if(cnt>=MaxPID){
+          MaxPID*=2;
+          PIDs = (int*)realloc(PIDs, MaxPID * sizeof(int));
+        }
+        PIDs[cnt] = atoi(entry->d_name);
 
-              //printf("Directory: %s\n", entry->d_name);
-              // 进行相应的操作
-          }
+        //printf("Directory: %s\n", entry->d_name);
+        // 进行相应的操作
       }
+    }
   }
   closedir(dir);
   return PIDs;
