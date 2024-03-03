@@ -41,7 +41,7 @@ int* traverseProcDirectory() {
   while ((entry = readdir(dir)) != NULL) {
       if (entry->d_type == DT_DIR) {
           if (isNumeric(entry->d_name)) {
-              PID[0]++;
+              PIDs[0]++;
               if(cnt>=MaxPID){
                   MaxPID*=2;
                   PIDs = (int*)realloc(PIDs, MaxPID * sizeof(int));
