@@ -24,7 +24,7 @@ int main(int argc, char *argv[]) {
     case 'n':
       cntopt++;
       targetPID = atoi(argv[cntopt+1]);//targetPID is int(the next argument)
-      printf("argv[%d] = %s\n", cntopt, argv[cntopt]);
+      printf("argv[%d] = %s %d\n", cntopt, argv[cntopt],targetPID);
       break;
     case 'p':
       cntopt++;
