@@ -7,7 +7,25 @@ int main(int argc, char *argv[]) {
     printf("argv[%d] = %s\n", i, argv[i]);
     //execute according to the input
   }
-  getopt(argc, argv, "n:V:p");
+  int cntopt=0;
+  int opt;
+  while((opt=getopt(argc,argv,"npV")!=-1){
+    switch (opt)
+    {
+    case 'n':
+      printf("argv[%d] = -n\n", cntopt);
+      break;
+    case 'p':
+      printf("argv[%d] = -p\n", cntopt);
+      break;
+    case 'V':
+      printf("argv[%d] = -V\n", cntopt);
+      break;
+    default:
+      break;
+    }
+  }
+  
   assert(!argv[argc]);//确保命令行参数列表以空指针结尾，如果不是，则会触发断言错误。
   return 0;
 }
