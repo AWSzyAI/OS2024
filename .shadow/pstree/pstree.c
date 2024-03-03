@@ -55,7 +55,7 @@ int main(int argc, char *argv[]) {
       sscanf(token, "%s", process.name);//get name
 
       
-      token = strtok(NULL, " ");
+      token = strtok(line, " ");
       
 
       sscanf(token, "%d", &process.ppid);//get PPID
