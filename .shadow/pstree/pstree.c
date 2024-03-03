@@ -53,7 +53,7 @@ int main(int argc, char *argv[]) {
       char *token = strtok(line, " "); //跳过进程ID
       token = strtok(NULL, " "); 
       sscanf(token, "%s", process.name);//get name
-      *token = strtok(line, " "); //跳过进程ID
+      token = strtok(line, " "); //跳过进程ID
       token = strtok(NULL, " "); 
       sscanf(token, "%d", &process.ppid);//get PPID
       
