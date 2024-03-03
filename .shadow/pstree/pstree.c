@@ -9,6 +9,9 @@ int main(int argc, char *argv[]) {
     printf("argv[%d] = %s\n", i, argv[i]);
     //execute according to the input
   }
+
+  //try getopt()
+  printf("-----try getopt-----");
   int cntopt=0;
   int opt;
   while((opt=getopt(argc,argv,"npV"))!=-1){
