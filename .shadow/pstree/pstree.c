@@ -5,6 +5,7 @@
 #include <string.h>
 #include <dirent.h>
 #include <ctype.h>
+#include "pstreeopt.h"
 
 
 #define MAX_LINE_LENGTH 1024
@@ -13,6 +14,7 @@ typedef struct {
   int pid;
   char *name;
   int ppid;
+  int *next;
 }Process;
 
 int isNumeric(const char* str) {
@@ -57,17 +59,20 @@ int* traverseProcDirectory() {
   return PIDs;
 }
 
+
+
+
+
 int main(int argc, char *argv[]) {
-  int targetPID = 1;//default PID is 1
-  
   for (int i = 0; i < argc; i++) {
     assert(argv[i]);
     printf("argv[%d] = %s\n", i, argv[i]);
-    //execute according to the input
   }
-
+  
+  
   //try getopt()
   printf("-----try getopt-----\n");
+  int targetPID = 1;//default PID is 1
   int cntopt=0;
   int opt;
   while((opt=getopt(argc,argv,"npV"))!=-1){
@@ -120,11 +125,12 @@ int main(int argc, char *argv[]) {
       break;
     case 'p':
       cntopt++;
-      printf("argv[%d] = %s\n", cntopt, argv[cntopt]);
+      exe_p(argc, argv, targetPID, cntopt);
+      
       break;
     case 'V':
       cntopt++;
-      printf("argv[%d] = %s\n", cntopt, argv[cntopt]);
+      exe_V(argc, argv, targetPID, cntopt);
       break;
     default:
       printf("argv[%d] = %s\n", cntopt, argv[cntopt]);
