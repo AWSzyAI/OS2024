@@ -95,7 +95,9 @@ int main(int argc, char *argv[]) {
     switch (opt)
     {
     case 'n':
+      printf("----exe_n----\n");
       exe_n(argc, argv, targetPID, cntopt);
+      printf("----exe_n----\n");
       
       cntopt++;
       targetPID = atoi(argv[cntopt+1]);//targetPID is int(the next argument)
