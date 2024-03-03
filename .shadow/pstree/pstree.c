@@ -84,7 +84,7 @@ void exe_n(int argc, char *argv[],int cntopt) {
 
 
 void exe_V(int argc, char*argv[],int cntopt){
-  printf("pstree (OS2024 - Ziyan Shi)\nCopyright (C) 2024-2024 NJU and Ziyan Shi\nPSmisc comes with ABSOLUTELY NO WARRANTY.\nThis is free software, and you are welcome to redistribute it under the terms of the GNU General Public License.\nFor more information about these matters, see the files named COPYING\n");
+  printf("pstree-32/64 (OS2024 - Ziyan Shi) version 0.0.1\nCopyright (C) 2024-2024 NJU and Ziyan Shi\nPSmisc comes with ABSOLUTELY NO WARRANTY.\nThis is free software, and you are welcome to redistribute it under the terms of the GNU General Public License.\nFor more information about these matters, see the files named COPYING\n");
 }
 
 int main(int argc, char *argv[]) {
