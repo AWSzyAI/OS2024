@@ -11,7 +11,7 @@ int main(int argc, char *argv[]) {
   }
 
   //try getopt()
-  printf("-----try getopt-----");
+  printf("-----try getopt-----\n");
   int cntopt=0;
   int opt;
   while((opt=getopt(argc,argv,"npV"))!=-1){
