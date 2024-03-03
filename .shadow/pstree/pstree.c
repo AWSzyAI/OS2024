@@ -58,6 +58,7 @@ int* traverseProcDirectory() {
   putchar('\n');
 
   closedir(dir);
+  return PIDs;
 }
 
 int main(int argc, char *argv[]) {
@@ -81,7 +82,8 @@ int main(int argc, char *argv[]) {
       targetPID = atoi(argv[cntopt+1]);//targetPID is int(the next argument)
       printf("argv[%d] = %s %d\n", cntopt, argv[cntopt],targetPID);
 
-      traverseProcDirectory();
+      int *PIDs = NULL;
+      PIDs = traverseProcDirectory();
       
       printf("PID = %d\n", targetPID);
 
