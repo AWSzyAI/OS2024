@@ -24,24 +24,40 @@ int isNumeric(const char* str) {
     return 1;
 }
 
-void traverseProcDirectory() {
-    DIR* dir = opendir("/proc");
-    if (dir == NULL) {
-        perror("opendir");
-        return;
-    }
+int* traverseProcDirectory() {
+  int cnt=0;
+  int MaxPID = 100;
+  int *PIDs = (int*)malloc(MaxPID * sizeof(int));
+  DIR* dir = opendir("/proc");
+  if (dir == NULL) {
+      perror("opendir");
+      return;
+  }
 
-    struct dirent* entry;
-    while ((entry = readdir(dir)) != NULL) {
-        if (entry->d_type == DT_DIR) {
-            if (isNumeric(entry->d_name)) {
-                printf("Directory: %s\n", entry->d_name);
-                // 进行相应的操作
-            }
-        }
-    }
+  struct dirent* entry;
+  while ((entry = readdir(dir)) != NULL) {
+      if (entry->d_type == DT_DIR) {
+          if (isNumeric(entry->d_name)) {
+              cnt++;
+              if(cnt>=MaxPID){
+                  MaxPID*=2;
+                  PIDs = (int*)realloc(PIDs, MaxPID * sizeof(int));
+              }
+              PIDs[cnt] = atoi(entry->d_name);
 
-    closedir(dir);
+              //printf("Directory: %s\n", entry->d_name);
+              // 进行相应的操作
+          }
+      }
+  }
+
+  printf("PID: ");
+  for(int i=0;i<cnt;i++){
+    printf("%d ", PIDs[i]);
+  }
+  putchar('\n');
+
+  closedir(dir);
 }
 
 int main(int argc, char *argv[]) {
