@@ -34,6 +34,7 @@ int main(int argc, char *argv[]) {
       targetPID = atoi(argv[cntopt+1]);//targetPID is int(the next argument)
       printf("argv[%d] = %s %d\n", cntopt, argv[cntopt],targetPID);
       char filename[100];
+      printf("PID = %d\n", targetPID);
       sprintf(filename, "/proc/%d/stat", targetPID);
       FILE *fp = fopen(filename, "r");
       if (fp == NULL) {
@@ -46,20 +47,24 @@ int main(int argc, char *argv[]) {
       fgets(line, MAX_LINE_LENGTH, fp);
       printf("line = %s\n", line);
 
-      // Process process;
-      // sscanf(line, "%d", &process.pid);//get PID
+      Process process;
+      sscanf(line, "%d", &process.pid);//get PID
       
-      // char *token = strtok(line, " "); //跳过进程ID
-      // token = strtok(NULL, " "); //获取
+      char *token = strtok(line, " "); //跳过进程ID
+      token = strtok(NULL, " "); //获取
 
-      // strtok(line, " ");
-      // sscanf(line, "%s", process.name);
+      strtok(line, " ");
+      sscanf(line, "%s", process.name);
 
 
-      // sscanf(NULL, "%d", &process.ppid);
-      // printf("PID = %d\n", targetPID);
-      // fp.readline();
-      // printf("父进程PID = %d",)
+      sscanf(NULL, "%d", &process.ppid);
+      
+      
+      fp.readline();
+      
+      printf("进程ID = %d\n", process.pid);
+      printf("进程名 = %s\n", process.name);
+      printf("父进程PID = %d",process.ppid);
       fclose(fp);
 
       break;
