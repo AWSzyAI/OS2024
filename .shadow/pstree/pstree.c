@@ -11,7 +11,7 @@ int main(int argc, char *argv[]) {
   }
   int cntopt=0;
   int opt;
-  while((opt=getopt(argc,argv,"npV")!=-1){
+  while((opt=getopt(argc,argv,"npV"))!=-1){
     switch (opt)
     {
     case 'n':
