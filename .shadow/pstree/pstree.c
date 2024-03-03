@@ -25,9 +25,12 @@ int isNumeric(const char* str) {
 }
 
 int* traverseProcDirectory() {
-  int cnt=0;
+  
   int MaxPID = 100;
+  
   int *PIDs = (int*)malloc(MaxPID * sizeof(int));
+  PIDs[0] = 0;
+  int cnt = 1;
   DIR* dir = opendir("/proc");
   if (dir == NULL) {
       perror("opendir");
@@ -38,7 +41,7 @@ int* traverseProcDirectory() {
   while ((entry = readdir(dir)) != NULL) {
       if (entry->d_type == DT_DIR) {
           if (isNumeric(entry->d_name)) {
-              cnt++;
+              PID[0]++;
               if(cnt>=MaxPID){
                   MaxPID*=2;
                   PIDs = (int*)realloc(PIDs, MaxPID * sizeof(int));
@@ -84,6 +87,9 @@ int main(int argc, char *argv[]) {
 
       int *PIDs = NULL;
       PIDs = traverseProcDirectory();
+      for(int i=1;i<=PIDs[0];i++){
+        printf("PID = %d\n", PIDs[i]);
+      }
       
       printf("PID = %d\n", targetPID);
 
