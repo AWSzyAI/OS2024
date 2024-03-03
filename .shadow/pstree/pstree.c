@@ -80,9 +80,11 @@ int main(int argc, char *argv[]) {
 
       int *PIDs = NULL;
       PIDs = traverseProcDirectory();
+      printf("PIDs : \n");
       for(int i=1;i<=PIDs[0];i++){
-        printf("PID = %d\n", PIDs[i]);
+        printf("%d ", PIDs[i]);
       }
+      puts("");
       
       printf("PID = %d\n", targetPID);
 
