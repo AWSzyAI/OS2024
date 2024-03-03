@@ -34,7 +34,7 @@ int* traverseProcDirectory() {
   DIR* dir = opendir("/proc");
   if (dir == NULL) {
       perror("opendir");
-      return;
+      return NULL;
   }
 
   struct dirent* entry;
