@@ -105,44 +105,44 @@ int main(int argc, char *argv[]) {
       exe_n(argc, argv, cntopt);
       printf("----exe_n----\n");
       
-      int *PIDs = NULL;
-      PIDs = traverseProcDirectory();
-      printf("PIDs : \n");
-      for(int i=1;i<=PIDs[0];i++){
-        printf("%d ", PIDs[i]);
-      }
-      puts("");
+      // int *PIDs = NULL;
+      // PIDs = traverseProcDirectory();
+      // printf("PIDs : \n");
+      // for(int i=1;i<=PIDs[0];i++){
+      //   printf("%d ", PIDs[i]);
+      // }
+      // puts("");
       
 
-      printf("-----try to open /proc/%d/stat-----\n", targetPID);
-      char filename[100];
-      sprintf(filename, "/proc/%d/stat", targetPID);
-      FILE *fp = fopen(filename, "r");
-      if (fp == NULL) {
-        printf("No such process\n");//pstree实际上不输出
-        fclose(fp);
-        return 0;
-      }
+      // printf("-----try to open /proc/%d/stat-----\n", targetPID);
+      // char filename[100];
+      // sprintf(filename, "/proc/%d/stat", targetPID);
+      // FILE *fp = fopen(filename, "r");
+      // if (fp == NULL) {
+      //   printf("No such process\n");//pstree实际上不输出
+      //   fclose(fp);
+      //   return 0;
+      // }
 
-      char line[MAX_LINE_LENGTH];
-      fgets(line, MAX_LINE_LENGTH, fp);
-      printf("line = %s\n", line);
+      // char line[MAX_LINE_LENGTH];
+      // fgets(line, MAX_LINE_LENGTH, fp);
+      // printf("line = %s\n", line);
 
-      Process process;
+      // Process process;
 
-      sscanf(line, "%d", &process.pid);//get PID
-      char *token = strtok(line, " "); //跳过进程ID
-      token = strtok(NULL, " "); 
-      sscanf(token, "%s", process.name);//get name
-      token = strtok(NULL, " "); 
-      token = strtok(NULL, " "); 
-      sscanf(token, "%d", &process.ppid);//get PPID
+      // sscanf(line, "%d", &process.pid);//get PID
+      // char *token = strtok(line, " "); //跳过进程ID
+      // token = strtok(NULL, " "); 
+      // sscanf(token, "%s", process.name);//get name
+      // token = strtok(NULL, " "); 
+      // token = strtok(NULL, " "); 
+      // sscanf(token, "%d", &process.ppid);//get PPID
       
-      printf("进程ID = %d\n", process.pid);
-      printf("进程名 = %s\n", process.name);
-      printf("父进程PID = %d\n",process.ppid);
+      // printf("进程ID = %d\n", process.pid);
+      // printf("进程名 = %s\n", process.name);
+      // printf("父进程PID = %d\n",process.ppid);
       
-      fclose(fp);
+      // fclose(fp);
       break;
     case 'p':
       cntopt++;
