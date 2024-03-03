@@ -78,7 +78,7 @@ void exe_n(int argc, char *argv[], int *cntopt){
   if (fp == NULL) {
     printf("No such process\n");//pstree实际上不输出
     fclose(fp);
-    return 0;
+    return;
   }
 
   char line[MAX_LINE_LENGTH];
