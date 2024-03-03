@@ -53,13 +53,6 @@ int* traverseProcDirectory() {
           }
       }
   }
-
-  printf("PID: ");
-  for(int i=0;i<cnt;i++){
-    printf("%d ", PIDs[i]);
-  }
-  putchar('\n');
-
   closedir(dir);
   return PIDs;
 }
