@@ -88,10 +88,10 @@ void exe_V(int argc, char*argv[],int cntopt){
 }
 
 int main(int argc, char *argv[]) {
-  for (int i = 0; i < argc; i++) {
-    assert(argv[i]);
-    printf("argv[%d] = %s\n", i, argv[i]);
-  }
+  // for (int i = 0; i < argc; i++) {
+  //   assert(argv[i]);
+  //   printf("argv[%d] = %s\n", i, argv[i]);
+  // }
   
   int opt;
   int cntopt=0;
