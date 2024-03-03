@@ -118,7 +118,7 @@ int main(int argc, char *argv[]) {
   while((opt=getopt(argc,argv,"npV"))!=-1){
     switch (opt)
     {
-    case 'n': exe_n(argc,&argv,&cntopt);
+    case 'n': exe_n(argc,argv,&cntopt);
       break;
     case 'p':
       cntopt++;
