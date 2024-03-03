@@ -15,15 +15,16 @@ int main(int argc, char *argv[]) {
     switch (opt)
     {
     case 'n':
-      printf("argv[%d] = -n\n", cntopt);
+      printf("argv[%d] = %s\n", cntopt, argv[cntopt]);
       break;
     case 'p':
-      printf("argv[%d] = -p\n", cntopt);
+      printf("argv[%d] = %s\n", cntopt, argv[cntopt]);
       break;
     case 'V':
-      printf("argv[%d] = -V\n", cntopt);
+      printf("argv[%d] = %s\n", cntopt, argv[cntopt]);
       break;
     default:
+      printf("argv[%d] = %s\n", cntopt, argv[cntopt]);
       break;
     }
   }
