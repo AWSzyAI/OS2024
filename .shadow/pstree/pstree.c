@@ -5,7 +5,9 @@ int main(int argc, char *argv[]) {
   for (int i = 0; i < argc; i++) {
     assert(argv[i]);
     printf("argv[%d] = %s\n", i, argv[i]);
+    //execute according to the input
   }
-  assert(!argv[argc]);
+  getopt(argc, argv, "a:b:c");
+  assert(!argv[argc]);//确保命令行参数列表以空指针结尾，如果不是，则会触发断言错误。
   return 0;
 }
