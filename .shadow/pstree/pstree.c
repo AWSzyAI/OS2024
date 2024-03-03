@@ -57,7 +57,7 @@ int* traverseProcDirectory() {
   return PIDs;
 }
 
-void exe_n(int argc, char *argv[], int &cntopt){
+void exe_n(int argc, char *argv[], int *cntopt){
   printf("exe_n\n");
   cntopt++;
   targetPID = atoi(argv[cntopt+1]);//targetPID is int(the next argument)
