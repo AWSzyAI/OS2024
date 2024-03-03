@@ -151,7 +151,7 @@ int main(int argc, char *argv[]) {
       exe_V(argc, argv, cntopt);
       break;
     default:
-      printf("argv[%d] = %s\n", cntopt, argv[cntopt]);
+      printf("<usage> pstree [-npV]\n");
       break;
     }
   }
