@@ -12,6 +12,34 @@ typedef struct {
   int ppid;
 }Process;
 
+int isNumeric(const char* str) {
+    while (*str) {
+        if (!isdigit(*str))
+            return 0;
+        str++;
+    }
+    return 1;
+}
+
+void traverseProcDirectory() {
+    DIR* dir = opendir("/proc");
+    if (dir == NULL) {
+        perror("opendir");
+        return;
+    }
+
+    struct dirent* entry;
+    while ((entry = readdir(dir)) != NULL) {
+        if (entry->d_type == DT_DIR) {
+            if (isNumeric(entry->d_name)) {
+                printf("Directory: %s\n", entry->d_name);
+                // 进行相应的操作
+            }
+        }
+    }
+
+    closedir(dir);
+}
 
 int main(int argc, char *argv[]) {
   int targetPID = 1;//default PID is 1
@@ -33,10 +61,13 @@ int main(int argc, char *argv[]) {
       cntopt++;
       targetPID = atoi(argv[cntopt+1]);//targetPID is int(the next argument)
       printf("argv[%d] = %s %d\n", cntopt, argv[cntopt],targetPID);
-      char filename[100];
+
+      traverseProcDirectory();
+      
       printf("PID = %d\n", targetPID);
 
       printf("-----try to open /proc/%d/stat-----\n", targetPID);
+      char filename[100];
       sprintf(filename, "/proc/%d/stat", targetPID);
       FILE *fp = fopen(filename, "r");
       if (fp == NULL) {
@@ -61,9 +92,9 @@ int main(int argc, char *argv[]) {
       
       printf("进程ID = %d\n", process.pid);
       printf("进程名 = %s\n", process.name);
-      printf("父进程PID = %d",process.ppid);
+      printf("父进程PID = %d\n",process.ppid);
+      
       fclose(fp);
-
       break;
     case 'p':
       cntopt++;
