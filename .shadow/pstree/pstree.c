@@ -5,7 +5,7 @@
 #include <string.h>
 #include <dirent.h>
 #include <ctype.h>
-#include "pstreeopt.h"
+
 
 
 #define MAX_LINE_LENGTH 1024
