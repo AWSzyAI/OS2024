@@ -3,7 +3,11 @@
 #include <stdlib.h>
 #include <unistd.h>
 
+
+
 int main(int argc, char *argv[]) {
+  int targetPID = 1;//default PID is 1
+  
   for (int i = 0; i < argc; i++) {
     assert(argv[i]);
     printf("argv[%d] = %s\n", i, argv[i]);
@@ -19,6 +23,7 @@ int main(int argc, char *argv[]) {
     {
     case 'n':
       cntopt++;
+      targetPID = atoi(argv[cntopt+1]);//targetPID is int(the next argument)
       printf("argv[%d] = %s\n", cntopt, argv[cntopt]);
       break;
     case 'p':
@@ -34,6 +39,7 @@ int main(int argc, char *argv[]) {
       break;
     }
   }
+
   
   assert(!argv[argc]);//确保命令行参数列表以空指针结尾，如果不是，则会触发断言错误。
   return 0;
