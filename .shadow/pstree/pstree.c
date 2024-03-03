@@ -51,16 +51,14 @@ int main(int argc, char *argv[]) {
       sscanf(line, "%d", &process.pid);//get PID
       
       char *token = strtok(line, " "); //跳过进程ID
-      token = strtok(NULL, " "); //获取
+      token = strtok(NULL, " "); 
+      sscanf(token, "%s", process.name);//get name
 
-      strtok(line, " ");
-      sscanf(line, "%s", process.name);
+      for (int i = 0; i < 3; i++) {
+        token = strtok(NULL, " ");
+      }
 
-
-      sscanf(NULL, "%d", &process.ppid);
-      
-      
-      fp.readline();
+      sscanf(token, "%d", &process.ppid);//get PPID
       
       printf("进程ID = %d\n", process.pid);
       printf("进程名 = %s\n", process.name);
