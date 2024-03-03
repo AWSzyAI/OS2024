@@ -14,8 +14,23 @@ typedef struct {
   int pid;
   char *name;
   int ppid;
+  int NumOfSon;
   int *next;
 }Process;
+
+Process *setProcess(int pid, char *name, int ppid, int NumOfSon, int *next) {
+  Process *process = (Process*)malloc(sizeof(Process));
+  process->pid = pid;
+  process->name = name;
+  process->ppid = ppid;
+  process->NumOfSon = NumOfSon;
+  process->next = (int*)malloc(NumOfSon * sizeof(int));
+  for (int i = 0; i < NumOfSon; i++) {
+    process->next[i] = next[i];
+  }
+  return process;
+}
+
 
 int isNumeric(const char* str) {
     for (int i = 0; str[i] != '\0'; i++) {
@@ -60,7 +75,9 @@ int* traverseProcDirectory() {
 }
 
 
-
+void exe_n(int argc, char *argv[],int PID, int cntopt) {
+  printf("argv[%d] = %s %d\n", cntopt, argv[cntopt],PID);
+}
 
 
 int main(int argc, char *argv[]) {
@@ -71,7 +88,6 @@ int main(int argc, char *argv[]) {
   
   
   //try getopt()
-  printf("-----try getopt-----\n");
   int targetPID = 1;//default PID is 1
   int cntopt=0;
   int opt;
@@ -79,6 +95,8 @@ int main(int argc, char *argv[]) {
     switch (opt)
     {
     case 'n':
+      exe_n(argc, argv, targetPID, cntopt);
+      
       cntopt++;
       targetPID = atoi(argv[cntopt+1]);//targetPID is int(the next argument)
       printf("argv[%d] = %s %d\n", cntopt, argv[cntopt],targetPID);
@@ -108,8 +126,8 @@ int main(int argc, char *argv[]) {
       printf("line = %s\n", line);
 
       Process process;
+
       sscanf(line, "%d", &process.pid);//get PID
-      
       char *token = strtok(line, " "); //跳过进程ID
       token = strtok(NULL, " "); 
       sscanf(token, "%s", process.name);//get name
