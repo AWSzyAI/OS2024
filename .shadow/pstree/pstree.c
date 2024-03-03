@@ -125,12 +125,11 @@ int main(int argc, char *argv[]) {
       break;
     case 'p':
       cntopt++;
-      exe_p(argc, argv, targetPID, cntopt);
-      
+      printf("argv[%d] = %s\n", cntopt, argv[cntopt]);
       break;
     case 'V':
       cntopt++;
-      exe_V(argc, argv, targetPID, cntopt);
+      printf("argv[%d] = %s\n", cntopt, argv[cntopt]);
       break;
     default:
       printf("argv[%d] = %s\n", cntopt, argv[cntopt]);
