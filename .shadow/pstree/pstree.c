@@ -57,51 +57,6 @@ int* traverseProcDirectory() {
   return PIDs;
 }
 
-void exe_n(){
-  printf("exe_n\n");
-  cntopt++;
-    targetPID = atoi(argv[cntopt+1]);//targetPID is int(the next argument)
-    printf("argv[%d] = %s %d\n", cntopt, argv[cntopt],targetPID);
-
-    int *PIDs = NULL;
-    PIDs = traverseProcDirectory();
-    for(int i=1;i<=PIDs[0];i++){
-      printf("PID = %d\n", PIDs[i]);
-    }
-    
-    printf("PID = %d\n", targetPID);
-
-    printf("-----try to open /proc/%d/stat-----\n", targetPID);
-    char filename[100];
-    sprintf(filename, "/proc/%d/stat", targetPID);
-    FILE *fp = fopen(filename, "r");
-    if (fp == NULL) {
-      printf("No such process\n");//pstree实际上不输出
-      fclose(fp);
-      return 0;
-    }
-
-    char line[MAX_LINE_LENGTH];
-    fgets(line, MAX_LINE_LENGTH, fp);
-    printf("line = %s\n", line);
-
-    Process process;
-    sscanf(line, "%d", &process.pid);//get PID
-    
-    char *token = strtok(line, " "); //跳过进程ID
-    token = strtok(NULL, " "); 
-    sscanf(token, "%s", process.name);//get name
-    token = strtok(NULL, " "); 
-    token = strtok(NULL, " "); 
-    sscanf(token, "%d", &process.ppid);//get PPID
-    
-    printf("进程ID = %d\n", process.pid);
-    printf("进程名 = %s\n", process.name);
-    printf("父进程PID = %d\n",process.ppid);
-    
-    fclose(fp);
-}
-
 int main(int argc, char *argv[]) {
   int targetPID = 1;//default PID is 1
   
@@ -118,7 +73,48 @@ int main(int argc, char *argv[]) {
   while((opt=getopt(argc,argv,"npV"))!=-1){
     switch (opt)
     {
-    case 'n': exe_n();
+    case 'n':
+      cntopt++;
+      targetPID = atoi(argv[cntopt+1]);//targetPID is int(the next argument)
+      printf("argv[%d] = %s %d\n", cntopt, argv[cntopt],targetPID);
+
+      int *PIDs = NULL;
+      PIDs = traverseProcDirectory();
+      for(int i=1;i<=PIDs[0];i++){
+        printf("PID = %d\n", PIDs[i]);
+      }
+      
+      printf("PID = %d\n", targetPID);
+
+      printf("-----try to open /proc/%d/stat-----\n", targetPID);
+      char filename[100];
+      sprintf(filename, "/proc/%d/stat", targetPID);
+      FILE *fp = fopen(filename, "r");
+      if (fp == NULL) {
+        printf("No such process\n");//pstree实际上不输出
+        fclose(fp);
+        return 0;
+      }
+
+      char line[MAX_LINE_LENGTH];
+      fgets(line, MAX_LINE_LENGTH, fp);
+      printf("line = %s\n", line);
+
+      Process process;
+      sscanf(line, "%d", &process.pid);//get PID
+      
+      char *token = strtok(line, " "); //跳过进程ID
+      token = strtok(NULL, " "); 
+      sscanf(token, "%s", process.name);//get name
+      token = strtok(NULL, " "); 
+      token = strtok(NULL, " "); 
+      sscanf(token, "%d", &process.ppid);//get PPID
+      
+      printf("进程ID = %d\n", process.pid);
+      printf("进程名 = %s\n", process.name);
+      printf("父进程PID = %d\n",process.ppid);
+      
+      fclose(fp);
       break;
     case 'p':
       cntopt++;
