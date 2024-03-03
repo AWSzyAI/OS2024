@@ -35,6 +35,8 @@ int main(int argc, char *argv[]) {
       printf("argv[%d] = %s %d\n", cntopt, argv[cntopt],targetPID);
       char filename[100];
       printf("PID = %d\n", targetPID);
+
+      printf("-----try to open /proc/%d/stat-----\n", targetPID);
       sprintf(filename, "/proc/%d/stat", targetPID);
       FILE *fp = fopen(filename, "r");
       if (fp == NULL) {
