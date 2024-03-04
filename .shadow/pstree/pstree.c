@@ -155,11 +155,11 @@ int main(int argc, char *argv[]) {
       break;
     }
   }
-  printf("optind = %d\n", optind);
+  
+  printf("optind = %d\n", optind);//getopt()函数的全局变量optind是命令行参数的索引，即argv[]数组的索引
   if(optind == argc){
     printf("No targetPID\n");
-  }else{
-    printf("targetPID = %s\n", argv[optind]);
+    psRootTree();
   }
 
 
