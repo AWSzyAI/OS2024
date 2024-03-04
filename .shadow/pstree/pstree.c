@@ -77,7 +77,7 @@ void exe_n(int argc, char *argv[],int cntopt) {
   FILE *fp = fopen(filename, "r");
   if(!fp)goto release;
 
-  char line[MAX_LINE_LENGTH];
+  char line[MAX_LINE_LENGTH+1];
   fgets(line, MAX_LINE_LENGTH, fp);
   printf("line = %s\n", line);
 
@@ -95,7 +95,7 @@ void exe_n(int argc, char *argv[],int cntopt) {
   printf("进程名 = %s\n", process.name);
   printf("父进程PID = %d\n",process.ppid);
 
-  printf("-----try to open /proc/%d/status-----\n", targetPID);
+  printf("-----try to open /proc/*-----\n", targetPID);
   DIR *dir;
   struct dirent *entry;
   int count = 0;
