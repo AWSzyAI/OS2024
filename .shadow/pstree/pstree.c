@@ -62,14 +62,11 @@ int* traverseProcDirectory() {
 void exe_n(int argc, char *argv[],int cntopt) {
 
   int targetPID;
-  if(cntopt+1==argc){
+  if(argc==1){
     targetPID = 1;
     printf("No targetPID, use default PID = 1\n");
   }else{
-    printf("argv[%d] = %s\n", cntopt, argv[cntopt]);
-    printf("argv[%d] = %s\n", cntopt+1, argv[cntopt+1]);
     targetPID = atoi(argv[2]);
-    printf("targetPID = %d\n", targetPID);
   }//targetPID is int(the next argument)
   printf("-----try to open /proc/%d/stat-----\n", targetPID);
   char filename[100];
