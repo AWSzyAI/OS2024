@@ -96,7 +96,7 @@ void exe_n(int argc, char *argv[],int cntopt) {
   printf("父进程PID = %d\n",process.ppid);
 
   DIR *dir;
-  struct direct *entry;
+  struct dirent *entry;
   int count = 0;
   dir = opendir("/proc/");
   if(dir == NULL){
@@ -114,7 +114,7 @@ void exe_n(int argc, char *argv[],int cntopt) {
   }
   puts("");
   printf("count = %d\n", count);
-  
+
   if(dir)closedir(dir);
 
 
