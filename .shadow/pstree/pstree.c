@@ -69,16 +69,13 @@ void exe_n(int argc, char *argv[],int cntopt) {
   }else{
     targetPID = atoi(argv[2]);
   }
-  
+
   printf("-----try to open /proc/%d/stat-----\n", targetPID);
   char filename[100];
+  
   sprintf(filename, "/proc/%d/stat", targetPID);
   FILE *fp = fopen(filename, "r");
-  if (fp == NULL) {
-    printf("No such process\n");//pstree实际上不输出
-    fclose(fp);
-    return;
-  }
+  if(!fp)goto release;
 
   char line[MAX_LINE_LENGTH];
   fgets(line, MAX_LINE_LENGTH, fp);
@@ -97,8 +94,20 @@ void exe_n(int argc, char *argv[],int cntopt) {
   printf("进程ID = %d\n", process.pid);
   printf("进程名 = %s\n", process.name);
   printf("父进程PID = %d\n",process.ppid);
-  
-  fclose(fp);
+
+
+
+
+  sprintf(filename, "/proc/%d/status", targetPID);
+  fp = fopen(filename, "r");
+  if (fp == NULL) {
+    printf("No such process\n");//pstree实际上不输出
+    fclose(fp);
+    return;
+  }
+
+release:  
+  if(fp)fclose(fp);
 
 }
 
