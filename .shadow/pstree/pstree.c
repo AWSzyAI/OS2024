@@ -62,7 +62,8 @@ int* traverseProcDirectory() {
 void exe_n(int argc, char *argv[],int cntopt) {
 
   int targetPID;
-  if(argc==1){
+  printf("argc = %d\n", argc);
+  if(argc==2){
     targetPID = 1;
     printf("No targetPID, use default PID = 1\n");
   }else{
