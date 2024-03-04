@@ -68,7 +68,8 @@ void exe_n(int argc, char *argv[],int cntopt) {
     printf("No targetPID, use default PID = 1\n");
   }else{
     targetPID = atoi(argv[2]);
-  }//targetPID is int(the next argument)
+  }
+  
   printf("-----try to open /proc/%d/stat-----\n", targetPID);
   char filename[100];
   sprintf(filename, "/proc/%d/stat", targetPID);
