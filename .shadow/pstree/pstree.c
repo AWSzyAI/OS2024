@@ -68,7 +68,7 @@ void exe_n(int argc, char *argv[],int cntopt) {
   }else{
     printf("argv[%d] = %s\n", cntopt, argv[cntopt]);
     printf("argv[%d] = %s\n", cntopt+1, argv[cntopt+1]);
-    targetPID = atoi(argv[cntopt+1]);
+    targetPID = atoi(argv[2]);
     printf("targetPID = %d\n", targetPID);
   }//targetPID is int(the next argument)
   printf("-----try to open /proc/%d/stat-----\n", targetPID);
