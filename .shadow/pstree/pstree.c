@@ -95,7 +95,7 @@ void exe_n(int argc, char *argv[],int cntopt) {
   printf("进程名 = %s\n", process.name);
   printf("父进程PID = %d\n",process.ppid);
 
-  printf("-----try to open /proc/*-----\n", targetPID);
+  printf("-----try to open /proc/*-----\n");
   DIR *dir;
   struct dirent *entry;
   int count = 0;
