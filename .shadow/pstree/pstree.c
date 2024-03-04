@@ -100,7 +100,7 @@ int main(int argc, char *argv[]) {
   int opt;
   int cntopt=0;
   
-  while((opt=getopt(argc,argv,"npVv"))!=-1){
+  while((opt=getopt(argc,argv,"npV:--version"))!=-1){
     switch (opt)
     {
     case 'n':
@@ -150,6 +150,9 @@ int main(int argc, char *argv[]) {
       printf("argv[%d] = %s\n", cntopt, argv[cntopt]);
       break;
     case 'V':
+      exe_V(argc, argv, cntopt);
+      break;
+    case "version":
       exe_V(argc, argv, cntopt);
       break;
     default:
