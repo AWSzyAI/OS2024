@@ -87,6 +87,8 @@ void exe_V(int argc, char*argv[],int cntopt){
   printf("pstree-32/64 (OS2024 - Ziyan Shi) version 0.0.1\nCopyright (C) 2024-2024 NJU and Ziyan Shi\nPSmisc comes with ABSOLUTELY NO WARRANTY.\nThis is free software, and you are welcome to redistribute it under the terms of the GNU General Public License.\nFor more information about these matters, see the files named COPYING\n");
 }
 
+
+
 int main(int argc, char *argv[]) {
   // for (int i = 0; i < argc; i++) {
   //   assert(argv[i]);
@@ -111,8 +113,6 @@ int main(int argc, char *argv[]) {
       //   printf("%d ", PIDs[i]);
       // }
       // puts("");
-      
-
       // printf("-----try to open /proc/%d/stat-----\n", targetPID);
       // char filename[100];
       // sprintf(filename, "/proc/%d/stat", targetPID);
@@ -155,6 +155,13 @@ int main(int argc, char *argv[]) {
       break;
     }
   }
+  printf("optind = %d\n", optind);
+  if(optind == argc){
+    printf("No targetPID\n");
+  }else{
+    printf("targetPID = %s\n", argv[optind]);
+  }
+
 
   
   assert(!argv[argc]);//确保命令行参数列表以空指针结尾，如果不是，则会触发断言错误。
