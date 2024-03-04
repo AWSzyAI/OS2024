@@ -95,6 +95,28 @@ void exe_n(int argc, char *argv[],int cntopt) {
   printf("进程名 = %s\n", process.name);
   printf("父进程PID = %d\n",process.ppid);
 
+  DIR *dir;
+  struct direct *entry;
+  int count = 0;
+  dir = opendir("/proc/");
+  if(dir == NULL){
+    perror("opendir error");
+    return;
+  }
+
+  printf("PIDs : ");
+  while((entry = readdir(dir)) != NULL){
+    if(isNumeric(entry->d_name)){
+      count++;
+      int pid = atoi(entry->d_name);
+      printf("%d ", pid);
+    }
+  }
+  puts("");
+  printf("count = %d\n", count);
+  
+  if(dir)closedir(dir);
+
 
 
 
