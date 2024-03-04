@@ -100,7 +100,7 @@ int main(int argc, char *argv[]) {
   int opt;
   int cntopt=0;
   
-  while((opt=getopt(argc,argv,"npV"))!=-1){
+  while((opt=getopt(argc,argv,"npVv"))!=-1){
     switch (opt)
     {
     case 'n':
