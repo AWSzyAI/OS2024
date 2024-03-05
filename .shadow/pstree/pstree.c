@@ -94,6 +94,44 @@ void exe_n(int argc, char *argv[],int cntopt) {
   printf("进程ID = %d\n", process.pid);
   printf("进程名 = %s\n", process.name);
   printf("父进程PID = %d\n",process.ppid);
+    
+  printf("-----try to open /proc/*-----\n");
+  DIR *dir;
+  struct dirent *entry;
+  int count = 0;
+  dir = opendir("/proc/");
+  if(dir == NULL){
+    perror("opendir error");
+    return;
+  }
+
+  printf("PIDs : ");
+  while((entry = readdir(dir)) != NULL){
+    if(isNumeric(entry->d_name)){
+      count++;
+      int pid = atoi(entry->d_name);
+      printf("%d ", pid);
+    }
+  }
+  puts("");
+  printf("count = %d\n", count);
+
+  if(dir)closedir(dir);
+
+
+
+
+  sprintf(filename, "/proc/%d/status", targetPID);
+  fp = fopen(filename, "r");
+  if (fp == NULL) {
+    printf("No such process\n");//pstree实际上不输出
+    fclose(fp);
+    return;
+  }
+
+release:  
+  if(fp)fclose(fp);
+
 
  }
 
