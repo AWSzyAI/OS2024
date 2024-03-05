@@ -148,7 +148,7 @@ int getPPID(int targetPID){
 
     char line[MAX_LINE_LENGTH+1];
     fgets(line, MAX_LINE_LENGTH, fp);
-    printf("line = %s\n", line);
+    // printf("line = %s\n", line);
 
     Process process;
 
@@ -160,11 +160,11 @@ int getPPID(int targetPID){
     token = strtok(NULL, " "); 
     sscanf(token, "%d", &process.ppid);//get PPID
   
-    printf("进程ID = %d\n", process.pid);
-    printf("进程名 = %s\n", process.name);
-    printf("父进程PID = %d\n",process.ppid);   
+    // printf("进程ID = %d\n", process.pid);
+    // printf("进程名 = %s\n", process.name);
+    // printf("父进程PID = %d\n",process.ppid);   
     if(fp)fclose(fp);
-    return -1;
+    
     return process.ppid;
 }
 
