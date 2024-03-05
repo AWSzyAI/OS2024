@@ -170,8 +170,8 @@ void exe_root(int argc, char *argv[],int cntopt){
     if(isNumeric(entry->d_name)){
       count++;
       int pid = atoi(entry->d_name);
-      
-      printf("%d ", pid);
+      int ppid = getppid(pid); 
+      printf(" %d-%d ", pid,ppid);
     }
   }
   puts("");
@@ -179,35 +179,35 @@ void exe_root(int argc, char *argv[],int cntopt){
 
   if(dir)closedir(dir);
 
-
-
-
-  sprintf(filename, "/proc/%d/stat", targetPID);
-  FILE *fp = fopen(filename, "r");
-  if(!fp)goto release;
-
-  char line[MAX_LINE_LENGTH+1];
-  fgets(line, MAX_LINE_LENGTH, fp);
-  printf("line = %s\n", line);
-
-  Process process;
-
-  sscanf(line, "%d", &process.pid);//get PID
-  char *token = strtok(line, " "); //跳过进程ID
-  token = strtok(NULL, " "); 
-  sscanf(token, "%s", process.name);//get name
-  token = strtok(NULL, " "); 
-  token = strtok(NULL, " "); 
-  sscanf(token, "%d", &process.ppid);//get PPID
   
-  printf("进程ID = %d\n", process.pid);
-  printf("进程名 = %s\n", process.name);
-  printf("父进程PID = %d\n",process.ppid);
-    
+}
+
+int getppid(int targetPID){
+    sprintf(filename, "/proc/%d/stat", targetPID);
+    FILE *fp = fopen(filename, "r");
+    if(!fp)goto release;
+
+    char line[MAX_LINE_LENGTH+1];
+    fgets(line, MAX_LINE_LENGTH, fp);
+    printf("line = %s\n", line);
+
+    Process process;
+
+    sscanf(line, "%d", &process.pid);//get PID
+    char *token = strtok(line, " "); //跳过进程ID
+    token = strtok(NULL, " "); 
+    sscanf(token, "%s", process.name);//get name
+    token = strtok(NULL, " "); 
+    token = strtok(NULL, " "); 
+    sscanf(token, "%d", &process.ppid);//get PPID
+  
+    printf("进程ID = %d\n", process.pid);
+    printf("进程名 = %s\n", process.name);
+    printf("父进程PID = %d\n",process.ppid);
+        
 release:   
-  if(fp)fclose(fp);
-
-
+    if(fp)fclose(fp);
+    return process.ppid;
 }
 
 int main(int argc, char *argv[]) {
