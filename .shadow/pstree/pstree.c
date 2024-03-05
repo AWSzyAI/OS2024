@@ -196,12 +196,17 @@ void exe_root(int argc, char *argv[],int cntopt){
 
   printf("PIDs : ");
   int pid=-1,ppid=-1;
+
+  int pids[1000];
+  int ppids[1000];
+
   while((entry = readdir(dir)) != NULL){
     if(isNumeric(entry->d_name)){
       count++;
       pid = atoi(entry->d_name);
       ppid = getPPID(pid); 
-      printf(" %d-%d ", pid,ppid);
+      printf(" %5d-%5d ", pid,ppid);
+
     }
   }
   puts("");
