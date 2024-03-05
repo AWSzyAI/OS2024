@@ -245,8 +245,7 @@ int main(int argc, char *argv[]) {
      
       break;
     case 'p':
-      // cntopt++;
-      printf("argv[%d] = %s\n", cntopt, argv[cntopt]);
+      printf("----exe_p----\n");
       break;
     case 'V':
       exe_V(argc, argv);
