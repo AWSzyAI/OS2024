@@ -205,7 +205,7 @@ void exe_root(int argc, char *argv[],int cntopt){
       count++;
       pid = atoi(entry->d_name);
       ppid = getPPID(pid); 
-      printf(" %5d-%5d ", pid,ppid);
+      printf(" %5d-%5d \n", pid,ppid);
 
     }
   }
