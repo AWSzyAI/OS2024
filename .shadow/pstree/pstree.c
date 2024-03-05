@@ -59,7 +59,7 @@ int* traverseProcDirectory() {
 }
 
 
-void exe_n(int argc, char *argv[],int cntopt) {
+void exe_n(int argc, char *argv[]) {
 
   int targetPID;
   printf("argc = %d\n", argc);
@@ -231,7 +231,7 @@ int main(int argc, char *argv[]) {
     {
     case 'n':
       printf("----exe_n----\n");
-      exe_n(argc, argv, cntopt);
+      exe_n(argc, argv);
       printf("----exe_n----\n");
       
       // int *PIDs = NULL;
