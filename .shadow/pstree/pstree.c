@@ -186,7 +186,7 @@ void exe_root(int argc, char *argv[],int cntopt){
   fp = fopen(filename, "r");
   if (fp == NULL) {
     printf("No such process\n");//pstree实际上不输出
-    fclose(fp);
+    //fclose(fp);
     return;
   }
 
