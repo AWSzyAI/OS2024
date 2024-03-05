@@ -153,7 +153,6 @@ void exe_root(int argc, char *argv[],int cntopt){
   }
  
 
-  char filename[100];
   printf("-----try to open /proc/*-----\n");
   
   DIR *dir;
@@ -183,6 +182,7 @@ void exe_root(int argc, char *argv[],int cntopt){
 }
 
 int getppid(int targetPID){
+    char filename[100];
     sprintf(filename, "/proc/%d/stat", targetPID);
     FILE *fp = fopen(filename, "r");
     if(!fp)goto release;
