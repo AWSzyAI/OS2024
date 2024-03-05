@@ -182,6 +182,7 @@ void exe_root(int argc, char *argv[],int cntopt){
 
 
   sprintf(filename, "/proc/%d/status", targetPID);
+  FILE *fp;
   fp = fopen(filename, "r");
   if (fp == NULL) {
     printf("No such process\n");//pstree实际上不输出
