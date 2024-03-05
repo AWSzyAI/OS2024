@@ -136,7 +136,7 @@ release:
  }
 
 
-void exe_V(int argc, char*argv[],int cntopt){
+void exe_V(int argc, char*argv[]){
   printf("pstree-32/64 (OS2024 - Ziyan Shi) version 0.0.1\nCopyright (C) 2024-2024 NJU and Ziyan Shi\nPSmisc comes with ABSOLUTELY NO WARRANTY.\nThis is free software, and you are welcome to redistribute it under the terms of the GNU General Public License.\nFor more information about these matters, see the files named COPYING\n");
 }
 
@@ -224,7 +224,7 @@ int main(int argc, char *argv[]) {
   }
   
   int opt;
-  int cntopt=0;
+  // int cntopt=0;
   
   while((opt=getopt(argc,argv,"npV"))!=-1){
     switch (opt)
@@ -245,11 +245,11 @@ int main(int argc, char *argv[]) {
      
       break;
     case 'p':
-      cntopt++;
+      // cntopt++;
       printf("argv[%d] = %s\n", cntopt, argv[cntopt]);
       break;
     case 'V':
-      exe_V(argc, argv, cntopt);
+      exe_V(argc, argv);
       break;
     default:
       printf("<usage> pstree [-npV]\n");
