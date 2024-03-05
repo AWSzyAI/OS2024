@@ -10,7 +10,7 @@
 
 #define MAX_LINE_LENGTH 1024
 
-typedef struct {
+typedef struct{
   int pid;
   char *name;
   int ppid;
@@ -144,7 +144,7 @@ int getppid(int targetPID){
     char filename[100];
     sprintf(filename, "/proc/%d/stat", targetPID);
     FILE *fp = fopen(filename, "r");
-    if(!fp)goto release;
+    if(!fp)return -1;
 
     char line[MAX_LINE_LENGTH+1];
     fgets(line, MAX_LINE_LENGTH, fp);
@@ -162,9 +162,7 @@ int getppid(int targetPID){
   
     printf("进程ID = %d\n", process.pid);
     printf("进程名 = %s\n", process.name);
-    printf("父进程PID = %d\n",process.ppid);
-        
-release:   
+    printf("父进程PID = %d\n",process.ppid);   
     if(fp)fclose(fp);
     return process.ppid;
 }
