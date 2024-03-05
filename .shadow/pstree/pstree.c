@@ -140,7 +140,7 @@ void exe_V(int argc, char*argv[],int cntopt){
   printf("pstree-32/64 (OS2024 - Ziyan Shi) version 0.0.1\nCopyright (C) 2024-2024 NJU and Ziyan Shi\nPSmisc comes with ABSOLUTELY NO WARRANTY.\nThis is free software, and you are welcome to redistribute it under the terms of the GNU General Public License.\nFor more information about these matters, see the files named COPYING\n");
 }
 
-int getppid(int targetPID){
+int getPPID(int targetPID){
     char filename[100];
     sprintf(filename, "/proc/%d/stat", targetPID);
     FILE *fp = fopen(filename, "r");
@@ -200,7 +200,7 @@ void exe_root(int argc, char *argv[],int cntopt){
     if(isNumeric(entry->d_name)){
       count++;
       pid = atoi(entry->d_name);
-      ppid = getppid(pid); 
+      ppid = getPPID(pid); 
       printf(" %d-%d ", pid,ppid);
     }
   }
