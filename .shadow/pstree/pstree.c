@@ -169,9 +169,8 @@ int getPPID(int targetPID){
 }
 
 
-void exe_root(int argc, char *argv[],int cntopt){
-  printf("root————\n");
 
+void exe_root(int argc, char *argv[]){
   int targetPID;
   printf("argc = %d\n", argc);
   if(argc==2){
@@ -261,7 +260,7 @@ int main(int argc, char *argv[]) {
   printf("optind = %d\n", optind);//getopt()函数的全局变量optind是命令行参数的索引，即argv[]数组的索引
   if(optind == argc){
     printf("No targetPID\n");
-    exe_root(argc,argv,cntopt);
+    exe_root(argc,argv);
   }
 
 
