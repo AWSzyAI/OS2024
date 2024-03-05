@@ -164,6 +164,7 @@ int getppid(int targetPID){
     printf("进程名 = %s\n", process.name);
     printf("父进程PID = %d\n",process.ppid);   
     if(fp)fclose(fp);
+    return -1;
     return process.ppid;
 }
 
