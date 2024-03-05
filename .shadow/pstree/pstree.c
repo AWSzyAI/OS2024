@@ -165,11 +165,12 @@ void exe_root(int argc, char *argv[],int cntopt){
   }
 
   printf("PIDs : ");
+  int pid=-1,ppid=-1;
   while((entry = readdir(dir)) != NULL){
     if(isNumeric(entry->d_name)){
       count++;
-      int pid = atoi(entry->d_name);
-      int ppid = getppid(pid); 
+      pid = atoi(entry->d_name);
+      ppid = getppid(pid); 
       printf(" %d-%d ", pid,ppid);
     }
   }
