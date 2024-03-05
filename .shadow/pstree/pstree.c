@@ -69,7 +69,7 @@ void exe_n(int argc, char *argv[],int cntopt) {
   }else{
     targetPID = atoi(argv[2]);
   }
-
+ 
   printf("-----try to open /proc/%d/stat-----\n", targetPID);
   char filename[100];
   
@@ -94,6 +94,26 @@ void exe_n(int argc, char *argv[],int cntopt) {
   printf("进程ID = %d\n", process.pid);
   printf("进程名 = %s\n", process.name);
   printf("父进程PID = %d\n",process.ppid);
+
+ }
+
+
+void exe_V(int argc, char*argv[],int cntopt){
+  printf("pstree-32/64 (OS2024 - Ziyan Shi) version 0.0.1\nCopyright (C) 2024-2024 NJU and Ziyan Shi\nPSmisc comes with ABSOLUTELY NO WARRANTY.\nThis is free software, and you are welcome to redistribute it under the terms of the GNU General Public License.\nFor more information about these matters, see the files named COPYING\n");
+}
+
+void exe_root(){
+  printf("root————\n");
+
+  int targetPID;
+  printf("argc = %d\n", argc);
+  if(argc==2){
+    targetPID = 1;
+    printf("No targetPID, use default PID = 1\n");
+  }else{
+    targetPID = atoi(argv[2]);
+  }
+ 
 
   printf("-----try to open /proc/*-----\n");
   DIR *dir;
@@ -132,15 +152,7 @@ void exe_n(int argc, char *argv[],int cntopt) {
 release:  
   if(fp)fclose(fp);
 
-}
 
-
-void exe_V(int argc, char*argv[],int cntopt){
-  printf("pstree-32/64 (OS2024 - Ziyan Shi) version 0.0.1\nCopyright (C) 2024-2024 NJU and Ziyan Shi\nPSmisc comes with ABSOLUTELY NO WARRANTY.\nThis is free software, and you are welcome to redistribute it under the terms of the GNU General Public License.\nFor more information about these matters, see the files named COPYING\n");
-}
-
-void exe_root(){
-  printf("root————\n");
 }
 
 int main(int argc, char *argv[]) {
