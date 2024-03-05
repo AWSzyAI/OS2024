@@ -140,6 +140,36 @@ void exe_V(int argc, char*argv[],int cntopt){
   printf("pstree-32/64 (OS2024 - Ziyan Shi) version 0.0.1\nCopyright (C) 2024-2024 NJU and Ziyan Shi\nPSmisc comes with ABSOLUTELY NO WARRANTY.\nThis is free software, and you are welcome to redistribute it under the terms of the GNU General Public License.\nFor more information about these matters, see the files named COPYING\n");
 }
 
+int getppid(int targetPID){
+    char filename[100];
+    sprintf(filename, "/proc/%d/stat", targetPID);
+    FILE *fp = fopen(filename, "r");
+    if(!fp)goto release;
+
+    char line[MAX_LINE_LENGTH+1];
+    fgets(line, MAX_LINE_LENGTH, fp);
+    printf("line = %s\n", line);
+
+    Process process;
+
+    sscanf(line, "%d", &process.pid);//get PID
+    char *token = strtok(line, " "); //跳过进程ID
+    token = strtok(NULL, " "); 
+    sscanf(token, "%s", process.name);//get name
+    token = strtok(NULL, " "); 
+    token = strtok(NULL, " "); 
+    sscanf(token, "%d", &process.ppid);//get PPID
+  
+    printf("进程ID = %d\n", process.pid);
+    printf("进程名 = %s\n", process.name);
+    printf("父进程PID = %d\n",process.ppid);
+        
+release:   
+    if(fp)fclose(fp);
+    return process.ppid;
+}
+
+
 void exe_root(int argc, char *argv[],int cntopt){
   printf("root————\n");
 
@@ -183,34 +213,6 @@ void exe_root(int argc, char *argv[],int cntopt){
   
 }
 
-int getppid(int targetPID){
-    char filename[100];
-    sprintf(filename, "/proc/%d/stat", targetPID);
-    FILE *fp = fopen(filename, "r");
-    if(!fp)goto release;
-
-    char line[MAX_LINE_LENGTH+1];
-    fgets(line, MAX_LINE_LENGTH, fp);
-    printf("line = %s\n", line);
-
-    Process process;
-
-    sscanf(line, "%d", &process.pid);//get PID
-    char *token = strtok(line, " "); //跳过进程ID
-    token = strtok(NULL, " "); 
-    sscanf(token, "%s", process.name);//get name
-    token = strtok(NULL, " "); 
-    token = strtok(NULL, " "); 
-    sscanf(token, "%d", &process.ppid);//get PPID
-  
-    printf("进程ID = %d\n", process.pid);
-    printf("进程名 = %s\n", process.name);
-    printf("父进程PID = %d\n",process.ppid);
-        
-release:   
-    if(fp)fclose(fp);
-    return process.ppid;
-}
 
 int main(int argc, char *argv[]) {
   for (int i = 0; i < argc; i++) {
