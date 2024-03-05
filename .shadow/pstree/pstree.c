@@ -153,7 +153,7 @@ void exe_root(int argc, char *argv[],int cntopt){
   }
  
     
-  printf("root(%d)",targetPID)
+  printf("root(%d)",targetPID);
   printf("-----try to open /proc/*-----\n");
   
   DIR *dir;
