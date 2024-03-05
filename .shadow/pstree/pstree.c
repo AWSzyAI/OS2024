@@ -152,7 +152,8 @@ void exe_root(int argc, char *argv[],int cntopt){
     targetPID = atoi(argv[2]);
   }
  
-
+    
+  printf("root(%d)",targetPID)
   printf("-----try to open /proc/*-----\n");
   
   DIR *dir;
