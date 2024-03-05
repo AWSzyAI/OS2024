@@ -153,7 +153,9 @@ void exe_root(int argc, char *argv[],int cntopt){
   }
  
 
+  char filename[100];
   printf("-----try to open /proc/*-----\n");
+  
   DIR *dir;
   struct dirent *entry;
   int count = 0;
