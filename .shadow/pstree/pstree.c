@@ -190,7 +190,6 @@ void exe_root(int argc, char *argv[],int cntopt){
     return;
   }
 
-release:  
   if(fp)fclose(fp);
 
 
