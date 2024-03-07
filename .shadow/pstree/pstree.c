@@ -6,6 +6,7 @@
 #include <dirent.h>
 #include <ctype.h>
 
+
 #define MAX_LINE_LENGTH 1024
 typedef struct{
   int pid;
@@ -20,6 +21,10 @@ int isNumeric(const char* str) {
         }
     }
     return 1;
+}
+
+int cmp(const void * a, const void * b) {
+  return ( *(int*)a - *(int*)b );
 }
 
 int* traverseProcDirectory() {
@@ -213,7 +218,8 @@ void exe_root(int argc, char *argv[]){
   puts("");
   printf("count = %d\n", count);
   
-  pids.sort();
+  qsort(pids,count,sizeof(int),cmp);
+  
   for(int i=0;i<count;i++){
     printf("%d ",pids[i]);
   }
