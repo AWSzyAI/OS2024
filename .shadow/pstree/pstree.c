@@ -194,7 +194,7 @@ void exe_root(int argc, char *argv[]){
   while((entry = readdir(dir)) != NULL){
     if(isNumeric(entry->d_name)){
       pid = atoi(entry->d_name);
-      pids[count] = pid;
+      pids[count++] = pid;
       // ppid = getPPID(pid); 
       // printf(" %5d-%5d \n", pid,ppid);
     }
@@ -205,6 +205,7 @@ void exe_root(int argc, char *argv[]){
   
   qsort(pids,count,sizeof(int),cmp);
   printf("PIDs : ");
+
   for(int i=0;i<count;i++){
     printf("%d ",pids[i]);
   }
