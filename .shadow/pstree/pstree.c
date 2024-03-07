@@ -249,7 +249,7 @@ int main(int argc, char *argv[]) {
   printf("optind = %d\n", optind); //getopt()函数的全局变量optind是命令行参数的索引，即argv[]数组的索引
   if(!option_processed &&optind == argc){
     printf("No targetPID\n");
-    exe_root(argc,argv);
+    // exe_root(argc,argv);
   }
   
   assert(!argv[argc]);//确保命令行参数列表以空指针结尾，如果不是，则会触发断言错误。
