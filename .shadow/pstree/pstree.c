@@ -16,48 +16,7 @@ typedef struct{
   int ppid;
 }Process;
 
-struct psNode{
-  int pid;
-  psNode *Parent;
-  psNode *FirstSon;
-  psNode *NextSubling;
-};
 
-class psTree{
-  Process *root;
-public:
-  psTree(int pid){
-    root.pid = pid;
-    root->Parent = NULL;
-    root->FirstSon = NULL;
-    root->NextSubling = NULL;
-  }
-  ~psTree(){}
-  psNode* getNode(int pid, psNode *p){
-    if(!p)return NULL;
-    if(p.pid==pid)return p;
-    psNode* targetNode=NULL;
-    targetNode = getNode(pid,p->FirstSon);
-    if(!targetNode){
-      targetNode = getNode(pid,p->NextSubling);
-    }
-    return targetNode;
-  }
-  void Insert(int ppid,int pid){
-    psNode *p = getNode(ppid);
-    psNode *q = new psNode(pid);
-    q->Parent = p;
-    if(!p->FirstSon){
-      p->FirstSon = q;
-    }else{
-      psNode *t = p->FirstSon;
-      while(t->NextSubling){
-        t = t->NextSubling;
-      }
-      t->NextSubling = q;
-    }
-  }
-};
 
 int isNumeric(const char* str) {
     for (int i = 0; str[i] != '\0'; i++) {
@@ -293,3 +252,53 @@ int main(int argc, char *argv[]) {
   assert(!argv[argc]);//确保命令行参数列表以空指针结尾，如果不是，则会触发断言错误。
   return 0;
 }
+
+
+
+
+/*
+tyeodef struct{
+  int pid;
+  psNode *Parent;
+  psNode *FirstSon;
+  psNode *NextSubling;
+}psNode;
+
+class psTree{
+  Process *root;
+public:
+  psTree(int pid){
+    root.pid = pid;
+    root->Parent = NULL;
+    root->FirstSon = NULL;
+    root->NextSubling = NULL;
+  }
+  ~psTree(){}
+  psNode* getNode(int pid, psNode *p){
+    if(!p)return NULL;
+    if(p.pid==pid)return p;
+    psNode* targetNode=NULL;
+    targetNode = getNode(pid,p->FirstSon);
+    if(!targetNode){
+      targetNode = getNode(pid,p->NextSubling);
+    }
+    return targetNode;
+  }
+  void Insert(int ppid,int pid){
+    psNode *p = getNode(ppid);
+    psNode *q = new psNode(pid);
+    q->Parent = p;
+    if(!p->FirstSon){
+      p->FirstSon = q;
+    }else{
+      psNode *t = p->FirstSon;
+      while(t->NextSubling){
+        t = t->NextSubling;
+      }
+      t->NextSubling = q;
+    }
+  }
+};
+
+
+*/
