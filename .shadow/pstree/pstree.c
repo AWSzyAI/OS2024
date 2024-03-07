@@ -157,7 +157,7 @@ int getPPID(int targetPID){
     sscanf(line, "%d", &process.pid);//get PID
     char *token = strtok(line, " "); //跳过进程ID
     token = strtok(NULL, " "); 
-    sscanf(token, "%s", &process.name);//get name
+    sscanf(token, "%s", process.name);//get name
     token = strtok(NULL, " "); 
     token = strtok(NULL, " "); 
     sscanf(token, "%d", &process.ppid);//get PPID
