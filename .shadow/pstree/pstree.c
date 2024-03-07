@@ -204,7 +204,7 @@ void exe_root(int argc, char *argv[]){
   printf("count = %d\n", count);
   
   qsort(pids,count,sizeof(int),cmp);
-  
+  printf("PIDs : ");
   for(int i=0;i<count;i++){
     printf("%d ",pids[i]);
   }
