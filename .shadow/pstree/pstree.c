@@ -179,6 +179,7 @@ void exe_root(int argc, char *argv[]){
   printf("???????????????\n");
   struct dirent *entry;
   int count = 0;
+  
   dir = opendir("/proc/");
   if(dir == NULL){
     perror("opendir error");
@@ -188,21 +189,48 @@ void exe_root(int argc, char *argv[]){
   printf("PIDs : ");
   int pid=-1,ppid=-1;
 
-  int pids[1000];
-  int ppids[1000];
+  int idx_pid=0,idx_ppid=0;
+  
+  int pids[10000];
+  int MaxPID = 10000;
+  int ppids[MaxPID];
 
   while((entry = readdir(dir)) != NULL){
     if(isNumeric(entry->d_name)){
-      count++;
+      
       pid = atoi(entry->d_name);
+      pids[count++] = pid;
       ppid = getPPID(pid); 
+      if(ppid<MaxPID)ppids[ppid] = pid;
+      else{
+        MaxPID*=2;
+        ppids = (int*)realloc(ppids, MaxPID * sizeof(int));
+        ppids[ppid] = pid;
+      }
       printf(" %5d-%5d \n", pid,ppid);
     }
   }
   puts("");
   printf("count = %d\n", count);
+  
+  pids.sort();
+  for(int i=0;i<count;i++){
+    printf("%d ",pids[i]);
+  }
+  puts("");
+  for(int i=0;i<count;i++){
+    printf("%d \n",ppids[i]);
+    for(int j=0;j<count;j++){
+      if(ppids[i]==pids[j]){
+        printf("%d ",pids[j]);
+      }
+    }
+    puts("");
+  }
 
-  //if(dir)closedir(dir);
+
+
+  if(dir)closedir(dir);
   
 }
 
