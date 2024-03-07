@@ -6,17 +6,12 @@
 #include <dirent.h>
 #include <ctype.h>
 
-
-
 #define MAX_LINE_LENGTH 1024
-
 typedef struct{
   int pid;
   char *name;
   int ppid;
 }Process;
-
-
 
 int isNumeric(const char* str) {
     for (int i = 0; str[i] != '\0'; i++) {
@@ -60,7 +55,6 @@ int* traverseProcDirectory() {
   return PIDs;
 }
 
-
 void exe_n(int argc, char *argv[]) {
   printf("----exe_n----\n");
   int targetPID;
@@ -71,7 +65,6 @@ void exe_n(int argc, char *argv[]) {
   }else{
     targetPID = atoi(argv[2]);
   }
- 
   printf("-----try to open /proc/%d/stat-----\n", targetPID);
   char filename[100];
   
@@ -137,7 +130,6 @@ release:
 
  }
 
-
 void exe_V(int argc, char*argv[]){
   printf("pstree-32/64 (OS2024 - Ziyan Shi) version 0.0.1\nCopyright (C) 2024-2024 NJU and Ziyan Shi\nPSmisc comes with ABSOLUTELY NO WARRANTY.\nThis is free software, and you are welcome to redistribute it under the terms of the GNU General Public License.\nFor more information about these matters, see the files named COPYING\n");
 }
@@ -170,8 +162,6 @@ int getPPID(int targetPID){
     return process.ppid;
 }
 
-
-
 void exe_root(int argc, char *argv[]){
   int targetPID;
   printf("argc = %d\n", argc);
@@ -181,7 +171,6 @@ void exe_root(int argc, char *argv[]){
   }else{
     targetPID = atoi(argv[2]);
   }
- 
     
   printf("root(%d)\n",targetPID);
   printf("-----try to open /proc/*-----\n");
