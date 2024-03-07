@@ -202,8 +202,8 @@ void exe_root(int argc, char *argv[]){
   puts("");
   printf("count = %d\n", count);
 
-  if(dir)closedir(dir);
-  return;
+  //if(dir)closedir(dir);
+  
 }
 
 
