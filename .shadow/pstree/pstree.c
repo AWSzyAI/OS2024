@@ -193,25 +193,12 @@ void exe_root(int argc, char *argv[]){
 
   printf("PIDs : ");
   int pid=-1,ppid=-1;
-
-  int idx_pid=0,idx_ppid=0;
-  
-  int pids[10000];
-  int MaxPID = 10000;
-  int ppids[MaxPID];
-
+  int *pids = (int*)malloc(100*sizeof(int));
   while((entry = readdir(dir)) != NULL){
     if(isNumeric(entry->d_name)){
-      
       pid = atoi(entry->d_name);
-      pids[count++] = pid;
+      pids[count] = pid;
       ppid = getPPID(pid); 
-      if(ppid<MaxPID)ppids[ppid] = pid;
-      else{
-        MaxPID*=2;
-        ppids = (int*)realloc(ppids, MaxPID * sizeof(int));
-        ppids[ppid] = pid;
-      }
       printf(" %5d-%5d \n", pid,ppid);
     }
   }
@@ -224,15 +211,6 @@ void exe_root(int argc, char *argv[]){
     printf("%d ",pids[i]);
   }
   puts("");
-  for(int i=0;i<count;i++){
-    printf("%d \n",ppids[i]);
-    for(int j=0;j<count;j++){
-      if(ppids[i]==pids[j]){
-        printf("%d ",pids[j]);
-      }
-    }
-    puts("");
-  }
 
 
 
