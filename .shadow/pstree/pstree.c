@@ -225,17 +225,21 @@ int main(int argc, char *argv[]) {
     printf("argv[%d] = %s\n", i, argv[i]);
   }
   int opt;
+  int option_processed = 0; // 标志变量
   while((opt=getopt(argc,argv,"npV"))!=-1){
     switch (opt)
     {
     case 'n':
       exe_n(argc, argv);
+      option_processed = 1; // 设置标志变量
       break;
     case 'p':
+      option_processed = 1; // 设置标志变量
       break;
     case 'V':
       exe_V(argc, argv);
       break;
+      option_processed = 1; // 设置标志变量
     default:
       printf("<usage> pstree [-npV]\n");
       break;
@@ -243,7 +247,7 @@ int main(int argc, char *argv[]) {
   }
   
   printf("optind = %d\n", optind); //getopt()函数的全局变量optind是命令行参数的索引，即argv[]数组的索引
-  if(optind == argc){
+  if(!option_processed &&optind == argc){
     printf("No targetPID\n");
     exe_root(argc,argv);
   }
