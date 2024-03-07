@@ -197,15 +197,13 @@ void exe_root(int argc, char *argv[]){
       pid = atoi(entry->d_name);
       ppid = getPPID(pid); 
       printf(" %5d-%5d \n", pid,ppid);
-
     }
   }
   puts("");
   printf("count = %d\n", count);
 
   if(dir)closedir(dir);
-
-  
+  return;
 }
 
 
