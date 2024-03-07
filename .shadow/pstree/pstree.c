@@ -169,7 +169,9 @@ int getPPID(int targetPID){
 
 void exe_root(int argc, char *argv[]){
   int targetPID;
+  
   printf("argc = %d\n", argc);
+  
   if(argc==1){
     targetPID = 1;
     printf("No targetPID, use default PID = 1\n");
@@ -181,25 +183,20 @@ void exe_root(int argc, char *argv[]){
   printf("-----try to open /proc/*-----\n");
   
   DIR *dir;
-  printf("???????????????\n");
   struct dirent *entry;
   int count = 0;
-  
-  dir = opendir("/proc/");
-  if(dir == NULL){
-    perror("opendir error");
-    return;
-  }
 
-  printf("PIDs : ");
+  dir = opendir("/proc/");
+  if(dir == NULL){perror("opendir error");return;}
+  
   int pid=-1,ppid=-1;
-  int *pids = (int*)malloc(100*sizeof(int));
+  int *pids = (int*)malloc(1000*sizeof(int));
   while((entry = readdir(dir)) != NULL){
     if(isNumeric(entry->d_name)){
       pid = atoi(entry->d_name);
       pids[count] = pid;
-      ppid = getPPID(pid); 
-      printf(" %5d-%5d \n", pid,ppid);
+      // ppid = getPPID(pid); 
+      // printf(" %5d-%5d \n", pid,ppid);
     }
   }
   puts("");
@@ -249,7 +246,7 @@ int main(int argc, char *argv[]) {
   printf("optind = %d\n", optind); //getopt()函数的全局变量optind是命令行参数的索引，即argv[]数组的索引
   if(!option_processed &&optind == argc){
     printf("No targetPID\n");
-    // exe_root(argc,argv);
+    exe_root(argc,argv);
   }
   
   assert(!argv[argc]);//确保命令行参数列表以空指针结尾，如果不是，则会触发断言错误。
