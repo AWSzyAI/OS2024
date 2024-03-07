@@ -198,6 +198,7 @@ void exe_root(int argc, char *argv[]){
       // ppid = getPPID(pid); 
       // printf(" %5d-%5d \n", pid,ppid);
     }
+    entry = readdir(dir);
   }
   puts("");
   printf("count = %d\n", count);
