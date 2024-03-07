@@ -16,6 +16,49 @@ typedef struct{
   int ppid;
 }Process;
 
+struct psNode{
+  int pid;
+  psNode *Parent;
+  psNode *FirstSon;
+  psNode *NextSubling;
+};
+
+class psTree{
+  Process *root;
+public:
+  psTree(int pid){
+    root.pid = pid;
+    root->Parent = NULL;
+    root->FirstSon = NULL;
+    root->NextSubling = NULL;
+  }
+  ~psTree(){}
+  psNode* getNode(int pid, psNode *p){
+    if(!p)return NULL;
+    if(p.pid==pid)return p;
+    psNode* targetNode=NULL;
+    targetNode = getNode(pid,p->FirstSon);
+    if(!targetNode){
+      targetNode = getNode(pid,p->NextSubling);
+    }
+    return targetNode;
+  }
+  void Insert(int ppid,int pid){
+    psNode *p = getNode(ppid);
+    psNode *q = new psNode(pid);
+    q->Parent = p;
+    if(!p->FirstSon){
+      p->FirstSon = q;
+    }else{
+      psNode *t = p->FirstSon;
+      while(t->NextSubling){
+        t = t->NextSubling;
+      }
+      t->NextSubling = q;
+    }
+  }
+};
+
 int isNumeric(const char* str) {
     for (int i = 0; str[i] != '\0'; i++) {
         if (!isdigit(str[i])) {
@@ -60,7 +103,7 @@ int* traverseProcDirectory() {
 
 
 void exe_n(int argc, char *argv[]) {
-
+  printf("----exe_n----\n");
   int targetPID;
   printf("argc = %d\n", argc);
   if(argc==2){
@@ -173,7 +216,7 @@ int getPPID(int targetPID){
 void exe_root(int argc, char *argv[]){
   int targetPID;
   printf("argc = %d\n", argc);
-  if(argc==2){
+  if(argc==1){
     targetPID = 1;
     printf("No targetPID, use default PID = 1\n");
   }else{
@@ -181,7 +224,7 @@ void exe_root(int argc, char *argv[]){
   }
  
     
-  printf("root(%d)",targetPID);
+  printf("root(%d)\n",targetPID);
   printf("-----try to open /proc/*-----\n");
   
   DIR *dir;
@@ -222,30 +265,14 @@ int main(int argc, char *argv[]) {
     assert(argv[i]);
     printf("argv[%d] = %s\n", i, argv[i]);
   }
-  
   int opt;
-  // int cntopt=0;
-  
   while((opt=getopt(argc,argv,"npV"))!=-1){
     switch (opt)
     {
     case 'n':
-      printf("----exe_n----\n");
       exe_n(argc, argv);
-      printf("----exe_n----\n");
-      
-      // int *PIDs = NULL;
-      // PIDs = traverseProcDirectory();
-      // printf("PIDs : \n");
-      // for(int i=1;i<=PIDs[0];i++){
-      //   printf("%d ", PIDs[i]);
-      // }
-      // puts("");
-
-     
       break;
     case 'p':
-      printf("----exe_p----\n");
       break;
     case 'V':
       exe_V(argc, argv);
@@ -255,7 +282,6 @@ int main(int argc, char *argv[]) {
       break;
     }
   }
-
   printf("optind = %d\n", optind);//getopt()函数的全局变量optind是命令行参数的索引，即argv[]数组的索引
   if(optind == argc){
     printf("No targetPID\n");
