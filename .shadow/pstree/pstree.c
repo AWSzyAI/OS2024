@@ -255,10 +255,11 @@ int main(int argc, char *argv[]) {
       break;
     case 'V':
       exe_V(argc, argv);
-      break;
       option_processed = 1; // 设置标志变量
+      break;
     default:
       printf("<usage> pstree [-npV]\n");
+      option_processed = 1; // 设置标志变量
       break;
     }
   }
