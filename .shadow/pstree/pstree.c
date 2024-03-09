@@ -143,32 +143,36 @@ void exe_V(int argc, char*argv[]){
 }
 
 int getPPID(int targetPID){
-    char filename[100];
-    sprintf(filename, "/proc/%d/stat", targetPID);
-    FILE *fp = fopen(filename, "r");
-    if(!fp)exit(1);
+  char filename[100];
+  sprintf(filename, "/proc/%d/stat", targetPID);
+  FILE *fp = fopen(filename, "r");
+  if(!fp)exit(1);
 
-    char line[MAX_LINE_LENGTH+1];
-    fgets(line, MAX_LINE_LENGTH, fp);
-    // printf("line = %s\n", line);
+  char line[MAX_LINE_LENGTH+1];
+  fgets(line, MAX_LINE_LENGTH, fp);
+  // printf("line = %s\n", line);
 
-    Process process;
+  Process process;
 
-    sscanf(line, "%d", &process.pid);//get PID
-    char *token = strtok(line, " "); //跳过进程ID
-    token = strtok(NULL, " "); 
-    sscanf(token, "%s", process.name);//get name
-    token = strtok(NULL, " "); 
-    token = strtok(NULL, " "); 
-    sscanf(token, "%d", &process.ppid);//get PPID
+  sscanf(line, "%d", &process.pid);//get PID
+  char *token = strtok(line, " "); //跳过进程ID
+  token = strtok(NULL, " "); 
+
+  // Allocate memory for process.name
+  process.name = (char*)malloc(MAX_LINE_LENGTH * sizeof(char));
+  sscanf(token, "%s", process.name);//get name
+
+  token = strtok(NULL, " "); 
+  token = strtok(NULL, " "); 
+  sscanf(token, "%d", &process.ppid);//get PPID
   
-    printf("进程ID = %d\n", process.pid);
-    printf("进程名 = %s\n", process.name);
-    printf("父进程PID = %d\n",process.ppid);   
-    
-    if(fp)fclose(fp);
-    
-    return process.ppid;
+  printf("进程ID = %d\n", process.pid);
+  printf("进程名 = %s\n", process.name);
+  printf("父进程PID = %d\n",process.ppid);   
+  
+  if(fp)fclose(fp);
+  
+  return process.ppid;
 }
 
 void exe_root(int argc, char *argv[]){
