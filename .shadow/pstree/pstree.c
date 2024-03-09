@@ -169,9 +169,9 @@ int getPPID(int targetPID){
   token = strtok(NULL, " "); 
   sscanf(token, "%d", &process.ppid);//get PPID
   
-  printf("进程ID = %d\n", process.pid);
-  printf("进程名 = %s\n", process.name);
-  printf("父进程PID = %d\n",process.ppid);   
+  // printf("进程ID = %d\n", process.pid);
+  // printf("进程名 = %s\n", process.name);
+  // printf("父进程PID = %d\n",process.ppid);   
   
   if(fp)fclose(fp);
   
@@ -247,10 +247,11 @@ int main(int argc, char *argv[]) {
     switch (opt)
     {
     case 'n':
-      exe_n(argc, argv);
+      // exe_n(argc, argv);
       option_processed = 1; // 设置标志变量
       break;
     case 'p':
+      // exe_p(argc, argv);
       option_processed = 1; // 设置标志变量
       break;
     case 'V':
