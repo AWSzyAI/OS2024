@@ -146,7 +146,10 @@ int getPPID(int targetPID){
   char filename[100];
   sprintf(filename, "/proc/%d/stat", targetPID);
   FILE *fp = fopen(filename, "r");
-  if(!fp)exit(1);
+  if(!fp){
+    printf("No such process\n");
+    return -1;
+  }
 
   char line[MAX_LINE_LENGTH+1];
   fgets(line, MAX_LINE_LENGTH, fp);
@@ -172,6 +175,8 @@ int getPPID(int targetPID){
   
   if(fp)fclose(fp);
   
+  free(process.name);
+  
   return process.ppid;
 }
 
@@ -180,11 +185,15 @@ void exe_root(int argc, char *argv[]){
   
   printf("argc = %d\n", argc);
   
-  if(argc==1){
+  if(argc<3){
     targetPID = 1;
     printf("No targetPID, use default PID = 1\n");
-  }else{
+    
+  }else{//argc>=3时，argv[2]才不是一个空指针（0x0）
     targetPID = atoi(argv[2]);
+    //atoi函数试图将字符串转换为整数，
+    //但是这里的argv[2]是一个空指针（0x0），
+    //导致SIGSEGV错误。
   }
     
   printf("root(%d)\n",targetPID);
