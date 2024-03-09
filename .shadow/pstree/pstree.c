@@ -264,8 +264,10 @@ int main(int argc, char *argv[]) {
     }
   }
   
-  printf("optind = %d\n", optind); //getopt()函数的全局变量optind是命令行参数的索引，即argv[]数组的索引
+  
   if(!option_processed &&optind == argc){
+    //getopt()函数的全局变量optind是命令行参数的索引，即argv[]数组的索引
+    printf("optind = %d\n", optind); 
     printf("No targetPID\n");
     exe_root(argc,argv);
   }
