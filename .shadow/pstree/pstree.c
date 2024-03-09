@@ -98,7 +98,7 @@ void exe_n(int argc, char *argv[]) {
   printf("父进程PID = %d\n",process.ppid);
 
     
-  printf("-----try to open /proc/*-----\n");
+  // printf("-----try to open /proc/*-----\n");
   DIR *dir;
   struct dirent *entry;
   int count = 0;
@@ -180,15 +180,35 @@ int getPPID(int targetPID){
   return process.ppid;
 }
 
+
+typedef struct Node{
+  int pid;
+  int ppid;
+  char *name;
+  struct Node *firstChild;
+  struct Node *nextSibling;
+}Node;
+
+
+
+
+
+
+
+
+
 void exe_root(int argc, char *argv[]){
-  int targetPID;
+  //扫描/proc目录，获取所有进程的PID
+  //并且按照PID的大小进行排序
+  //然后构建进程树
+  //最后输出进程树
+
   
   printf("argc = %d\n", argc);
-  
+  int targetPID;
   if(argc<3){
     targetPID = 1;
     printf("No targetPID, use default PID = 1\n");
-    
   }else{//argc>=3时，argv[2]才不是一个空指针（0x0）
     targetPID = atoi(argv[2]);
     //atoi函数试图将字符串转换为整数，
