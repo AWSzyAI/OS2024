@@ -8,12 +8,111 @@
 
 
 #define MAX_LINE_LENGTH 1024
-typedef struct{
+
+
+
+
+typedef struct psNode{
   int pid;
   char *name;
   int ppid;
   int depth;
-}Process;
+  psNode *Parent;
+  psNode *FirstSon;
+  psNode *NextSibling;
+}psNode;
+
+
+psNode *root = NULL;
+
+psNode* getNode(int pid, psNode *root){
+  if(!root)return NULL;
+  if(root->pid==pid)return root;
+  struct psNode* targetNode=NULL;
+  targetNode = getNode(pid,root->FirstSon);
+  if(!targetNode){
+    targetNode = getNode(pid,root->NextSibling);
+  }
+  return targetNode;
+}
+
+void addNode(int pid, int ppid, char *name){
+  if(!root){
+    root = (psNode*)malloc(sizeof(psNode));
+    root->pid = pid;
+    root->ppid = ppid;
+    root->name = name;
+    root->depth = 0;
+    root->Parent = NULL;
+    root->FirstSon = NULL;
+    root->NextSibling = NULL;
+  }
+  psNode *p = getNode(ppid, root);
+  psNode *q = (psNode*)malloc(sizeof(psNode));//new psNode(pid);
+  q->pid = pid;
+  q->ppid = ppid;
+  q->name = name;
+  q->depth = p->depth+1;
+  q->Parent = p;
+  q->FirstSon = NULL;
+  q->NextSibling = NULL;
+  if(!p->FirstSon){
+    p->FirstSon = q;
+  }else{
+    psNode *t = p->FirstSon;
+    while(t->NextSibling){
+      t = t->NextSibling;
+    }
+    t->NextSibling = q;
+  }
+}
+
+
+void PrintTree(psNode *root){
+  
+}
+
+
+
+int getPPID(int targetPID){
+  char filename[100];
+  sprintf(filename, "/proc/%d/stat", targetPID);
+  FILE *fp = fopen(filename, "r");
+  if(!fp){
+    printf("No such process\n");
+    return -1;
+  }
+
+  char line[MAX_LINE_LENGTH+1];
+  fgets(line, MAX_LINE_LENGTH, fp);
+  // printf("line = %s\n", line);
+
+  Process process;
+
+  sscanf(line, "%d", &process.pid);//get PID
+  char *token = strtok(line, " "); //跳过进程ID
+  token = strtok(NULL, " "); 
+
+  // Allocate memory for process.name
+  process.name = (char*)malloc(MAX_LINE_LENGTH * sizeof(char));
+  sscanf(token, "%s", process.name);//get name
+
+  token = strtok(NULL, " "); 
+  token = strtok(NULL, " "); 
+  sscanf(token, "%d", &process.ppid);//get PPID
+  
+  // printf("进程ID = %d\n", process.pid);
+  // printf("进程名 = %s\n", process.name);
+  // printf("父进程PID = %d\n",process.ppid);   
+  addNode(process.pid, process.ppid, process.name);
+
+  if(fp)fclose(fp);
+  
+  free(process.name);
+  
+  return process.ppid;
+}
+
 
 int isNumeric(const char* str) {
     for (int i = 0; str[i] != '\0'; i++) {
@@ -24,9 +123,7 @@ int isNumeric(const char* str) {
     return 1;
 }
 
-int cmp(const void * a, const void * b) {
-  return ( *(int*)a - *(int*)b );
-}
+int cmp(const void * a, const void * b) {return ( *(int*)a - *(int*)b );}
 
 int* traverseProcDirectory() {
   
@@ -138,56 +235,10 @@ release:
 
  }
 
-void exe_V(int argc, char*argv[]){
-  printf("pstree-32/64 (OS2024 - Ziyan Shi) version 0.0.1\nCopyright (C) 2024-2024 NJU and Ziyan Shi\nPSmisc comes with ABSOLUTELY NO WARRANTY.\nThis is free software, and you are welcome to redistribute it under the terms of the GNU General Public License.\nFor more information about these matters, see the files named COPYING\n");
-}
-
-int getPPID(int targetPID){
-  char filename[100];
-  sprintf(filename, "/proc/%d/stat", targetPID);
-  FILE *fp = fopen(filename, "r");
-  if(!fp){
-    printf("No such process\n");
-    return -1;
-  }
-
-  char line[MAX_LINE_LENGTH+1];
-  fgets(line, MAX_LINE_LENGTH, fp);
-  // printf("line = %s\n", line);
-
-  Process process;
-
-  sscanf(line, "%d", &process.pid);//get PID
-  char *token = strtok(line, " "); //跳过进程ID
-  token = strtok(NULL, " "); 
-
-  // Allocate memory for process.name
-  process.name = (char*)malloc(MAX_LINE_LENGTH * sizeof(char));
-  sscanf(token, "%s", process.name);//get name
-
-  token = strtok(NULL, " "); 
-  token = strtok(NULL, " "); 
-  sscanf(token, "%d", &process.ppid);//get PPID
-  
-  // printf("进程ID = %d\n", process.pid);
-  // printf("进程名 = %s\n", process.name);
-  // printf("父进程PID = %d\n",process.ppid);   
-  
-  if(fp)fclose(fp);
-  
-  free(process.name);
-  
-  return process.ppid;
-}
+void exe_V(int argc, char*argv[]){printf("pstree-32/64 (OS2024 - Ziyan Shi) version 0.0.1\nCopyright (C) 2024-2024 NJU and Ziyan Shi\nPSmisc comes with ABSOLUTELY NO WARRANTY.\nThis is free software, and you are welcome to redistribute it under the terms of the GNU General Public License.\nFor more information about these matters, see the files named COPYING\n");}
 
 
-typedef struct Node{
-  int pid;
-  int ppid;
-  char *name;
-  struct Node *firstChild;
-  struct Node *nextSibling;
-}Node;
+
 
 
 
@@ -198,6 +249,7 @@ typedef struct Node{
 
 
 void exe_root(int argc, char *argv[]){
+  psNode *root = NULL;
   //扫描/proc目录，获取所有进程的PID
   //并且按照PID的大小进行排序
   //然后构建进程树
@@ -216,13 +268,11 @@ void exe_root(int argc, char *argv[]){
     //导致SIGSEGV错误。
   }
     
-  printf("root(%d)\n",targetPID);
-  printf("-----try to open /proc/*-----\n");
-  
+  printf("root:%d\n",targetPID);
+  // printf("-----try to open /proc/*-----\n");
   DIR *dir;
   struct dirent *entry;
   int count = 0;
-
   dir = opendir("/proc/");
   if(dir == NULL){perror("opendir error");return;}
   count = 1;
@@ -234,7 +284,7 @@ void exe_root(int argc, char *argv[]){
       pid = atoi(entry->d_name);
       pids[count++] = pid;
       ppid = getPPID(pid); 
-      printf(" %5d-%5d \n", pid,ppid);
+      // printf(" %5d-%5d \n", pid,ppid);
     }
     entry = readdir(dir);
   }
@@ -242,12 +292,15 @@ void exe_root(int argc, char *argv[]){
   printf("count = %d\n", count);
   
   qsort(pids,count,sizeof(int),cmp);
-  printf("PIDs : ");
+  
+  //print all of the PIDs
+  // printf("PIDs : ");
+  // for(int i=0;i<count;i++){
+  //   printf("%d ",pids[i]);
+  // }
+  // puts("");
 
-  for(int i=0;i<count;i++){
-    printf("%d ",pids[i]);
-  }
-  puts("");
+
 
 
 
@@ -257,6 +310,7 @@ void exe_root(int argc, char *argv[]){
 
 
 int main(int argc, char *argv[]) {
+
   for (int i = 0; i < argc; i++) {
     assert(argv[i]);
     printf("argv[%d] = %s\n", i, argv[i]);
