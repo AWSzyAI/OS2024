@@ -207,7 +207,7 @@ void exe_root(int argc, char *argv[]){
   dir = opendir("/proc/");
   if(dir == NULL){perror("opendir error");return;}
   count = 1;
-  int pid=-1,ppid=-1;
+  int pid=-1;
   int *pids = (int*)malloc(1000*sizeof(int));
   pids[0] = 1;
   while((entry = readdir(dir)) != NULL){
