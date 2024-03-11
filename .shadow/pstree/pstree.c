@@ -216,8 +216,8 @@ void exe_root(int argc, char *argv[]){
     if(isNumeric(entry->d_name)){
       pid = atoi(entry->d_name);
       pids[count++] = pid;
-      ppid = getPPID(pid); 
-      printf(" %5d-%5d \n", pid,ppid);
+      // ppid = getPPID(pid); 
+      // printf(" %5d-%5d \n", pid,ppid);
     }
     entry = readdir(dir);
   }
