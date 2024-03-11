@@ -21,9 +21,9 @@ typedef struct psNode{
   char *name;
   int ppid;
   int depth;
-  psNode *Parent;
-  psNode *FirstSon;
-  psNode *NextSibling;
+  struct psNode *Parent;
+  struct psNode *FirstSon;
+  struct psNode *NextSibling;
 }psNode;
 
 
