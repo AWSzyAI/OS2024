@@ -10,7 +10,11 @@
 #define MAX_LINE_LENGTH 1024
 
 
-
+typedef struct{
+  int pid;
+  char *name;
+  int ppid;
+}Process;
 
 typedef struct psNode{
   int pid;
