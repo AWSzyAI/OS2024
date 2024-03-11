@@ -217,7 +217,7 @@ void exe_root(int argc, char *argv[]){
       pid = atoi(entry->d_name);
       pids[count++] = pid;
       ppid = getPPID(pid); 
-      // printf(" %5d-%5d \n", pid,ppid);
+      printf(" %5d-%5d \n", pid,ppid);
     }
     entry = readdir(dir);
   }
