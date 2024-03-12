@@ -72,8 +72,19 @@ void addNode(int pid, int ppid, char *name){
 }
 
 
-void PrintTree(psNode *root){
+void PrintTree(psNode *root, int depth){
+  if(!root) return;
   
+  for(int i = 0; i < depth; i++)
+    printf("  ");
+  
+  printf("%s\n", root->name);
+  
+  psNode *child = root->FirstSon;
+  while(child){
+    PrintTree(child, depth + 1);
+    child = child->NextSibling;
+  }
 }
 
 
@@ -168,17 +179,6 @@ void exe_n(int argc, char *argv[]) {
 
 void exe_V(int argc, char*argv[]){printf("pstree-32/64 (OS2024 - Ziyan Shi) version 0.0.1\nCopyright (C) 2024-2024 NJU and Ziyan Shi\nPSmisc comes with ABSOLUTELY NO WARRANTY.\nThis is free software, and you are welcome to redistribute it under the terms of the GNU General Public License.\nFor more information about these matters, see the files named COPYING\n");}
 
-
-
-
-
-
-
-
-
-
-
-
 void exe_root(int argc, char *argv[]){
   psNode *root = NULL;
   //扫描/proc目录，获取所有进程的PID
@@ -216,6 +216,7 @@ void exe_root(int argc, char *argv[]){
     if(isNumeric(entry->d_name)){
       pid = atoi(entry->d_name);
       pids[count++] = pid;
+      addNode(pid, getPPID(pid), entry->d_name);
       // ppid = getPPID(pid); 
       // printf(" %5d-%5d \n", pid,ppid);
     }
@@ -232,10 +233,6 @@ void exe_root(int argc, char *argv[]){
   //   printf("%d ",pids[i]);
   // }
   // puts("");
-
-
-
-
 
   if(dir)closedir(dir);
   
