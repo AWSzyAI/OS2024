@@ -72,8 +72,19 @@ void addNode(int pid, int ppid, char *name){
 }
 
 
-void PrintTree(psNode *root){
+void PrintTree(psNode *root, int depth){
+  if(!root) return;
   
+  for(int i = 0; i < depth; i++)
+    printf("  ");
+  
+  printf("%s\n", root->name);
+  
+  psNode *child = root->FirstSon;
+  while(child){
+    PrintTree(child, depth + 1);
+    child = child->NextSibling;
+  }
 }
 
 
