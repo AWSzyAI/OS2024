@@ -216,7 +216,7 @@ void exe_root(int argc, char *argv[]){
     if(isNumeric(entry->d_name)){
       pid = atoi(entry->d_name);
       pids[count++] = pid;
-      addNode(pid, getPPID(pid), entry->d_name);
+      // addNode(pid, getPPID(pid), entry->d_name);
       // ppid = getPPID(pid); 
       // printf(" %5d-%5d \n", pid,ppid);
     }
