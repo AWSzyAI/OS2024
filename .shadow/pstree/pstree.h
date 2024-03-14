@@ -47,11 +47,12 @@ static inline void printNode(psNode *node){
     // printf("pid = %d, name = %s, ppid = %d\n", node->pid, node->name, node->ppid);
     
 }
+char *getName(int pid);
 static inline void printArray(int **arr, int n){
     printf("count = %d\n", n);
     for(int i=0;i<n;i++){
         char *name = getName(arr[i][0]);
-        printf("%s %d %d\n", name, arr[i][0], arr[i][1]);
+        printf("%s %d %d\n", &name, arr[i][0], arr[i][1]);
     }
     printf("----------------------\n");
     // puts("");
@@ -81,7 +82,7 @@ static inline int cmp_pid(const void *a, const void *b){
 
 //getName(arr[i][0]) vs getName(arr[j][0])
 //字典序
-char *getName(int pid);
+
 int cmp_name(const int pid_a,const int pid_b){
     char *name_a = getName(pid_a);
     char *name_b = getName(pid_b);
