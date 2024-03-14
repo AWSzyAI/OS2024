@@ -168,10 +168,9 @@ static inline psNode * NewNode(int pid){
     sscanf(line, "%d", &node->pid);//get PID
     char *token = strtok(line, " "); //跳过进程ID
     token = strtok(NULL, " ");
-    
     char *name = (char*)malloc(MAX_LINE_LENGTH * sizeof(char));
-    sscanf(token, "%s", name);//get name
-    node->name = name;
+    sscanf(token, "%s", &node->name);//get name
+    // node->name = name;
     token = strtok(NULL, " ");
     token = strtok(NULL, " ");
     sscanf(token, "%d", &node->ppid);//get PPID
