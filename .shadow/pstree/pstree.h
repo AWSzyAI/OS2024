@@ -47,10 +47,10 @@ static inline void printNode(psNode *node){
     // printf("pid = %d, name = %s, ppid = %d\n", node->pid, node->name, node->ppid);
     
 }
-static inline void printArray(int *arr, int n){
+static inline void printArray(int **arr, int n){
     printf("count = %d\n", n);
     for(int i=0;i<n;i++){
-        printf("%d ",arr[i]);
+        printf("%d %d\n", arr[i][0], arr[i][1]);
     }
     puts("");
 }
