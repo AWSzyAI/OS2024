@@ -50,7 +50,8 @@ static inline void printNode(psNode *node){
 static inline void printArray(int **arr, int n){
     printf("count = %d\n", n);
     for(int i=0;i<n;i++){
-        printf("%d %d\n", arr[i][0], arr[i][1]);
+        char *name = getName(arr[i][0]);
+        printf("%s %d %d\n", name, arr[i][0], arr[i][1]);
     }
     printf("----------------------\n");
     // puts("");
@@ -77,6 +78,14 @@ static inline int cmp_pid(const void *a, const void *b){
     return ((int*)a)[0] - ((int*)b)[0];
 }
 
+
+//getName(arr[i][0]) vs getName(arr[j][0])
+//字典序
+static inline int cmp_name(const int pida,const int pidb){
+
+    
+}
+
 static inline int GetRootPID(int argc, char *argv[]){
     int rootPID;
     if(argc<3){//无参数 ./pstree-64 
@@ -87,6 +96,23 @@ static inline int GetRootPID(int argc, char *argv[]){
     return rootPID;
 }
 
+static inline char* getName(int pid){
+    char filename[100];
+    sprintf(filename, "/proc/%d/stat", pid);
+    FILE *fp = fopen(filename, "r");
+    if(!fp){
+        printf("No such process\n");
+        return NULL;
+    }
+    char line[MAX_LINE_LENGTH+1];
+    fgets(line, MAX_LINE_LENGTH, fp);
+    char *name = (char*)malloc(MAX_LINE_LENGTH * sizeof(char));
+    char *token = strtok(line, " "); //跳过进程ID
+    token = strtok(NULL, " "); 
+    sscanf(token, "%s", name);//get name
+    if(fp)fclose(fp);
+    return name;
+}
 
 static inline int getPPID(int targetPID){
     char filename[100];
