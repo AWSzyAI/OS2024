@@ -152,7 +152,7 @@ static inline int getPIDs(int *pids){
 
 
 static inline psNode * NewNode(int pid){
-    // printf("[Log] NewNode %d\n", pid);
+    printf("[Log] NewNode %d\n", pid);
 
     char filename[100];
     sprintf(filename, "/proc/%d/stat", pid);
