@@ -1,13 +1,7 @@
 #include "pstree.h"
 
 
-
-
-
-
-int main(int argc, char *argv[]) {
-  readargs(argc, argv);
-
+void cmd(int argc, char *argv[]) {
   int opt;
   int option_processed = 0; // 标志变量
   while((opt=getopt(argc,argv,"npV"))!=-1){
@@ -38,7 +32,11 @@ int main(int argc, char *argv[]) {
     printf("[Log] optind = %d No targetPID\n", optind); 
     cmd_root(argc,argv);
   }
-  
+}
+
+int main(int argc, char *argv[]) {
+  readargs(argc, argv);
+  cmd(argc, argv);
   assert(!argv[argc]);//确保命令行参数列表以空指针结尾，如果不是，则会触发断言错误。
   return 0;
 }
