@@ -266,10 +266,13 @@ void printArray(int *arr, int n){
 }
 
 int getPIDs(int *pids){
+  /*
+  -1 代表失败
+  */
   DIR *dir;
   struct dirent *entry;
   dir = opendir("/proc/");
-  if(dir == NULL){perror("opendir error");return;}
+  if(dir == NULL){perror("opendir error");return -1;}
 
   int count = 1;
   int pid,ppid;
