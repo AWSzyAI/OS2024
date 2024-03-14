@@ -52,7 +52,7 @@ static inline void printArray(int **arr, int n){
     printf("count = %d\n", n);
     for(int i=0;i<n;i++){
         char *name = getName(arr[i][0]);
-        printf("%s %d %d\n", &name, arr[i][0], arr[i][1]);
+        printf("%s %d %d\n", name, arr[i][0], arr[i][1]);
     }
     printf("----------------------\n");
     // puts("");
