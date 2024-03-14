@@ -170,8 +170,8 @@ static inline int getPIDs(int **pids){
     int count = 1;
     int pid,ppid;
     
-    pids[0][0] = 1;
-    pids[0][1] = 0;
+    pids[0][0] = 0;
+    pids[0][1] = -1;
 
     while((entry = readdir(dir)) != NULL){
         if(isNumeric(entry->d_name)){
