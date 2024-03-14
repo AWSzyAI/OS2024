@@ -62,7 +62,7 @@ static inline void cmd(int argc, char *argv[]) {
         switch (opt)
         {
         case 'n':
-        // exe_n(argc, argv);
+        exe_n(argc, argv);
         option_processed = 1; // 设置标志变量
         break;
         case 'p':
