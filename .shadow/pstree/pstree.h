@@ -28,10 +28,6 @@ typedef struct psNode{
     struct psNode *NextSibling;
 }psNode;
 
-// Then, when you create a new variable of type psNode, you can initialize it:
-// psNode node = { -1, NULL, -1, -1, NULL, NULL, NULL };
-
-
 /*Log*/
 static inline void printNode(psNode *node){
     if(!node){
@@ -323,7 +319,38 @@ static inline psNode * getNode(int pid, psNode *root){
     return getNode(pid, root->NextSibling);
 }
 
+static inline psNode * addNewNode_name(int pid, psNode *root){
+    if(!root){
+        root = NewNode(pid);
+        // printNode(root);
+        return root;
+    }
+    psNode *node = NewNode(pid);
+    if(!node){
+        printf("[Log] newnode fail");
+        return root;
+    }
 
+    int ppid = node->ppid;
+
+    psNode *parent = getNode(ppid, root);
+    if(!parent){
+        printf("No such parent process\n");
+        return root;
+    }
+    node->depth = parent->depth + 1;
+    node->Parent = parent;
+    if(!parent->FirstSon){
+        parent->FirstSon = node;
+    }else{
+        psNode *temp = parent->FirstSon;
+        while(temp->name < node->name && temp->NextSibling){
+            temp = temp->NextSibling;
+        }
+        temp->NextSibling = node;
+    }
+    return root;
+}
 
 static inline psNode * addNewNode(int pid, psNode *root){
     if(!root){
