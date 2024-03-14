@@ -38,7 +38,7 @@ static inline void printNode(psNode *node){
         printf("[Log] Print No node\n");
         return;
     }
-    printf("---printNode---\n");
+    // printf("---printNode---\n");
     int pid = node->pid;
     char *name = node->name;
     int ppid = node->ppid;
@@ -298,7 +298,7 @@ static inline psNode * getNode(int pid, psNode *root){
 static inline psNode * addNewNode(int pid, psNode *root){
     if(!root){
         root = NewNode(pid);
-        printNode(root);
+        // printNode(root);
         return root;
     }
     psNode *node = NewNode(pid);
