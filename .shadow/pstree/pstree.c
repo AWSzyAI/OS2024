@@ -248,9 +248,8 @@ void exe_root(int argc, char *argv[]){
 
 int GetRootPID(int argc, char *argv[]){
   int rootPID;
-  if(argc<3){
+  if(argc<3){//无参数 ./pstree-64 
     rootPID = 1;
-    printf("No rootPID, use default PID = 1\n");
   }else{//argc>=3时，argv[2]才不是一个空指针（0x0）
     rootPID = atoi(argv[2]);
   }
@@ -288,13 +287,28 @@ int getPIDs(int *pids){
   }
   puts("");
   qsort(pids,count,sizeof(int),cmp);// function well
+  if(dir)closedir(dir);
   return count;
+}
+
+psNode * addNewNode(int pid, psNode *root){
+  if(!root){
+    root = (psNode*)malloc(sizeof(psNode));
+    root->pid = pid;
+    root->ppid = getPPID(pid);
+    root->name = "root";
+    root->depth = 0;
+    root->Parent = NULL;
+    root->FirstSon = NULL;
+    root->NextSibling = NULL;
+  }
 }
 
 void cmd_root(int argc, char *argv[]){
   //读取参数，定义root PID
   int rootPID = GetRootPID(argc,argv);
   printf("[Log] rootPID = %d\n", rootPID);//[ ] Log系统有待优化
+  
   //扫描/proc目录，获取所有进程的PID
   
   int *pids = (int*)malloc(1000*sizeof(int));
@@ -303,7 +317,11 @@ void cmd_root(int argc, char *argv[]){
 
   //构建进程树
   psNode *root = NULL;
-
+  // for(int i=0;i<cntPIDs;i++)root = addNewNode(pids[i], root);
+  //最后输出进程树
+  // PrintTree(root, 0);
+  //释放内存
+  free(pids);
 }
 
 
@@ -351,52 +369,3 @@ int main(int argc, char *argv[]) {
   return 0;
 }
 
-
-
-
-/*
-tyeodef struct{
-  int pid;
-  psNode *Parent;
-  psNode *FirstSon;
-  psNode *NextSubling;
-}psNode;
-
-class psTree{
-  Process *root;
-public:
-  psTree(int pid){
-    root.pid = pid;
-    root->Parent = NULL;
-    root->FirstSon = NULL;
-    root->NextSubling = NULL;
-  }
-  ~psTree(){}
-  psNode* getNode(int pid, psNode *p){
-    if(!p)return NULL;
-    if(p.pid==pid)return p;
-    psNode* targetNode=NULL;
-    targetNode = getNode(pid,p->FirstSon);
-    if(!targetNode){
-      targetNode = getNode(pid,p->NextSubling);
-    }
-    return targetNode;
-  }
-  void Insert(int ppid,int pid){
-    psNode *p = getNode(ppid);
-    psNode *q = new psNode(pid);
-    q->Parent = p;
-    if(!p->FirstSon){
-      p->FirstSon = q;
-    }else{
-      psNode *t = p->FirstSon;
-      while(t->NextSubling){
-        t = t->NextSubling;
-      }
-      t->NextSubling = q;
-    }
-  }
-};
-
-
-*/
