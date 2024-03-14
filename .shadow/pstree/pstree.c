@@ -31,7 +31,7 @@ static inline void cmd_root(int argc, char *argv[]){
     // printNode(root);
     // printf("[Log] pids[0] = %d\n", pids[0]);
     root = addNewNode(rootPID, root);
-    ConstructTree(root, pids, cntPIDs, rootPID);
+    ConstructTree_name(root, pids, cntPIDs, rootPID);
     // for(int i=0;i<cntPIDs;i++)root = addNewNode(pids[i], root);
     //最后输出进程树
     PrintTree(rootPID,root, 10);
