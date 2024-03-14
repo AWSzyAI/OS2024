@@ -223,9 +223,9 @@ void exe_root(int argc, char *argv[]){
         printf("pid = %d, ppid = %d, name = %s\n", p->pid, p->ppid, p->name);
       }
       
-      ppid = getPPID(pid); 
-      if(ppid == -1)continue;
-      addNode(pid, ppid, entry->d_name);
+      // ppid = getPPID(pid); 
+      // if(ppid == -1)continue;
+      // addNode(pid, ppid, entry->d_name);
       // printf(" %5d-%5d \n", pid,ppid);
     }
     entry = readdir(dir);
