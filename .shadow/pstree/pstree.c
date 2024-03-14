@@ -34,7 +34,7 @@ static inline void cmd_root(int argc, char *argv[]){
     ConstructTree(root, pids, cntPIDs, rootPID);
     // for(int i=0;i<cntPIDs;i++)root = addNewNode(pids[i], root);
     //最后输出进程树
-    PrintTree(root, 10);
+    PrintTree(rootPID,root, 10);
     //释放内存
     free(pids);
     deleteNode(root);
@@ -50,7 +50,7 @@ static inline void exe_n(int argc, char *argv[]){
     psNode *root = NULL;
     root = addNewNode(1, root);
     ConstructTree(root, pids, cntPIDs, rootPID);
-    PrintTree(root, 10);
+    PrintTree(rootPID,root, 10);
     free(pids);
     deleteNode(root);
 }
@@ -67,7 +67,7 @@ static inline void exe_p(int argc, char *argv[]){
     psNode *root = NULL;
     root = addNewNode(1, root);
     ConstructTree(root, pids, cntPIDs, rootPID);
-    PrintTree_p(root, 10);
+    PrintTree_p(rootPID,root, 10);
     free(pids);
     deleteNode(root);
 }
