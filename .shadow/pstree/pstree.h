@@ -60,7 +60,7 @@ static inline void printArray(int **arr, int n){
 static inline void PrintTree(psNode *root, int depth){
     if(!root)return;
 
-    if(root->pid!=1)printf("     ");
+    if(root->pid!=1)printf("    ");
     for(int i=0;i<root->depth-1;i++)printf("│   ");
     if(root->pid!=1){
         if(root->NextSibling)printf("─┬─");
