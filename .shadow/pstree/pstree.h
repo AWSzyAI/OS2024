@@ -176,6 +176,21 @@ static inline psNode * NewNode(int pid){
     token = strtok(NULL, " ");
     char *name = (char*)malloc(MAX_LINE_LENGTH * sizeof(char));
     sscanf(token, "%s", name);//get name
+    char *name="(ssh)";
+    char *start = name;
+    char *end = name + strlen(name) - 1;
+
+    // Remove '(' from the start
+    if (*start == '(') {
+        start++;
+    }
+
+    // Remove ')' from the end
+    if (*end == ')') {
+        *end = '\0';
+    }
+
+    name = start;
     node->name = name;
     token = strtok(NULL, " ");
     token = strtok(NULL, " ");
