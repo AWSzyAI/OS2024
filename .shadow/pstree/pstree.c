@@ -26,7 +26,7 @@ static inline void cmd_root(int argc, char *argv[]){
 
 
     int cntPIDs =  getPIDs(pids);
-    printf("cntPIDs: %d\n",cntPIDs);
+    // printf("cntPIDs: %d\n",cntPIDs);
     // printArray(pids,cntPIDs);
 
     //构建进程树
