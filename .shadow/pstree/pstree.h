@@ -139,18 +139,81 @@ static inline int getPIDs(int *pids){
     return count;
 }
 
-psNode * addNewNode(int pid, psNode *root){
-    if(!root){
-        root = (psNode*)malloc(sizeof(psNode));
-        root->pid = pid;
-        root->ppid = getPPID(pid);
-        root->name = "root";
-        root->depth = 0;
-        root->Parent = NULL;
-        root->FirstSon = NULL;
-        root->NextSibling = NULL;
+static inline psNode * NewNode(int pid){
+    char filename[100];
+    sprintf(filename, "/proc/%d/stat", pid);
+    FILE *fp = fopen(filename, "r");
+    if(!fp){
+        printf("No such process\n");
+        return NULL;
     }
-    return NULL;
+    char line[MAX_LINE_LENGTH+1];
+    fgets(line, MAX_LINE_LENGTH, fp);
+    if(fp)fclose(fp);
+
+    psNode *node = (psNode*)malloc(sizeof(psNode));
+
+    sscanf(line, "%d", &node->pid);//get PID
+    char *token = strtok(line, " "); //跳过进程ID
+    token = strtok(NULL, " ");
+    // process.name = (char*)malloc(MAX_LINE_LENGTH * sizeof(char));
+    sscanf(token, "%s", node->name);//get name
+    token = strtok(NULL, " ");
+    token = strtok(NULL, " ");
+    sscanf(token, "%d", &node->ppid);//get PPID
+    
+    node->depth = 0;
+    node->Parent = NULL;
+    node->FirstSon = NULL;
+    node->NextSibling = NULL;
+    
+    return node;
+}
+
+static inline psNode * getNode(int pid, psNode *root){
+    if(!root)return NULL;
+    if(root->pid == pid)return root;
+    psNode *node = getNode(pid, root->FirstSon);
+    if(node)return node;
+    return getNode(pid, root->NextSibling);
+}
+
+static inline psNode * addNewNode(int pid, psNode *root){
+    if(!root){
+        root = NewNode(pid);
+        return root;
+    }
+    psNode *node = NewNode(pid);
+    if(!node)return root;
+    int ppid = node->ppid;
+
+    psNode *parent = getNode(ppid, root);
+    if(!parent){
+        printf("No such parent process\n");
+        return root;
+    }
+    node->depth = parent->depth + 1;
+    node->Parent = parent;
+    if(!parent->FirstSon){
+        parent->FirstSon = node;
+    }else{
+        psNode *temp = parent->FirstSon;
+        while(temp->NextSibling){
+            temp = temp->NextSibling;
+        }
+        temp->NextSibling = node;
+    }
+    return root;
+}
+
+
+/*Done*/
+
+static inline void readargs(int argc, char *argv[]){
+    for (int i = 0; i < argc; i++) {
+        assert(argv[i]);
+        printf("argv[%d] = %s\n", i, argv[i]);
+    }
 }
 
 static inline void cmd_root(int argc, char *argv[]){
@@ -166,19 +229,45 @@ static inline void cmd_root(int argc, char *argv[]){
 
     //构建进程树
     psNode *root = NULL;
-    // for(int i=0;i<cntPIDs;i++)root = addNewNode(pids[i], root);
+    for(int i=0;i<cntPIDs;i++)root = addNewNode(pids[i], root);
     //最后输出进程树
     // PrintTree(root, 0);
     //释放内存
     free(pids);
 }
 
+static inline void cmd(int argc, char *argv[]) {
+    int opt;
+    int option_processed = 0; // 标志变量
+    while((opt=getopt(argc,argv,"npV"))!=-1){
+        switch (opt)
+        {
+        case 'n':
+        // exe_n(argc, argv);
+        option_processed = 1; // 设置标志变量
+        break;
+        case 'p':
+        // exe_p(argc, argv);
+        option_processed = 1; // 设置标志变量
+        break;
+        case 'V':
+        exe_V(argc, argv);
+        option_processed = 1; // 设置标志变量
+        break;
+        default:
+        printf("<usage> pstree [-npV]\n");
+        option_processed = 1; // 设置标志变量
+        break;
+        }
+    }
 
-static inline void readargs(int argc, char *argv[]){
-    for (int i = 0; i < argc; i++) {
-        assert(argv[i]);
-        printf("argv[%d] = %s\n", i, argv[i]);
+    if(!option_processed &&optind == argc){
+        //getopt()函数的全局变量optind是命令行参数的索引，即argv[]数组的索引
+        printf("[Log] optind = %d No targetPID\n", optind); 
+        cmd_root(argc,argv);
     }
 }
+
+
 
 #endif // PSTREE_H
