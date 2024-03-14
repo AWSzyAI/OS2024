@@ -52,6 +52,7 @@ static inline void printArray(int **arr, int n){
     for(int i=0;i<n;i++){
         printf("%d %d\n", arr[i][0], arr[i][1]);
     }
+    printf("----------------------\n");
     puts("");
 }
 static inline void PrintTree(psNode *root, int depth){
