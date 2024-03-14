@@ -227,7 +227,7 @@ void exe_root(int argc, char *argv[]){
   
   qsort(pids,count,sizeof(int),cmp);
   
-  print all of the PIDs
+  // print all of the PIDs
   printf("PIDs : ");
   for(int i=0;i<count;i++){
     printf("%d ",pids[i]);
