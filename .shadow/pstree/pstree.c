@@ -217,7 +217,7 @@ void exe_root(int argc, char *argv[]){
       pid = atoi(entry->d_name);
       pids[count++] = pid;
       psNode *p = getNode(pid, root);
-      printf("p = %p\n", p);
+      printf("p = %x\n", p);
       ppid = getPPID(pid); 
       if(ppid == -1)continue;
       addNode(pid, ppid, entry->d_name);
