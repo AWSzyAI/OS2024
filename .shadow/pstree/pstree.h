@@ -178,9 +178,14 @@ static inline psNode * getNode(int pid, psNode *root){
     return getNode(pid, root->NextSibling);
 }
 
+void printNode(psNode *node){
+    printf("pid = %d, name = %s, ppid = %d\n", node->pid, node->name, node->ppid);
+}
+
 static inline psNode * addNewNode(int pid, psNode *root){
     if(!root){
         root = NewNode(pid);
+        printNode(root);
         return root;
     }
     psNode *node = NewNode(pid);
