@@ -71,7 +71,11 @@ int isNumeric(const char* str) {
     }
     return 1;
 }
-int cmp(const void * a, const void * b) {return ( *(int*)a - *(int*)b );}
+
+//arr[i][0] vs arr[j][0]
+static inline int cmp_pid(const void *a, const void *b){
+    return ((int*)a)[0] - ((int*)b)[0];
+}
 
 static inline int GetRootPID(int argc, char *argv[]){
     int rootPID;
@@ -140,7 +144,7 @@ static inline int getPIDs(int **pids){
         entry = readdir(dir);
     }
     puts("");
-    qsort(pids,count,sizeof(int),cmp);// function well
+    qsort(pids,count,sizeof(int)*2,cmp_pid);// function well
     if(dir)closedir(dir);
     return count;
 }
