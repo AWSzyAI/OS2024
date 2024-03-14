@@ -385,7 +385,27 @@ static inline psNode * addNewNode(int pid, psNode *root){
     return root;
 }
 
+static inline void ConstructTree_name(psNode *p, int **pids, int cntPIDs, int pid){
 
+    for(int i=0;i<cntPIDs;i++){
+        if(pids[i][1] == pid){
+            psNode *q = NewNode(pids[i][0]);
+            q->Parent = p;
+            q->depth = p->depth + 1;
+            if(!p->FirstSon){
+                p->FirstSon = q;
+            }else{
+                psNode *temp = p->FirstSon;
+                while(temp->name < q->name && temp->NextSibling){
+                    temp = temp->NextSibling;
+                }
+                temp->NextSibling = q;
+            }
+            ConstructTree(q, pids, cntPIDs, pids[i][0]);
+        }
+    }
+
+}
 
 static inline void ConstructTree(psNode *p, int **pids, int cntPIDs, int pid){
 
