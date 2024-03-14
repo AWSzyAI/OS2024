@@ -140,8 +140,10 @@ int cmp_name(const void *a, const void *b){
 
 static inline int GetRootPID(int argc, char *argv[]){
     int rootPID;
-    if(argc<3){//无参数 ./pstree-64 
+    if(argc==1){//无参数 ./pstree-64 
         rootPID = 1;
+    }else if(argc==2){
+        rootPID = argv[1][0]=='-' ? 1 : atoi(argv[1]);
     }else{//argc>=3时，argv[2]才不是一个空指针（0x0）
         rootPID = atoi(argv[2]);
     }
