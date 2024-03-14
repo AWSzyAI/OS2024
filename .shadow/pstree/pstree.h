@@ -129,9 +129,12 @@ static inline int getPIDs(int **pids){
 
     while((entry = readdir(dir)) != NULL){
         if(isNumeric(entry->d_name)){
-            pid = atoi(entry->d_name);
+            pid  = atoi(entry->d_name);
+            ppid = getPPID(pid);
+            printf("%d %d\n", pid, ppid);
             pids[count][0] = pid;
-            pids[count++][1]=getPPID(pid);
+            pids[count][1] = ppid;
+            count++;
         }
         entry = readdir(dir);
     }
