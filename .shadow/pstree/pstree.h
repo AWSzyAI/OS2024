@@ -57,18 +57,27 @@ static inline void printArray(int **arr, int n){
     printf("----------------------\n");
     // puts("");
 }
+
+
 static inline void PrintTree(psNode *root, int depth){
     if(!root)return;
-
-    if(root->pid!=1)printf("    ");
-    for(int i=0;i<root->depth-1;i++)printf("│   ");
-    if(root->pid!=1){
-        if(root->NextSibling)printf("─┬─");
-        else printf("└─");
+    int isLastSibling;
+    if(root->NextSibling==NULL){
+        isLastSibling = 1;
+    }else{
+        isLastSibling = 0;
     }
-    printf("%s(%d) - %d\n", root->name,root->pid, root->depth);
-    PrintTree(root->FirstSon, depth+1);
-    PrintTree(root->NextSibling, depth);
+
+    for(int i=0;i<depth-1;i++)printf(isLastSibling ? "   " : "│  ");
+    if(root->pid!=1){
+        printf(isLastSibling ? "└─" : "├─");
+    }
+    printf("%s(%d)\n", root->name,root->pid);
+    psNode *child = root->FirstSon;
+    while(child){
+        PrintTree(child, depth+1, child == root->LastSon);
+        child = child->NextSibling;
+    }
 }
 
 int isNumeric(const char* str) {
