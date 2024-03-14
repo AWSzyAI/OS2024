@@ -98,7 +98,7 @@ static inline int GetRootPID(int argc, char *argv[]){
     return rootPID;
 }
 
-static inline char* getName(int pid){
+char* getName(int pid){
     char filename[100];
     sprintf(filename, "/proc/%d/stat", pid);
     FILE *fp = fopen(filename, "r");
