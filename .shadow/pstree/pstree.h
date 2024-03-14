@@ -131,9 +131,10 @@ static inline int getPIDs(int **pids){
         if(isNumeric(entry->d_name)){
             pid  = atoi(entry->d_name);
             ppid = getPPID(pid);
-            printf("%d %d\n", pid, ppid);
+            // printf("%d %d\n", pid, ppid);
             pids[count][0] = pid;
             pids[count][1] = ppid;
+            printf("%d %d\n", pids[count][0], pids[count][1]);
             count++;
         }
         entry = readdir(dir);
