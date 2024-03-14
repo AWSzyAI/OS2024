@@ -16,8 +16,8 @@ static inline void cmd_root(int argc, char *argv[]){
     psNode *root = NULL;
     printNode(root);
     printf("[Log] pids[0] = %d\n", pids[0]);
-    root = addNewNode(pids[0], root);
-    // for(int i=0;i<cntPIDs;i++)root = addNewNode(pids[i], root);
+    // root = addNewNode(pids[0], root);
+    for(int i=0;i<cntPIDs;i++)root = addNewNode(pids[i], root);
     //最后输出进程树
     // PrintTree(root, 0);
     //释放内存

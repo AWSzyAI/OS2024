@@ -164,7 +164,8 @@ static inline psNode * NewNode(int pid){
     
     //刚分配的node，不存在parent，firstSon，nextSibling，都是随机指针，打印会溢出
     // printNode(node);
-    printf("[Log] ! %d\n", pid);
+    // printf("[Log] ! %d\n", pid);
+
     sscanf(line, "%d", &node->pid);//get PID
     char *token = strtok(line, " "); //跳过进程ID
     token = strtok(NULL, " ");
@@ -174,16 +175,14 @@ static inline psNode * NewNode(int pid){
     token = strtok(NULL, " ");
     token = strtok(NULL, " ");
     sscanf(token, "%d", &node->ppid);//get PPID
-    
     node->depth = 0;
     node->Parent = NULL;
     node->FirstSon = NULL;
     node->NextSibling = NULL;
 
-    printf("进程ID = %d\n", node->pid);
-    printf("进程名 = %s\n", node->name);
-    printf("父进程PID = %d\n",node->ppid);
-    printNode(node);
+    // printf("进程ID = %d\n", node->pid);
+    // printf("进程名 = %s\n", node->name);
+    // printf("父进程PID = %d\n",node->ppid);
 
     
     return node;
