@@ -216,8 +216,13 @@ void exe_root(int argc, char *argv[]){
     if(isNumeric(entry->d_name)){
       pid = atoi(entry->d_name);
       pids[count++] = pid;
+      printf("pid = %d\n", pid);  
       psNode *p = getNode(pid, root);
-      printf("p = %x\n", p);
+      //打印p的信息
+      if(p){
+        printf("pid = %d, ppid = %d, name = %s\n", p->pid, p->ppid, p->name);
+      }
+      
       ppid = getPPID(pid); 
       if(ppid == -1)continue;
       addNode(pid, ppid, entry->d_name);
