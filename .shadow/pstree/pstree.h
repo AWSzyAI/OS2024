@@ -158,7 +158,7 @@ static inline psNode * NewNode(int pid){
     sprintf(filename, "/proc/%d/stat", pid);
     FILE *fp = fopen(filename, "r");
     if(!fp){
-        // printf("No such process\n");
+        printf("No such process\n");
         return NULL;
     }
     char line[MAX_LINE_LENGTH+1];
