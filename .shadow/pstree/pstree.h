@@ -114,6 +114,19 @@ char* getName(int pid){
     token = strtok(NULL, " "); 
     sscanf(token, "%s", name);//get name
     if(fp)fclose(fp);
+
+    //remove '(' and ')'
+    char *start = name;
+    char *end = name + strlen(name) - 1;
+    // Remove '(' from the start
+    if (*start == '(') {
+        start++;
+    }
+    // Remove ')' from the end
+    if (*end == ')') {
+        *end = '\0';
+    }
+    name = start;
     return name;
 }
 
