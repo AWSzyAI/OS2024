@@ -302,6 +302,7 @@ psNode * addNewNode(int pid, psNode *root){
     root->FirstSon = NULL;
     root->NextSibling = NULL;
   }
+  return NULL;
 }
 
 void cmd_root(int argc, char *argv[]){
