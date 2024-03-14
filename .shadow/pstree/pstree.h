@@ -57,7 +57,7 @@ static inline void printArray(int *arr, int n){
 static inline void PrintTree(psNode *root, int depth){
     if(!root)return;
     for(int i=0;i<depth;i++)printf("  ");
-    printf("%d %s\n", root->pid, root->name);
+    printf("%d %s %d\n", root->pid, root->name, root->depth);
     PrintTree(root->FirstSon, depth+1);
     PrintTree(root->NextSibling, depth);
 }
