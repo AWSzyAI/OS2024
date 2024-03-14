@@ -179,6 +179,10 @@ static inline psNode * getNode(int pid, psNode *root){
 }
 
 void printNode(psNode *node){
+    if(!node){
+        printf("[Log] Print No node\n");
+        return;
+    }
     printf("pid = %d, name = %s, ppid = %d\n", node->pid, node->name, node->ppid);
 }
 
