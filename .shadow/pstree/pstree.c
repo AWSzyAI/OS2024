@@ -296,7 +296,7 @@ void cmd_root(int argc, char *argv[]){
   //扫描/proc目录，获取所有进程的PID
   
   int *pids = (int*)malloc(1000*sizeof(int));
-  int cntPIDs =  getPIDs(&pids);
+  int cntPIDs =  getPIDs(pids);
   printArray(pids,cntPIDs);
 
   //构建进程树
