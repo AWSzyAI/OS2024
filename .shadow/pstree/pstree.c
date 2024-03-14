@@ -119,7 +119,7 @@ int getPPID(int targetPID){
   // printf("进程ID = %d\n", process.pid);
   // printf("进程名 = %s\n", process.name);
   // printf("父进程PID = %d\n",process.ppid);   
-  addNode(process.pid, process.ppid, process.name);
+  // addNode(process.pid, process.ppid, process.name);
 
   if(fp)fclose(fp);
   
@@ -218,6 +218,11 @@ void exe_root(int argc, char *argv[]){
       pids[count++] = pid;
       printf("pid = %d\n", pid);  
       psNode *p = getNode(pid, root);
+      if(!p){
+        ppid = getPPID(pid);
+        if(ppid == -1)continue;
+        addNode(pid, ppid, entry->d_name);
+      }
       //打印p的信息
       if(p){
         printf("pid = %d, ppid = %d, name = %s\n", p->pid, p->ppid, p->name);
