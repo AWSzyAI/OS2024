@@ -287,7 +287,6 @@ int getPIDs(int *pids){
     entry = readdir(dir);
   }
   puts("");
-  printf("count = %d\n", count);
   qsort(pids,count,sizeof(int),cmp);// function well
   return count;
 }
