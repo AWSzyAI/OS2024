@@ -77,8 +77,8 @@ static inline void PrintTree(psNode *root, int depth){
         printf(isLastSibling ? "   " : "│  ");
         printf(isLastSibling ? "└─" : "├─");
     }
-    printf("%s(%d)\n", root->name,root->pid);
-    // printf("%s(%d) %d\n", root->name,root->pid,root->depth);
+    // printf("%s(%d)\n", root->name,root->pid);
+    printf("%s(%d) %d\n", root->name,root->pid,root->depth);
     psNode *child = root->FirstSon;
     while(child){
         PrintTree(child, depth+1);
