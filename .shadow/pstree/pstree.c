@@ -22,13 +22,10 @@ static inline void cmd_root(int argc, char *argv[]){
     for(int i=0;i<1000;i++){
         pids[i] = (int*)malloc(2*sizeof(int));
     }
-
-
-
     int cntPIDs =  getPIDs(pids);
+    qsort(pids,cntPIDs,sizeof(int)*2,cmp_pid);// function well
     // printf("cntPIDs: %d\n",cntPIDs);
     // printArray(pids,cntPIDs);
-
     //构建进程树
     psNode *root = NULL;
     // printNode(root);
