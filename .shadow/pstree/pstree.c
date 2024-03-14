@@ -15,7 +15,14 @@ static inline void cmd_root(int argc, char *argv[]){
     
     //扫描/proc目录，获取所有进程的PID
     
-    int *pids = (int*)malloc(1000*sizeof(int));
+    // int *pids = (int*)malloc(1000*sizeof(int));
+    
+    //int pids[1000][2]
+    int **pids = (int**)malloc(1000*sizeof(int*));
+    for(int i=0;i<1000;i++){
+        pids[i] = (int*)malloc(2*sizeof(int));
+    }
+
     int cntPIDs =  getPIDs(pids);
     printf("cntPIDs: %d",cntPIDs);
     // printArray(pids,cntPIDs);
@@ -69,9 +76,9 @@ static inline void cmd(int argc, char *argv[]) {
 }
 
 int main(int argc, char *argv[]) {
-  readargs(argc, argv);
-  cmd(argc, argv);
-  assert(!argv[argc]);//确保命令行参数列表以空指针结尾，如果不是，则会触发断言错误。
-  return 0;
+    readargs(argc, argv);
+    cmd(argc, argv);
+    assert(!argv[argc]);//确保命令行参数列表以空指针结尾，如果不是，则会触发断言错误。
+    return 0;
 }
 

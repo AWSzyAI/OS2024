@@ -81,6 +81,8 @@ static inline int GetRootPID(int argc, char *argv[]){
     }
     return rootPID;
 }
+
+
 static inline int getPPID(int targetPID){
     char filename[100];
     sprintf(filename, "/proc/%d/stat", targetPID);
@@ -92,7 +94,6 @@ static inline int getPPID(int targetPID){
 
     char line[MAX_LINE_LENGTH+1];
     fgets(line, MAX_LINE_LENGTH, fp);
-    // printf("line = %s\n", line);
 
     Process process;
 
@@ -108,9 +109,9 @@ static inline int getPPID(int targetPID){
     token = strtok(NULL, " "); 
     sscanf(token, "%d", &process.ppid);//get PPID
     
-    // printf("进程ID = %d\n", process.pid);
-    // printf("进程名 = %s\n", process.name);
-    // printf("父进程PID = %d\n",process.ppid);   
+    printf("进程ID = %d\n", process.pid);
+    printf("进程名 = %s\n", process.name);
+    printf("父进程PID = %d\n",process.ppid);   
     // addNode(process.pid, process.ppid, process.name);
 
     if(fp)fclose(fp);
@@ -119,7 +120,7 @@ static inline int getPPID(int targetPID){
     
     return process.ppid;
 }
-static inline int getPIDs(int *pids){
+static inline int getPIDs(int **pids){
     /*
     -1 代表失败
     */
@@ -135,8 +136,9 @@ static inline int getPIDs(int *pids){
 
     while((entry = readdir(dir)) != NULL){
         if(isNumeric(entry->d_name)){
-        pid = atoi(entry->d_name);
-        pids[count++] = pid;
+            pid = atoi(entry->d_name);
+            pids[count][0] = pid;
+            pids[count++][1]=getPPID(pid);
         }
         entry = readdir(dir);
     }
@@ -152,7 +154,7 @@ static inline int getPIDs(int *pids){
 
 
 static inline psNode * NewNode(int pid){
-    printf("[Log] NewNode %d\n", pid);
+    // printf("[Log] NewNode %d\n", pid);
 
     char filename[100];
     sprintf(filename, "/proc/%d/stat", pid);
