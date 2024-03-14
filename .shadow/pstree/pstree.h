@@ -81,9 +81,11 @@ static inline int cmp_pid(const void *a, const void *b){
 
 //getName(arr[i][0]) vs getName(arr[j][0])
 //字典序
-static inline int cmp_name(const int pida,const int pidb){
 
-    
+int cmp_name(const int pid_a,const int pid_b){
+    char *name_a = getName(pid_a);
+    char *name_b = getName(pid_b);
+    return strcmp(name_a, name_b);
 }
 
 static inline int GetRootPID(int argc, char *argv[]){
