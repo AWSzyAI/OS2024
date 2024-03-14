@@ -83,7 +83,7 @@ static inline void PrintTree_p(psNode *root, int depth){
     // printf("%s(%d) %d\n", root->name,root->pid,root->depth);
     psNode *child = root->FirstSon;
     while(child){
-        PrintTree(child, depth+1);
+        PrintTree_p(child, depth+1);
         child = child->NextSibling;
     }
 }
