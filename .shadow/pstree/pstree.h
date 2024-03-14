@@ -36,7 +36,12 @@ static inline void printNode(psNode *node){
         return;
     }
     printf("---printNode---\n");
-    printf("pid = %d, name = %s, ppid = %d\n", node->pid, node->name, node->ppid);
+    int pid = node->pid;
+    char *name = node->name;
+    int ppid = node->ppid;
+    int depth = node->depth;
+    printf("pid = %d, name = %s, ppid = %d, depth = %d\n", pid, name, ppid, depth);
+    // printf("pid = %d, name = %s, ppid = %d\n", node->pid, node->name, node->ppid);
     
 }
 static inline void printArray(int *arr, int n){
