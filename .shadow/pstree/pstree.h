@@ -167,11 +167,13 @@ static inline int getPIDs(int **pids){
     dir = opendir("/proc/");
     if(dir == NULL){perror("opendir error");return -1;}
 
-    int count = 1;
+    int count = 2;
     int pid,ppid;
     
-    pids[0][0] = 0;
-    pids[0][1] = -1;
+    pids[0][0] = 1;
+    pids[0][1] = 0;
+    pids[1][0] = 2;
+    pids[1][1] = 0;
 
     while((entry = readdir(dir)) != NULL){
         if(isNumeric(entry->d_name)){
