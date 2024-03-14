@@ -128,7 +128,9 @@ static inline int cmp_pid(const void *a, const void *b){
 //getName(arr[i][0]) vs getName(arr[j][0])
 //字典序
 
-int cmp_name(const int pid_a,const int pid_b){
+int cmp_name(const void *a, const void *b){
+    int pid_a = ((int*)a)[0];
+    int pid_b = ((int*)b)[0];
     char *name_a = getName(pid_a);
     char *name_b = getName(pid_b);
     return strcmp(name_a, name_b);
