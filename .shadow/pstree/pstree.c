@@ -201,22 +201,22 @@ void exe_root(int argc, char *argv[]){
     
   printf("root:%d\n",targetPID);
   printf("-----try to open /proc/*-----\n");
+  
   DIR *dir;
   struct dirent *entry;
-  int count = 0;
   dir = opendir("/proc/");
   if(dir == NULL){perror("opendir error");return;}
-  count = 1;
-  int pid;
+
+  int count = 1;
+  int pid,ppid;
   int *pids = (int*)malloc(1000*sizeof(int));
   pids[0] = 1;
 
-  int ppid;
   while((entry = readdir(dir)) != NULL){
     if(isNumeric(entry->d_name)){
       pid = atoi(entry->d_name);
       pids[count++] = pid;
-      printf("pid = %d\n", pid);  
+      // printf("pid = %d\n", pid);  
       psNode *p = getNode(pid, root);
       if(!p){
         ppid = getPPID(pid);
@@ -240,16 +240,70 @@ void exe_root(int argc, char *argv[]){
   
   qsort(pids,count,sizeof(int),cmp);// function well
   
-  // print all of the PIDs
-  // printf("PIDs : ");
-  // for(int i=0;i<count;i++){
-  //   printf("%d ",pids[i]);
-  // }
-  // puts("");
 
   if(dir)closedir(dir);
   
 }
+
+
+int GetRootPID(int argc, char *argv[]){
+  int rootPID;
+  if(argc<3){
+    rootPID = 1;
+    printf("No rootPID, use default PID = 1\n");
+  }else{//argc>=3时，argv[2]才不是一个空指针（0x0）
+    rootPID = atoi(argv[2]);
+  }
+  return rootPID;
+}
+
+void printArray(int *arr, int n){
+  printf("count = %d\n", n);
+  for(int i=0;i<n;i++){
+    printf("%d ",arr[i]);
+  }
+  puts("");
+}
+
+int getPIDs(int *pids){
+  DIR *dir;
+  struct dirent *entry;
+  dir = opendir("/proc/");
+  if(dir == NULL){perror("opendir error");return;}
+
+  int count = 1;
+  int pid,ppid;
+  
+  pids[0] = 1;
+
+  while((entry = readdir(dir)) != NULL){
+    if(isNumeric(entry->d_name)){
+      pid = atoi(entry->d_name);
+      pids[count++] = pid;
+    }
+    entry = readdir(dir);
+  }
+  puts("");
+  printf("count = %d\n", count);
+  qsort(pids,count,sizeof(int),cmp);// function well
+  return count;
+}
+
+void cmd_root(int argc, char *argv[]){
+  //读取参数，定义root PID
+  int rootPID = GetRootPID(argc,argv);
+  printf("[Log] rootPID = %d\n", rootPID);//[ ] Log系统有待优化
+  //扫描/proc目录，获取所有进程的PID
+  
+  int *pids = (int*)malloc(1000*sizeof(int));
+  int cntPIDs =  getPIDs(&pids);
+  printArray(pids,cntPIDs);
+
+  //构建进程树
+  psNode *root = NULL;
+
+}
+
 
 
 int main(int argc, char *argv[]) {
@@ -287,7 +341,8 @@ int main(int argc, char *argv[]) {
     //getopt()函数的全局变量optind是命令行参数的索引，即argv[]数组的索引
     printf("optind = %d\n", optind); 
     printf("No targetPID\n");
-    exe_root(argc,argv);
+    // exe_root(argc,argv);
+    cmd_root(argc,argv);
   }
   
   assert(!argv[argc]);//确保命令行参数列表以空指针结尾，如果不是，则会触发断言错误。
