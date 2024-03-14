@@ -151,8 +151,9 @@ static inline psNode * NewNode(int pid){
     if(fp)fclose(fp);
 
     psNode *node = (psNode*)malloc(sizeof(psNode));
-    printf("[Log] ! %d\n", pid);
+    
     printNode(node);
+    printf("[Log] ! %d\n", pid);
     sscanf(line, "%d", &node->pid);//get PID
     char *token = strtok(line, " "); //跳过进程ID
     token = strtok(NULL, " ");
