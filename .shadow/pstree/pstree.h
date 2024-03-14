@@ -66,7 +66,7 @@ int isLastSibling(psNode *root){
     }
 }
 
-static inline void PrintTree(psNode *root, int depth){
+static inline void PrintTree_p(psNode *root, int depth){
     if(!root)return;
 
 
@@ -80,6 +80,28 @@ static inline void PrintTree(psNode *root, int depth){
         printf(isLastSib? "└─" : "├─");
     }
     printf("%s(%d)\n", root->name,root->pid);
+    // printf("%s(%d) %d\n", root->name,root->pid,root->depth);
+    psNode *child = root->FirstSon;
+    while(child){
+        PrintTree(child, depth+1);
+        child = child->NextSibling;
+    }
+}
+
+static inline void PrintTree(psNode *root, int depth){
+    if(!root)return;
+
+
+    int isLastSib=isLastSibling(root);
+
+    if(root->pid!=1)printf("   ");
+    // for(int i=0;i<root->depth-1;i++)printf(isLastSibling ? "   " : "│  ");
+    for(int i=0;i<root->depth-1;i++)printf("│  ");
+    
+    if(root->pid!=1){
+        printf(isLastSib? "└─" : "├─");
+    }
+    printf("%s\n", root->name);
     // printf("%s(%d) %d\n", root->name,root->pid,root->depth);
     psNode *child = root->FirstSon;
     while(child){
@@ -207,7 +229,7 @@ static inline int getPIDs(int **pids){
         entry = readdir(dir);
     }
     puts("");
-    qsort(pids,count,sizeof(int)*2,cmp_pid);// function well
+    
     if(dir)closedir(dir);
     return count;
 }
