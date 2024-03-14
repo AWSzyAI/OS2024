@@ -10,7 +10,7 @@ static inline void cmd_root(int argc, char *argv[]){
     
     int *pids = (int*)malloc(1000*sizeof(int));
     int cntPIDs =  getPIDs(pids);
-    // printArray(pids,cntPIDs);
+    printArray(pids,cntPIDs);
 
     //构建进程树
     psNode *root = NULL;
