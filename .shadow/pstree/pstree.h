@@ -28,6 +28,9 @@ typedef struct psNode{
     struct psNode *NextSibling;
 }psNode;
 
+// Then, when you create a new variable of type psNode, you can initialize it:
+// psNode node = { -1, NULL, -1, -1, NULL, NULL, NULL };
+
 
 /*Log*/
 static inline void printNode(psNode *node){
@@ -159,7 +162,8 @@ static inline psNode * NewNode(int pid){
 
     psNode *node = (psNode*)malloc(sizeof(psNode));
     
-    printNode(node);
+    //刚分配的node，不存在parent，firstSon，nextSibling，都是随机指针，打印会溢出
+    // printNode(node);
     printf("[Log] ! %d\n", pid);
     sscanf(line, "%d", &node->pid);//get PID
     char *token = strtok(line, " "); //跳过进程ID
@@ -178,6 +182,7 @@ static inline psNode * NewNode(int pid){
     printf("进程ID = %d\n", node->pid);
     printf("进程名 = %s\n", node->name);
     printf("父进程PID = %d\n",node->ppid);
+    printNode(node);
 
     
     return node;
