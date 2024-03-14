@@ -69,12 +69,12 @@ static inline void PrintTree(psNode *root, int depth){
         isLastSibling = 0;
     }
 
-    // for(int i=0;i<depth-1;i++)printf(isLastSibling ? "   " : "│  ");
-    printf(isLastSibling ? "   " : "│  ");
+    for(int i=0;i<root->depth-1;i++)printf(isLastSibling ? "   " : "│  ");
+    
     if(root->pid!=1){
         printf(isLastSibling ? "└─" : "├─");
     }
-    printf("%s(%d)\n", root->name,root->pid);
+    printf("%s(%d) %d\n", root->name,root->pid,root->depth);
     psNode *child = root->FirstSon;
     while(child){
         PrintTree(child, depth+1);
