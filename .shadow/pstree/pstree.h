@@ -401,7 +401,7 @@ static inline void ConstructTree_name(psNode *p, int **pids, int cntPIDs, int pi
                 }
                 temp->NextSibling = q;
             }
-            ConstructTree(q, pids, cntPIDs, pids[i][0]);
+            ConstructTree_name(q, pids, cntPIDs, pids[i][0]);
         }
     }
 
