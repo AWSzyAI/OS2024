@@ -35,7 +35,9 @@ static inline void printNode(psNode *node){
         printf("[Log] Print No node\n");
         return;
     }
+    printf("---printNode---\n");
     printf("pid = %d, name = %s, ppid = %d\n", node->pid, node->name, node->ppid);
+    
 }
 static inline void printArray(int *arr, int n){
     printf("count = %d\n", n);
