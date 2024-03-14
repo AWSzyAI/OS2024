@@ -61,7 +61,7 @@ static inline void PrintTree(psNode *root, int depth){
     if(!root)return;
     for(int i=0;i<root->depth;i++)printf("     ");
     for(int i=0;i<root->depth-1;i++)printf("|    ");
-    printf("|----");
+    for(int i=0;i<root->depth-2;i++)printf("|----");
     printf("%s(%d) - %d\n", root->name,root->pid, root->depth);
     PrintTree(root->FirstSon, depth+1);
     PrintTree(root->NextSibling, depth);
