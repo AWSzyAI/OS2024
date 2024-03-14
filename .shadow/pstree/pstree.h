@@ -48,12 +48,12 @@ static inline void printNode(psNode *node){
     
 }
 static inline void printArray(int **arr, int n){
-    printf("count = %d\n", n);
+    // printf("count = %d\n", n);
     for(int i=0;i<n;i++){
         printf("%d %d\n", arr[i][0], arr[i][1]);
     }
     printf("----------------------\n");
-    puts("");
+    // puts("");
 }
 static inline void PrintTree(psNode *root, int depth){
     if(!root)return;
@@ -134,7 +134,7 @@ static inline int getPIDs(int **pids){
             // printf("%d %d\n", pid, ppid);
             pids[count][0] = pid;
             pids[count][1] = ppid;
-            printf("%d %d\n", pids[count][0], pids[count][1]);
+            // printf("%d %d\n", pids[count][0], pids[count][1]);
             count++;
         }
         entry = readdir(dir);
