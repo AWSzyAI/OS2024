@@ -29,12 +29,43 @@ typedef struct psNode{
 }psNode;
 
 
-
+/*Log*/
+static inline void printNode(psNode *node){
+    if(!node){
+        printf("[Log] Print No node\n");
+        return;
+    }
+    printf("pid = %d, name = %s, ppid = %d\n", node->pid, node->name, node->ppid);
+}
+static inline void printArray(int *arr, int n){
+    printf("count = %d\n", n);
+    for(int i=0;i<n;i++){
+        printf("%d ",arr[i]);
+    }
+    puts("");
+}
 static inline void PrintTree(psNode *root, int depth){
 }
 
+int isNumeric(const char* str) {
+    for (int i = 0; str[i] != '\0'; i++) {
+        if (!isdigit(str[i])) {
+            return 0;
+        }
+    }
+    return 1;
+}
+int cmp(const void * a, const void * b) {return ( *(int*)a - *(int*)b );}
 
-
+static inline int GetRootPID(int argc, char *argv[]){
+    int rootPID;
+    if(argc<3){//无参数 ./pstree-64 
+        rootPID = 1;
+    }else{//argc>=3时，argv[2]才不是一个空指针（0x0）
+        rootPID = atoi(argv[2]);
+    }
+    return rootPID;
+}
 static inline int getPPID(int targetPID){
     char filename[100];
     sprintf(filename, "/proc/%d/stat", targetPID);
@@ -73,45 +104,6 @@ static inline int getPPID(int targetPID){
     
     return process.ppid;
 }
-
-
-static inline int isNumeric(const char* str) {
-    for (int i = 0; str[i] != '\0'; i++) {
-        if (!isdigit(str[i])) {
-            return 0;
-        }
-    }
-    return 1;
-}
-
-int cmp(const void * a, const void * b) {return ( *(int*)a - *(int*)b );}
-
-
-static inline void exe_n(int argc, char *argv[]) {
-    printf("----exe_n----\n");
-}
-
-static inline void exe_V(int argc, char*argv[]){printf("pstree-32/64 (OS2024 - Ziyan Shi) version 0.0.1\nCopyright (C) 2024-2024 NJU and Ziyan Shi\nPSmisc comes with ABSOLUTELY NO WARRANTY.\nThis is free software, and you are welcome to redistribute it under the terms of the GNU General Public License.\nFor more information about these matters, see the files named COPYING\n");}
-
-
-static inline int GetRootPID(int argc, char *argv[]){
-    int rootPID;
-    if(argc<3){//无参数 ./pstree-64 
-        rootPID = 1;
-    }else{//argc>=3时，argv[2]才不是一个空指针（0x0）
-        rootPID = atoi(argv[2]);
-    }
-    return rootPID;
-}
-
-static inline void printArray(int *arr, int n){
-    printf("count = %d\n", n);
-    for(int i=0;i<n;i++){
-        printf("%d ",arr[i]);
-    }
-    puts("");
-}
-
 static inline int getPIDs(int *pids){
     /*
     -1 代表失败
@@ -139,7 +131,14 @@ static inline int getPIDs(int *pids){
     return count;
 }
 
+
+
+
+
+
 static inline psNode * NewNode(int pid){
+    printf("[Log] NewNode %d\n", pid);
+
     char filename[100];
     sprintf(filename, "/proc/%d/stat", pid);
     FILE *fp = fopen(filename, "r");
@@ -152,7 +151,7 @@ static inline psNode * NewNode(int pid){
     if(fp)fclose(fp);
 
     psNode *node = (psNode*)malloc(sizeof(psNode));
-
+    printNode(node);
     sscanf(line, "%d", &node->pid);//get PID
     char *token = strtok(line, " "); //跳过进程ID
     token = strtok(NULL, " ");
@@ -178,13 +177,7 @@ static inline psNode * getNode(int pid, psNode *root){
     return getNode(pid, root->NextSibling);
 }
 
-void printNode(psNode *node){
-    if(!node){
-        printf("[Log] Print No node\n");
-        return;
-    }
-    printf("pid = %d, name = %s, ppid = %d\n", node->pid, node->name, node->ppid);
-}
+
 
 static inline psNode * addNewNode(int pid, psNode *root){
     if(!root){
@@ -225,60 +218,9 @@ static inline void readargs(int argc, char *argv[]){
     }
 }
 
-static inline void cmd_root(int argc, char *argv[]){
-    //读取参数，定义root PID
-    int rootPID = GetRootPID(argc,argv);
-    printf("[Log] rootPID = %d\n", rootPID);//[ ] Log系统有待优化
-    
-    //扫描/proc目录，获取所有进程的PID
-    
-    int *pids = (int*)malloc(1000*sizeof(int));
-    int cntPIDs =  getPIDs(pids);
-    printArray(pids,cntPIDs);
 
-    //构建进程树
-    psNode *root = NULL;
-    printNode(root);
-    printf("[Log] pids[0] = %d\n", pids[0]);
-    root = addNewNode(pids[0], root);
-    // for(int i=0;i<cntPIDs;i++)root = addNewNode(pids[i], root);
-    //最后输出进程树
-    // PrintTree(root, 0);
-    //释放内存
-    free(pids);
-}
 
-static inline void cmd(int argc, char *argv[]) {
-    int opt;
-    int option_processed = 0; // 标志变量
-    while((opt=getopt(argc,argv,"npV"))!=-1){
-        switch (opt)
-        {
-        case 'n':
-        // exe_n(argc, argv);
-        option_processed = 1; // 设置标志变量
-        break;
-        case 'p':
-        // exe_p(argc, argv);
-        option_processed = 1; // 设置标志变量
-        break;
-        case 'V':
-        exe_V(argc, argv);
-        option_processed = 1; // 设置标志变量
-        break;
-        default:
-        printf("<usage> pstree [-npV]\n");
-        option_processed = 1; // 设置标志变量
-        break;
-        }
-    }
 
-    if(!option_processed &&optind == argc){
-        //getopt()函数的全局变量optind是命令行参数的索引，即argv[]数组的索引
-        printf("[Log] optind = %d No targetPID\n", optind); 
-        cmd_root(argc,argv);
-    }
-}
 
 
 
