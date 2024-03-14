@@ -48,7 +48,7 @@ static inline void printNode(psNode *node){
     
 }
 static inline void printArray(int **arr, int n){
-    // printf("count = %d\n", n);
+    printf("count = %d\n", n);
     for(int i=0;i<n;i++){
         printf("%d %d\n", arr[i][0], arr[i][1]);
     }
