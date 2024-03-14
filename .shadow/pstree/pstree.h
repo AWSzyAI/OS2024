@@ -167,14 +167,10 @@ static inline int getPIDs(int **pids){
     dir = opendir("/proc/");
     if(dir == NULL){perror("opendir error");return -1;}
 
-    int count = 2;
+    int count = 1;
     int pid,ppid;
-    
     pids[0][0] = 1;
     pids[0][1] = 0;
-    pids[1][0] = 2;
-    pids[1][1] = 0;
-
     while((entry = readdir(dir)) != NULL){
         if(isNumeric(entry->d_name)){
             pid  = atoi(entry->d_name);
@@ -200,6 +196,17 @@ static inline int getPIDs(int **pids){
 
 static inline psNode * NewNode(int pid){
     // printf("[Log] NewNode %d\n", pid);
+    if(pid == 0){
+        psNode *node = (psNode*)malloc(sizeof(psNode));
+        node->pid = 0;
+        node->name = "root";
+        node->ppid = 0;
+        node->depth = 0;
+        node->Parent = NULL;
+        node->FirstSon = NULL;
+        node->NextSibling = NULL;
+        return node;
+    }
 
     char filename[100];
     sprintf(filename, "/proc/%d/stat", pid);
