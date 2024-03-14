@@ -225,7 +225,11 @@ static inline psNode * addNewNode(int pid, psNode *root){
         return root;
     }
     psNode *node = NewNode(pid);
-    if(!node)return root;
+    if(!node){
+        printf("[Log] newnode fail");
+        return root;
+    }
+
     int ppid = node->ppid;
 
     psNode *parent = getNode(ppid, root);
