@@ -165,6 +165,11 @@ static inline psNode * NewNode(int pid){
     node->Parent = NULL;
     node->FirstSon = NULL;
     node->NextSibling = NULL;
+
+    printf("进程ID = %d\n", node->pid);
+    printf("进程名 = %s\n", node->name);
+    printf("父进程PID = %d\n",node->ppid);
+    
     
     return node;
 }
