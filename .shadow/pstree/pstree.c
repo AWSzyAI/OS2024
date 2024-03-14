@@ -200,7 +200,7 @@ void exe_root(int argc, char *argv[]){
   }
     
   printf("root:%d\n",targetPID);
-  // printf("-----try to open /proc/*-----\n");
+  printf("-----try to open /proc/*-----\n");
   DIR *dir;
   struct dirent *entry;
   int count = 0;
