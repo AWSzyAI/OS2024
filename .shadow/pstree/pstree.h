@@ -131,6 +131,7 @@ static inline int cmp_pid(const void *a, const void *b){
 int cmp_name(const void *a, const void *b){
     int pid_a = ((int*)a)[0];
     int pid_b = ((int*)b)[0];
+    printf("cmp_name %d %d\n", pid_a, pid_b);
     char *name_a = getName(pid_a);
     char *name_b = getName(pid_b);
     printf("%s %s\n", name_a, name_b);
