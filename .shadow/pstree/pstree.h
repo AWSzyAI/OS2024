@@ -234,7 +234,7 @@ static inline psNode * addNewNode(int pid, psNode *root){
 
     psNode *parent = getNode(ppid, root);
     if(!parent){
-        // printf("No such parent process\n");
+        printf("No such parent process\n");
         return root;
     }
     node->depth = parent->depth + 1;
