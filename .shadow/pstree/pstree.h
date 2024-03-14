@@ -229,7 +229,8 @@ static inline void cmd_root(int argc, char *argv[]){
 
     //构建进程树
     psNode *root = NULL;
-    for(int i=0;i<cntPIDs;i++)root = addNewNode(pids[i], root);
+    root = addNewNode(pids[0], root);
+    // for(int i=0;i<cntPIDs;i++)root = addNewNode(pids[i], root);
     //最后输出进程树
     // PrintTree(root, 0);
     //释放内存
