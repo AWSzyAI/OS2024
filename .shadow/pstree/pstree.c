@@ -1,10 +1,4 @@
-#include <stdio.h>
-#include <assert.h>
-#include <stdlib.h>
-#include <unistd.h>
-#include <string.h>
-#include <dirent.h>
-#include <ctype.h>
+#include "pstree.h"
 
 
 #define MAX_LINE_LENGTH 1024
