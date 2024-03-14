@@ -61,7 +61,7 @@ static inline void printArray(int **arr, int n){
 
 static inline void PrintTree(psNode *root, int depth){
     if(!root)return;
-    
+
     int isLastSibling;
     if(root->NextSibling==NULL){
         isLastSibling = 1;
@@ -69,7 +69,8 @@ static inline void PrintTree(psNode *root, int depth){
         isLastSibling = 0;
     }
 
-    for(int i=0;i<depth-1;i++)printf(isLastSibling ? "   " : "│  ");
+    // for(int i=0;i<depth-1;i++)printf(isLastSibling ? "   " : "│  ");
+    printf(isLastSibling ? "   " : "│  ");
     if(root->pid!=1){
         printf(isLastSibling ? "└─" : "├─");
     }
