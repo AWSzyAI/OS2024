@@ -91,33 +91,24 @@ static inline int getPPID(int targetPID){
         printf("No such process\n");
         return -1;
     }
-
     char line[MAX_LINE_LENGTH+1];
     fgets(line, MAX_LINE_LENGTH, fp);
-
     Process process;
-
     sscanf(line, "%d", &process.pid);//get PID
     char *token = strtok(line, " "); //跳过进程ID
     token = strtok(NULL, " "); 
-
     // Allocate memory for process.name
     process.name = (char*)malloc(MAX_LINE_LENGTH * sizeof(char));
     sscanf(token, "%s", process.name);//get name
-
     token = strtok(NULL, " "); 
     token = strtok(NULL, " "); 
     sscanf(token, "%d", &process.ppid);//get PPID
-    
-    printf("进程ID = %d\n", process.pid);
-    printf("进程名 = %s\n", process.name);
-    printf("父进程PID = %d\n",process.ppid);   
+    // printf("进程ID = %d\n", process.pid);
+    // printf("进程名 = %s\n", process.name);
+    // printf("父进程PID = %d\n",process.ppid);   
     // addNode(process.pid, process.ppid, process.name);
-
-    if(fp)fclose(fp);
-    
+    if(fp)fclose(fp);    
     free(process.name);
-    
     return process.ppid;
 }
 static inline int getPIDs(int **pids){
