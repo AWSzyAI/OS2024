@@ -1,6 +1,13 @@
 #include "pstree.h"
 
 
+void deleteNode(psNode *root){
+    if(!root)return;
+    deleteNode(root->FirstSon);
+    deleteNode(root->NextSibling);
+    free(root);
+}
+
 static inline void cmd_root(int argc, char *argv[]){
     //读取参数，定义root PID
     int rootPID = GetRootPID(argc,argv);
@@ -22,6 +29,7 @@ static inline void cmd_root(int argc, char *argv[]){
     PrintTree(root, 0);
     //释放内存
     free(pids);
+    deleteNode(root);
 }
 static inline void exe_n(int argc, char *argv[]){
     printf("----exe_n----\n");
