@@ -23,11 +23,11 @@ static inline void cmd_root(int argc, char *argv[]){
         pids[i] = (int*)malloc(2*sizeof(int));
     }
 
-    
+
 
     int cntPIDs =  getPIDs(pids);
     printf("cntPIDs: %d\n",cntPIDs);
-    printArray(pids,cntPIDs);
+    // printArray(pids,cntPIDs);
 
     //构建进程树
     psNode *root = NULL;
