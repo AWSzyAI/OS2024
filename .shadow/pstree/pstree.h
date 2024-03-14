@@ -133,6 +133,7 @@ int cmp_name(const void *a, const void *b){
     int pid_b = ((int*)b)[0];
     char *name_a = getName(pid_a);
     char *name_b = getName(pid_b);
+    printf("%s %s\n", name_a, name_b);
     return strcmp(name_a, name_b);
 }
 
