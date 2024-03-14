@@ -216,8 +216,11 @@ void exe_root(int argc, char *argv[]){
     if(isNumeric(entry->d_name)){
       pid = atoi(entry->d_name);
       pids[count++] = pid;
-      // addNode(pid, getPPID(pid), entry->d_name);
-      // ppid = getPPID(pid); 
+      psNode *p = getNode(pid, root);
+      printf("p = %p\n", p);
+      ppid = getPPID(pid); 
+      if(ppid == -1)continue;
+      addNode(pid, ppid, entry->d_name);
       // printf(" %5d-%5d \n", pid,ppid);
     }
     entry = readdir(dir);
@@ -225,14 +228,14 @@ void exe_root(int argc, char *argv[]){
   puts("");
   printf("count = %d\n", count);
   
-  qsort(pids,count,sizeof(int),cmp);
+  qsort(pids,count,sizeof(int),cmp);// function well
   
   // print all of the PIDs
-  printf("PIDs : ");
-  for(int i=0;i<count;i++){
-    printf("%d ",pids[i]);
-  }
-  puts("");
+  // printf("PIDs : ");
+  // for(int i=0;i<count;i++){
+  //   printf("%d ",pids[i]);
+  // }
+  // puts("");
 
   if(dir)closedir(dir);
   
