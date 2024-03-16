@@ -12,7 +12,7 @@
 #define MAX_LINE_LENGTH 1024
 
 
-typedef struct{
+typedef struct{ 
     int pid;
     char *name;
     int ppid;
