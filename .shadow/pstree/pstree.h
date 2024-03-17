@@ -490,10 +490,9 @@ static inline void ConstructTree_name(psNode *p, int **pids, int cntPIDs, int pi
             ConstructTree_name(q, pids, cntPIDs, pids[i][0]);
         }
     }
-
 }
-static inline void ConstructTree(psNode *p, int **pids, int cntPIDs, int pid){
 
+static inline void ConstructTree(psNode *p, int **pids, int cntPIDs, int pid){
     for(int i=0;i<cntPIDs;i++){
         if(pids[i][1] == pid){
             psNode *q = NewNode(pids[i][0]);
@@ -503,16 +502,15 @@ static inline void ConstructTree(psNode *p, int **pids, int cntPIDs, int pid){
                 p->FirstSon = q;
             }else{
                 psNode *temp = p->FirstSon;
-                while(temp->NextSibling){
+                while(temp->pid<q->pid && temp->NextSibling){
                     temp = temp->NextSibling;
                 }
                 temp->NextSibling = q;
             }
-            printf("AddNode: %d -> %d\n", pids[i][0], pids[i][1]);
+            // printf("AddNode: %d -> %d\n", pids[i][0], pids[i][1]);
             ConstructTree(q, pids, cntPIDs, pids[i][0]);
         }
     }
-
 }
 
 
