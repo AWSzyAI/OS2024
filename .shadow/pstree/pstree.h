@@ -97,12 +97,12 @@ static inline void PrintTree(int rootPID,psNode *root, int depth){
     
     // printf("%s(%d) %d\n", root->name,root->pid,root->depth);
     psNode *child = root->FirstSon;
-    if(child){
-        printf("——%s\n", child->name);
-        child = child->NextSibling;
-    }else{
-        printf("\n");
-    }
+    // if(child){
+    //     printf("——%s\n", child->name);
+    //     child = child->NextSibling;
+    // }else{
+    //     printf("\n");
+    // }
     while(child){
         PrintTree(rootPID,child, depth+1);
         child = child->NextSibling;
