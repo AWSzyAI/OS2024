@@ -115,7 +115,7 @@ static inline void PrintTree_p(int rootPID,psNode *root){
     psNode *child = root->FirstSon;
 
     // printf("%s", root->name);
-    printf("%s(%d)\n", root->name,root->pid);
+    printf("%s(%d)", root->name,root->pid);
     if(!child)return;
     if(isLastSibling(child)){
         printf("───");
