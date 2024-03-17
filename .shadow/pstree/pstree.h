@@ -146,15 +146,6 @@ systemd─┬─snapd-desktop-i───snapd-desktop-i
 static inline void PrintTree(int rootPID,psNode *root, int depth){
     if(!root)return;
     psNode *child = root->FirstSon;
-    
-
-    // if(root->pid!=rootPID)printf("   ");
-    // // for(int i=0;i<root->depth-1;i++)printf(isLastSibling ? "   " : "│  ");
-    // for(int i=0;i<root->depth-1;i++)printf("│  ");
-    // if(root->pid!=rootPID){
-    //     printf(isLastSibling(root)? "└─" : "├─");
-    // }
-    
 
     printf("%s", root->name);
     if(!child)return;
@@ -163,32 +154,31 @@ static inline void PrintTree(int rootPID,psNode *root, int depth){
         PrintTree(rootPID,child, depth+1);
         return;
     }
+    //first child
     printf("─┬─");
     PrintTree(rootPID,child, depth+1);
-    child = child->NextSibling;
-
-    //get all parents until rootPID
-    Stack *stack = initStack();
-
-    psNode *q = root;
-    while(q->pid != rootPID){
-        push(stack, q);
-        q = q->Parent;
-    }
-    assert(q->pid == rootPID);
-    for(int j=0;j<strlen(q->name);j++)printf(" ");
-    
-    while(!isEmpty(stack)){
-        q = pop(stack);
-        printf(isLastSibling(q)?"   ":"│  ");
-        for(int j=0;j<strlen(q->name);j++)printf(" ");
-    }
-
-    while(child){
+    //other children
+    while(child = child->NextSibling){
         printf("\n");
-        printf(isLastSibling(child)?"└─":"├─");
+        // draw "   " & " │ " & " ├─"
+        //get all parents until rootPID
+        Stack *stack = initStack();
+        psNode *q = child->Parent;
+        while(q->pid != rootPID){
+            push(stack, q);
+            q = q->Parent;
+        }
+        assert(q->pid == rootPID);
+        for(int j=0;j<strlen(q->name);j++)printf(" ");
+        
+        while(!isEmpty(stack)){
+            q = pop(stack);
+            printf(isLastSibling(q)?"   ":" │ ");
+            for(int j=0;j<strlen(q->name);j++)printf(" ");
+        }
+        deleteStack(stack);
+        printf(isLastSibling(child)?" └─":" ├─");
         PrintTree(rootPID,child, depth+1);
-        child = child->NextSibling;
     }
 }
 
