@@ -147,14 +147,12 @@ static inline void PrintTree(int rootPID,psNode *root, int depth){
     if(!root)return;
     psNode *child = root->FirstSon;
     
-    int isLastSib=isLastSibling(root);
-    
 
     if(root->pid!=rootPID)printf("   ");
     // for(int i=0;i<root->depth-1;i++)printf(isLastSibling ? "   " : "│  ");
     for(int i=0;i<root->depth-1;i++)printf("│  ");
     if(root->pid!=rootPID){
-        printf(isLastSib? "└─" : "├─");
+        printf(isLastSibling(root)? "└─" : "├─");
     }
     
 
