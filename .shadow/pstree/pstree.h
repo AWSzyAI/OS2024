@@ -45,12 +45,12 @@ static inline void printNode(psNode *node){
 }
 char *getName(int pid);
 static inline void printArray(int **arr, int n){
-    printf("count = %d\n", n);
+    printf("Array count = %d\n", n);
     for(int i=0;i<n;i++){
         char *name = getName(arr[i][0]);
-        printf("%s %d %d\n", name, arr[i][0], arr[i][1]);
+        printf("%d %d %s\n", arr[i][0], arr[i][1], name);
     }
-    printf("----------------------\n");
+    printf("----------[Done] printArray------------\n");
     // puts("");
 }
 
@@ -423,6 +423,7 @@ static inline void ConstructTree(psNode *p, int **pids, int cntPIDs, int pid){
                 }
                 temp->NextSibling = q;
             }
+            printf("ConstructTree %d -> %d\n", pids[i][0], pids[i][1]);
             ConstructTree(q, pids, cntPIDs, pids[i][0]);
         }
     }
