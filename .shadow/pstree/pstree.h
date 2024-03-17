@@ -145,7 +145,7 @@ static inline void PrintTree_p(int rootPID,psNode *root){
             x/=10;
             pid_len++;
         }
-        for(int j=0;j<strlen(q->name)+"  "+pid_len;j++)printf(" ");
+        for(int j=0;j<strlen(q->name)+2+pid_len;j++)printf(" ");
         while(!isEmpty(stack)){
             q = pop(stack);
             printf(isLastSibling(q)?"   ":" │ ");
