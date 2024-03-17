@@ -9,10 +9,11 @@
 #include <dirent.h>
 #include <ctype.h>
 
+
 #define MAX_LINE_LENGTH 1024
 
 
-typedef struct{
+typedef struct{ 
     int pid;
     char *name;
     int ppid;
@@ -28,8 +29,50 @@ typedef struct psNode{
     struct psNode *NextSibling;
 }psNode;
 
-// Then, when you create a new variable of type psNode, you can initialize it:
-// psNode node = { -1, NULL, -1, -1, NULL, NULL, NULL };
+#define INITAL_STACK_SIZE 10
+
+typedef struct{
+    psNode **data;
+    int top;
+    int size;
+}Stack;
+
+Stack *initStack();
+void push(Stack *s, psNode *node);
+psNode *pop(Stack *s);
+int isEmpty(Stack *s);
+void deleteStack(Stack *s);
+
+
+Stack *initStack(){
+    Stack *s = (Stack*)malloc(sizeof(Stack));
+    s->data = (psNode**)malloc(INITAL_STACK_SIZE*sizeof(psNode*));
+    s->top = -1;
+    s->size = INITAL_STACK_SIZE;
+    return s;
+}
+
+void push(Stack *s, psNode *node){
+    if(s->top == s->size-1){
+        s->size *= 2;
+        s->data = (psNode**)realloc(s->data, s->size*sizeof(psNode*));
+    }
+    s->data[++s->top] = node;
+}
+
+psNode *pop(Stack *s){
+    if(s->top == -1)return NULL;
+    return s->data[s->top--];
+}
+
+int isEmpty(Stack *s){
+    return s->top == -1;
+}
+
+void deleteStack(Stack *s){
+    free(s->data);
+    free(s);
+}
 
 
 /*Log*/
@@ -47,18 +90,19 @@ static inline void printNode(psNode *node){
     // printf("pid = %d, name = %s, ppid = %d\n", node->pid, node->name, node->ppid);
     
 }
-char *getName(int pid);
+static inline char *getName(int pid);
 static inline void printArray(int **arr, int n){
-    printf("count = %d\n", n);
+    printf("Array count = %d\n", n);
     for(int i=0;i<n;i++){
         char *name = getName(arr[i][0]);
-        printf("%s %d %d\n", name, arr[i][0], arr[i][1]);
+        printf("%d %d %s\n", arr[i][0], arr[i][1], name);
     }
-    printf("----------------------\n");
+    printf("----------[Done] printArray------------\n");
     // puts("");
 }
 
-int isLastSibling(psNode *root){
+static inline int isLastSibling(psNode *root){
+    if(root==NULL)return 2;//?
     if(root->NextSibling==NULL){
         return 1;
     }else{
@@ -66,51 +110,110 @@ int isLastSibling(psNode *root){
     }
 }
 
-static inline void PrintTree_p(int rootPID,psNode *root, int depth){
+static inline void PrintTree_p(int rootPID,psNode *root){
     if(!root)return;
-
-
-    int isLastSib=isLastSibling(root);
-
-    if(root->pid!=rootPID)printf("   ");
-    // for(int i=0;i<root->depth-1;i++)printf(isLastSibling ? "   " : "│  ");
-    for(int i=0;i<root->depth-1;i++)printf("│  ");
-    
-    if(root->pid!=rootPID){
-        printf(isLastSib? "└─" : "├─");
-    }
-    printf("%s(%d)\n", root->name,root->pid);
-    // printf("%s(%d) %d\n", root->name,root->pid,root->depth);
     psNode *child = root->FirstSon;
+
+    // printf("%s", root->name);
+    printf("%s(%d)", root->name,root->pid);
+    if(!child)return;
+    if(isLastSibling(child)){
+        printf("───");
+        PrintTree_p(rootPID,child);
+        return;
+    }
+    //first child
+    printf("─┬─");
+    PrintTree_p(rootPID,child);
+    //other children
+    child = child->NextSibling;
     while(child){
-        PrintTree_p(rootPID,child, depth+1);
+        printf("\n");
+        // draw "   " & " │ " & " ├─"
+        //get all parents until rootPID
+        Stack *stack = initStack();
+        psNode *q = child->Parent;
+        while(q->pid != rootPID){
+            push(stack, q);
+            q = q->Parent;
+        }
+        assert(q->pid == rootPID);
+        
+        int pid_len = 0;
+        int x = q->pid;
+        while(x){
+            x/=10;
+            pid_len++;
+        }
+        for(int j=0;j<strlen(q->name)+2+pid_len;j++)printf(" ");
+        while(!isEmpty(stack)){
+            q = pop(stack);
+            printf(isLastSibling(q)?"   ":" │ ");
+            for(int j=0;j<strlen(q->name);j++)printf(" ");
+        }
+        deleteStack(stack);
+        printf(isLastSibling(child)?" └─":" ├─");
+        PrintTree_p(rootPID,child);
+        child = child->NextSibling;
+    }
+}
+    
+
+
+
+/*
+systemd─┬─snapd-desktop-i───snapd-desktop-i
+        ├─ubuntu-report
+        ├─gvfsd─┬─gvfsd-trash
+        │       ├─gvfsd-network
+        │       └─gvfsd-dnssd
+        ├─dbus-daemon
+        └─sd-pam─┬─gvfsd-trash
+                 ├─gvfsd-network
+                 └─gvfsd-dnssd     
+*/
+static inline void PrintTree(int rootPID,psNode *root){
+    if(!root)return;
+    psNode *child = root->FirstSon;
+
+    printf("%s", root->name);
+    if(!child)return;
+    if(isLastSibling(child)){
+        printf("───");
+        PrintTree(rootPID,child);
+        return;
+    }
+    //first child
+    printf("─┬─");
+    PrintTree(rootPID,child);
+    //other children
+    child = child->NextSibling;
+    while(child){
+        printf("\n");
+        // draw "   " & " │ " & " ├─"
+        //get all parents until rootPID
+        Stack *stack = initStack();
+        psNode *q = child->Parent;
+        while(q->pid != rootPID){
+            push(stack, q);
+            q = q->Parent;
+        }
+        assert(q->pid == rootPID);
+        for(int j=0;j<strlen(q->name);j++)printf(" ");
+        
+        while(!isEmpty(stack)){
+            q = pop(stack);
+            printf(isLastSibling(q)?"   ":" │ ");
+            for(int j=0;j<strlen(q->name);j++)printf(" ");
+        }
+        deleteStack(stack);
+        printf(isLastSibling(child)?" └─":" ├─");
+        PrintTree(rootPID,child);
         child = child->NextSibling;
     }
 }
 
-static inline void PrintTree(int rootPID,psNode *root, int depth){
-    if(!root)return;
-
-
-    int isLastSib=isLastSibling(root);
-
-    if(root->pid!=rootPID)printf("   ");
-    // for(int i=0;i<root->depth-1;i++)printf(isLastSibling ? "   " : "│  ");
-    for(int i=0;i<root->depth-1;i++)printf("│  ");
-    
-    if(root->pid!=rootPID){
-        printf(isLastSib? "└─" : "├─");
-    }
-    printf("%s\n", root->name);
-    // printf("%s(%d) %d\n", root->name,root->pid,root->depth);
-    psNode *child = root->FirstSon;
-    while(child){
-        PrintTree(rootPID,child, depth+1);
-        child = child->NextSibling;
-    }
-}
-
-int isNumeric(const char* str) {
+static inline int isNumeric(const char* str) {
     for (int i = 0; str[i] != '\0'; i++) {
         if (!isdigit(str[i])) {
             return 0;
@@ -118,17 +221,10 @@ int isNumeric(const char* str) {
     }
     return 1;
 }
-
-//arr[i][0] vs arr[j][0]
 static inline int cmp_pid(const void *a, const void *b){
     return ((int*)a)[0] - ((int*)b)[0];
 }
-
-
-//getName(arr[i][0]) vs getName(arr[j][0])
-//字典序
-
-int cmp_name(const void *a, const void *b){
+static inline int cmp_name(const void *a, const void *b){
     int pid_a = ((int*)a)[0];
     int pid_b = ((int*)b)[0];
     printf("cmp_name %d %d\n", pid_a, pid_b);
@@ -137,7 +233,6 @@ int cmp_name(const void *a, const void *b){
     printf("%s %s\n", name_a, name_b);
     return strcmp(name_a, name_b);
 }
-
 static inline int GetRootPID(int argc, char *argv[]){
     int rootPID;
     if(argc==1){//无参数 ./pstree-64 
@@ -149,9 +244,8 @@ static inline int GetRootPID(int argc, char *argv[]){
     }
     return rootPID;
 }
-
-char* getName(int pid){
-    printf("get name of pid = %d : ", pid);
+static inline char* getName(int pid){
+    // printf("get name of pid = %d : ", pid);
     char filename[100];
     sprintf(filename, "/proc/%d/stat", pid);
     FILE *fp = fopen(filename, "r");
@@ -179,10 +273,9 @@ char* getName(int pid){
         *end = '\0';
     }
     name = start;
-    printf("%s\n", name);
+    // printf("%s\n", name);
     return name;
 }
-
 static inline int getPPID(int targetPID){
     char filename[100];
     sprintf(filename, "/proc/%d/stat", targetPID);
@@ -228,25 +321,17 @@ static inline int getPIDs(int **pids){
         if(isNumeric(entry->d_name)){
             pid  = atoi(entry->d_name);
             ppid = getPPID(pid);
-            // printf("%d %d\n", pid, ppid);
+            // printf("%d\n", pid);
             pids[count][0] = pid;
             pids[count][1] = ppid;
             // printf("%d %d\n", pids[count][0], pids[count][1]);
             count++;
         }
-        entry = readdir(dir);
+        // entry = readdir(dir);
     }
-    puts("");
-    
     if(dir)closedir(dir);
     return count;
 }
-
-
-
-
-
-
 static inline psNode * NewNode(int pid){
     // printf("[Log] NewNode %d\n", pid);
     if(pid == 0){
@@ -314,7 +399,6 @@ static inline psNode * NewNode(int pid){
     
     return node;
 }
-
 static inline psNode * getNode(int pid, psNode *root){
     if(!root)return NULL;
     if(root->pid == pid)return root;
@@ -322,9 +406,38 @@ static inline psNode * getNode(int pid, psNode *root){
     if(node)return node;
     return getNode(pid, root->NextSibling);
 }
+static inline psNode * addNewNode_name(int pid, psNode *root){
+    if(!root){
+        root = NewNode(pid);
+        // printNode(root);
+        return root;
+    }
+    psNode *node = NewNode(pid);
+    if(!node){
+        printf("[Log] newnode fail");
+        return root;
+    }
 
+    int ppid = node->ppid;
 
-
+    psNode *parent = getNode(ppid, root);
+    if(!parent){
+        printf("No such parent process\n");
+        return root;
+    }
+    node->depth = parent->depth + 1;
+    node->Parent = parent;
+    if(!parent->FirstSon){
+        parent->FirstSon = node;
+    }else{
+        psNode *temp = parent->FirstSon;
+        while(temp->name < node->name && temp->NextSibling){
+            temp = temp->NextSibling;
+        }
+        temp->NextSibling = node;
+    }
+    return root;
+}
 static inline psNode * addNewNode(int pid, psNode *root){
     if(!root){
         root = NewNode(pid);
@@ -357,10 +470,7 @@ static inline psNode * addNewNode(int pid, psNode *root){
     }
     return root;
 }
-
-
-
-static inline void ConstructTree(psNode *p, int **pids, int cntPIDs, int pid){
+static inline void ConstructTree_name(psNode *p, int **pids, int cntPIDs, int pid){
 
     for(int i=0;i<cntPIDs;i++){
         if(pids[i][1] == pid){
@@ -371,27 +481,44 @@ static inline void ConstructTree(psNode *p, int **pids, int cntPIDs, int pid){
                 p->FirstSon = q;
             }else{
                 psNode *temp = p->FirstSon;
-                while(temp->NextSibling){
+                while(temp->name < q->name && temp->NextSibling){
                     temp = temp->NextSibling;
                 }
                 temp->NextSibling = q;
             }
+            // printf("AddNode: %d -> %d\n", pids[i][0], pids[i][1]);
+            ConstructTree_name(q, pids, cntPIDs, pids[i][0]);
+        }
+    }
+}
+
+static inline void ConstructTree(psNode *p, int **pids, int cntPIDs, int pid){
+    for(int i=0;i<cntPIDs;i++){
+        if(pids[i][1] == pid){
+            psNode *q = NewNode(pids[i][0]);
+            q->Parent = p;
+            q->depth = p->depth + 1;
+            if(!p->FirstSon){
+                p->FirstSon = q;
+            }else{
+                psNode *temp = p->FirstSon;
+                while(temp->pid<q->pid && temp->NextSibling){
+                    temp = temp->NextSibling;
+                }
+                temp->NextSibling = q;
+            }
+            // printf("AddNode: %d -> %d\n", pids[i][0], pids[i][1]);
             ConstructTree(q, pids, cntPIDs, pids[i][0]);
         }
     }
-
 }
 
 
 /*Done*/
-
 static inline void readargs(int argc, char *argv[]){
     for (int i = 0; i < argc; i++) {
         assert(argv[i]);
         printf("argv[%d] = %s\n", i, argv[i]);
     }
 }
-
-
-
 #endif // PSTREE_H
