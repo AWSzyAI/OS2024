@@ -139,6 +139,13 @@ static inline void PrintTree_p(int rootPID,psNode *root){
         }
         assert(q->pid == rootPID);
         for(int j=0;j<strlen(q->name);j++)printf(" ");
+        int lenpid = 0;
+        int x = q->pid;
+        while(x){
+            x/=10;
+            lenpid++;
+        }
+        int spacelen = strlen(q->name)+"  "+lenpid;
         
         while(!isEmpty(stack)){
             q = pop(stack);
