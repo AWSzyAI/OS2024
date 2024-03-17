@@ -26,7 +26,7 @@ static inline void cmd_root(int argc, char *argv[]){
     ConstructTree_name(root, pids, cntPIDs, rootPID);
     // for(int i=0;i<cntPIDs;i++)root = addNewNode(pids[i], root);
     //最后输出进程树
-    // PrintTree(rootPID,root, 10);
+    PrintTree(rootPID,root, 10);
     //释放内存
     free(pids);
     deleteNode(root);

@@ -211,7 +211,7 @@ static inline int getPIDs(int **pids){
         if(isNumeric(entry->d_name)){
             pid  = atoi(entry->d_name);
             ppid = getPPID(pid);
-            printf("%d\n", pid);
+            // printf("%d\n", pid);
             pids[count][0] = pid;
             pids[count][1] = ppid;
             // printf("%d %d\n", pids[count][0], pids[count][1]);
@@ -378,7 +378,7 @@ static inline void ConstructTree_name(psNode *p, int **pids, int cntPIDs, int pi
                 }
                 temp->NextSibling = q;
             }
-            printf("AddNode: %d -> %d\n", pids[i][0], pids[i][1]);
+            // printf("AddNode: %d -> %d\n", pids[i][0], pids[i][1]);
             ConstructTree_name(q, pids, cntPIDs, pids[i][0]);
         }
     }
