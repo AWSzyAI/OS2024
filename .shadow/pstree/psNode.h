@@ -1,4 +1,4 @@
-typedef struct psNode{
+typedef struct{
     int pid;
     char *name;
     int ppid;
