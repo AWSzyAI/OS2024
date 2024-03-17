@@ -8,8 +8,7 @@
 #include <string.h>
 #include <dirent.h>
 #include <ctype.h>
-#include "psNode.h"
-#include "pstack.h"
+
 
 #define MAX_LINE_LENGTH 1024
 
@@ -30,6 +29,50 @@ typedef struct psNode{
     struct psNode *NextSibling;
 }psNode;
 
+#define INITAL_STACK_SIZE 10
+
+typedef struct{
+    psNode **data;
+    int top;
+    int size;
+}Stack;
+
+Stack *initStack();
+void push(Stack *s, psNode *node);
+psNode *pop(Stack *s);
+int isEmpty(Stack *s);
+void deleteStack(Stack *s);
+
+
+Stack *initStack(){
+    Stack *s = (Stack*)malloc(sizeof(Stack));
+    s->data = (psNode**)malloc(INITAL_STACK_SIZE*sizeof(psNode*));
+    s->top = -1;
+    s->size = INITAL_STACK_SIZE;
+    return s;
+}
+
+void push(Stack *s, psNode *node){
+    if(s->top == s->size-1){
+        s->size *= 2;
+        s->data = (psNode**)realloc(s->data, s->size*sizeof(psNode*));
+    }
+    s->data[++s->top] = node;
+}
+
+psNode *pop(Stack *s){
+    if(s->top == -1)return NULL;
+    return s->data[s->top--];
+}
+
+int isEmpty(Stack *s){
+    return s->top == -1;
+}
+
+void deleteStack(Stack *s){
+    free(s->data);
+    free(s);
+}
 
 
 /*Log*/
