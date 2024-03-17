@@ -11,21 +11,15 @@ void deleteNode(psNode *root){
 static inline void cmd_root(int argc, char *argv[]){
     //读取参数，定义root PID
     int rootPID = GetRootPID(argc,argv);
-    // printf("[Log] rootPID = %d\n", rootPID);//[ ] Log系统有待优化
-    
-    //扫描/proc目录，获取所有进程的PID
-    
-    // int *pids = (int*)malloc(1000*sizeof(int));
-    
-    //int pids[1000][2]
+    // get all PIDs
     int **pids = (int**)malloc(1000*sizeof(int*));
     for(int i=0;i<1000;i++){
         pids[i] = (int*)malloc(2*sizeof(int));
     }
     int cntPIDs =  getPIDs(pids);
     qsort(pids,cntPIDs,sizeof(int)*2,cmp_pid);// function well
-    // printf("cntPIDs: %d\n",cntPIDs);
-    // printArray(pids,cntPIDs);
+    printf("cntPIDs: %d\n",cntPIDs);
+    printArray(pids,cntPIDs);
     //构建进程树
     psNode *root = NULL;
     // printNode(root);
