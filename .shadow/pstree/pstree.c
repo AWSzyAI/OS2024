@@ -43,7 +43,7 @@ static inline void exe_n(int argc, char *argv[]){
     int cntPIDs =  getPIDs(pids);
     qsort(pids,cntPIDs,sizeof(int)*2,cmp_pid);// function well
     psNode *root = NULL;
-    root = addNewNode(1, root);
+    root = addNewNode(rootPID, root);
     ConstructTree(root, pids, cntPIDs, rootPID);
     PrintTree(rootPID,root);
     free(pids);
