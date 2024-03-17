@@ -119,7 +119,7 @@ static inline void PrintTree_p(int rootPID,psNode *root){
     if(!child)return;
     if(isLastSibling(child)){
         printf("───");
-        PrintTree(rootPID,child);
+        PrintTree_p(rootPID,child);
         return;
     }
     //first child
