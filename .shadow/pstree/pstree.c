@@ -1,4 +1,7 @@
 #include "pstree.h"
+#include "pstack.h"
+
+
 void deleteNode(psNode *root){
     if(!root)return;
     deleteNode(root->FirstSon);
