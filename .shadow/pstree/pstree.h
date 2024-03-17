@@ -8,8 +8,11 @@
 #include <string.h>
 #include <dirent.h>
 #include <ctype.h>
+#include "psNode.h"
+#include "pstack.h"
 
 #define MAX_LINE_LENGTH 1024
+
 
 typedef struct{ 
     int pid;
@@ -17,15 +20,8 @@ typedef struct{
     int ppid;
 }Process;
 
-typedef struct psNode{
-    int pid;
-    char *name;
-    int ppid;
-    int depth;
-    struct psNode *Parent;
-    struct psNode *FirstSon;
-    struct psNode *NextSibling;
-}psNode;
+
+
 
 /*Log*/
 static inline void printNode(psNode *node){
@@ -54,6 +50,7 @@ static inline void printArray(int **arr, int n){
 }
 
 static inline int isLastSibling(psNode *root){
+    if(root==NULL)return 2;//?
     if(root->NextSibling==NULL){
         return 1;
     }else{
@@ -83,9 +80,24 @@ static inline void PrintTree_p(int rootPID,psNode *root, int depth){
     }
 }
 
+/*
+systemd─┬─snapd-desktop-i───snapd-desktop-i
+        ├─ubuntu-report
+        ├─gvfsd─┬─gvfsd-trash
+        │       ├─gvfsd-network
+        │       └─gvfsd-dnssd
+        ├─dbus-daemon
+        └─sd-pam─┬─gvfsd-trash
+                 ├─gvfsd-network
+                 └─gvfsd-dnssd     
+*/
 static inline void PrintTree(int rootPID,psNode *root, int depth){
     if(!root)return;
+    psNode *child = root->FirstSon;
+    
     int isLastSib=isLastSibling(root);
+    
+
     if(root->pid!=rootPID)printf("   ");
     // for(int i=0;i<root->depth-1;i++)printf(isLastSibling ? "   " : "│  ");
     for(int i=0;i<root->depth-1;i++)printf("│  ");
@@ -93,17 +105,38 @@ static inline void PrintTree(int rootPID,psNode *root, int depth){
         printf(isLastSib? "└─" : "├─");
     }
     
-    printf("%s\n", root->name);
+
+    printf("%s", root->name);
+    if(!child)return;
+    if(isLastSibling(child)){
+        printf("───");
+        PrintTree(rootPID,child, depth+1);
+        return;
+    }
+    printf("─┬─");
+    PrintTree(rootPID,child, depth+1);
+    child = child->NextSibling;
+
+    //get all parents until rootPID
+    Stack *stack = initStack();
+
+    psNode *q = root;
+    while(q->pid != rootPID){
+        push(stack, &q);
+        q = q->Parent;
+    }
+    assert(q->pid == rootPID);
+    for(int j=0;j<strlen(q->name);j++)printf(" ");
     
-    // printf("%s(%d) %d\n", root->name,root->pid,root->depth);
-    psNode *child = root->FirstSon;
-    // if(child){
-    //     printf("——%s\n", child->name);
-    //     child = child->NextSibling;
-    // }else{
-    //     printf("\n");
-    // }
+    while(!isEmpty(stack)){
+        q = pop(stack);
+        printf(isLastSibling(q)?"   ":"│  ");
+        for(int j=0;j<strlen(q->name);j++)printf(" ");
+    }
+
     while(child){
+        printf("\n");
+        printf(isLastSibling(child)?"└─":"├─");
         PrintTree(rootPID,child, depth+1);
         child = child->NextSibling;
     }
