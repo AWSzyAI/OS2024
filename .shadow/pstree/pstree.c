@@ -1,5 +1,5 @@
 #include "pstree.h"
-#include "pstack.h"
+
 
 
 void deleteNode(psNode *root){
