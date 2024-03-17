@@ -143,7 +143,7 @@ systemd─┬─snapd-desktop-i───snapd-desktop-i
                  ├─gvfsd-network
                  └─gvfsd-dnssd     
 */
-static inline void PrintTree(int rootPID,psNode *root, int depth){
+static inline void PrintTree(int rootPID,psNode *root){
     if(!root)return;
     psNode *child = root->FirstSon;
 
@@ -151,12 +151,12 @@ static inline void PrintTree(int rootPID,psNode *root, int depth){
     if(!child)return;
     if(isLastSibling(child)){
         printf("───");
-        PrintTree(rootPID,child, depth+1);
+        PrintTree(rootPID,child);
         return;
     }
     //first child
     printf("─┬─");
-    PrintTree(rootPID,child, depth+1);
+    PrintTree(rootPID,child);
     //other children
     child = child->NextSibling;
     while(child){
@@ -179,7 +179,7 @@ static inline void PrintTree(int rootPID,psNode *root, int depth){
         }
         deleteStack(stack);
         printf(isLastSibling(child)?" └─":" ├─");
-        PrintTree(rootPID,child, depth+1);
+        PrintTree(rootPID,child);
         child = child->NextSibling;
     }
 }
