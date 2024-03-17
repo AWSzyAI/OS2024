@@ -138,7 +138,7 @@ static inline void PrintTree_p(int rootPID,psNode *root){
             q = q->Parent;
         }
         assert(q->pid == rootPID);
-        for(int j=0;j<strlen(q->name);j++)printf(" ");
+        
         int lenpid = 0;
         int x = q->pid;
         while(x){
@@ -146,7 +146,7 @@ static inline void PrintTree_p(int rootPID,psNode *root){
             lenpid++;
         }
         int spacelen = strlen(q->name)+"  "+lenpid;
-        
+        for(int j=0;j<spacelen;j++)printf(" ");
         while(!isEmpty(stack)){
             q = pop(stack);
             printf(isLastSibling(q)?"   ":" │ ");
