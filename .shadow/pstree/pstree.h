@@ -139,14 +139,13 @@ static inline void PrintTree_p(int rootPID,psNode *root){
         }
         assert(q->pid == rootPID);
         
-        int lenpid = 0;
+        int pid_len = 0;
         int x = q->pid;
         while(x){
             x/=10;
-            lenpid++;
+            pid_len++;
         }
-        int spacelen = strlen(q->name)+"  "+lenpid;
-        for(int j=0;j<spacelen;j++)printf(" ");
+        for(int j=0;j<strlen(q->name)+"  "+pid_len;j++)printf(" ");
         while(!isEmpty(stack)){
             q = pop(stack);
             printf(isLastSibling(q)?"   ":" │ ");
