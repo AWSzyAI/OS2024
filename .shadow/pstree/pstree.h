@@ -175,7 +175,7 @@ char* getName(int pid){
         *end = '\0';
     }
     name = start;
-    printf("%s\n", name);
+    // printf("%s\n", name);
     return name;
 }
 
