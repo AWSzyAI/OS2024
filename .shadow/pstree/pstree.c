@@ -61,7 +61,7 @@ static inline void exe_p(int argc, char *argv[]){
     psNode *root = NULL;
     root = addNewNode(1, root);
     ConstructTree(root, pids, cntPIDs, rootPID);
-    PrintTree_p(rootPID,root, 10);
+    PrintTree_p(rootPID,root);
     free(pids);
     deleteNode(root);
 }
