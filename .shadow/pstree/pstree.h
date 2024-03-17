@@ -211,7 +211,7 @@ static inline int getPIDs(int **pids){
         if(isNumeric(entry->d_name)){
             pid  = atoi(entry->d_name);
             ppid = getPPID(pid);
-            printf("%d ", pid);
+            printf("%d\n", pid);
             pids[count][0] = pid;
             pids[count][1] = ppid;
             // printf("%d %d\n", pids[count][0], pids[count][1]);
