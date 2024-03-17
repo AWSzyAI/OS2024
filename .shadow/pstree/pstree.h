@@ -122,7 +122,7 @@ static inline void PrintTree(int rootPID,psNode *root, int depth){
 
     psNode *q = root;
     while(q->pid != rootPID){
-        push(stack, &q);
+        push(stack, q);
         q = q->Parent;
     }
     assert(q->pid == rootPID);
