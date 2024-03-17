@@ -217,7 +217,7 @@ static inline int getPIDs(int **pids){
             // printf("%d %d\n", pids[count][0], pids[count][1]);
             count++;
         }
-        entry = readdir(dir);
+        // entry = readdir(dir);
     }
     puts("");
     
