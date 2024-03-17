@@ -225,8 +225,6 @@ static inline int getPIDs(int **pids){
         }
         // entry = readdir(dir);
     }
-    puts("");
-    
     if(dir)closedir(dir);
     return count;
 }

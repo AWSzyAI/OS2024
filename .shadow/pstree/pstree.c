@@ -87,11 +87,6 @@ static inline void cmd(int argc, char *argv[]) {
         }
     }
 
-    // if(!option_processed &&optind == argc){
-    //     //getopt()函数的全局变量optind是命令行参数的索引，即argv[]数组的索引
-    //     // printf("[Log] optind = %d No targetPID\n", optind); 
-    //     cmd_root(argc,argv);
-    // }
     if(!option_processed){
         cmd_root(argc,argv);
     }
