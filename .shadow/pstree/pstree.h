@@ -110,27 +110,50 @@ static inline int isLastSibling(psNode *root){
     }
 }
 
-static inline void PrintTree_p(int rootPID,psNode *root, int depth){
+static inline void PrintTree_p(int rootPID,psNode *root){
     if(!root)return;
-    int isLastSib=isLastSibling(root);
-    if(root->pid!=rootPID)printf("   ");
-    // for(int i=0;i<root->depth-1;i++)printf(isLastSibling ? "   " : "│  ");
-    for(int i=0;i<root->depth-1;i++)printf("│  ");
-    if(root->pid!=rootPID){
-        printf(isLastSib? "└─" : "├─");
-    }
-    
-    
-    printf("%s(%d)\n", root->name,root->pid);
-
-
-    // printf("%s(%d) %d\n", root->name,root->pid,root->depth);
     psNode *child = root->FirstSon;
+
+    // printf("%s", root->name);
+    printf("%s(%d)\n", root->name,root->pid);
+    if(!child)return;
+    if(isLastSibling(child)){
+        printf("───");
+        PrintTree(rootPID,child);
+        return;
+    }
+    //first child
+    printf("─┬─");
+    PrintTree_p(rootPID,child);
+    //other children
+    child = child->NextSibling;
     while(child){
-        PrintTree_p(rootPID,child, depth+1);
+        printf("\n");
+        // draw "   " & " │ " & " ├─"
+        //get all parents until rootPID
+        Stack *stack = initStack();
+        psNode *q = child->Parent;
+        while(q->pid != rootPID){
+            push(stack, q);
+            q = q->Parent;
+        }
+        assert(q->pid == rootPID);
+        for(int j=0;j<strlen(q->name);j++)printf(" ");
+        
+        while(!isEmpty(stack)){
+            q = pop(stack);
+            printf(isLastSibling(q)?"   ":" │ ");
+            for(int j=0;j<strlen(q->name);j++)printf(" ");
+        }
+        deleteStack(stack);
+        printf(isLastSibling(child)?" └─":" ├─");
+        PrintTree_p(rootPID,child);
         child = child->NextSibling;
     }
 }
+    
+
+
 
 /*
 systemd─┬─snapd-desktop-i───snapd-desktop-i
