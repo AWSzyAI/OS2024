@@ -158,7 +158,8 @@ static inline void PrintTree(int rootPID,psNode *root, int depth){
     printf("─┬─");
     PrintTree(rootPID,child, depth+1);
     //other children
-    while(child = child->NextSibling){
+    child = child->NextSibling;
+    while(child){
         printf("\n");
         // draw "   " & " │ " & " ├─"
         //get all parents until rootPID
@@ -179,6 +180,7 @@ static inline void PrintTree(int rootPID,psNode *root, int depth){
         deleteStack(stack);
         printf(isLastSibling(child)?" └─":" ├─");
         PrintTree(rootPID,child, depth+1);
+        child = child->NextSibling;
     }
 }
 
