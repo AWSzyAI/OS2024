@@ -1,7 +1,7 @@
 #ifndef PSTACK_H
 #define PSTACK_H
 
-#include "psNode.h"
+#include "pstree.h"
 
 #define INITAL_STACK_SIZE 10
 
