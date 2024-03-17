@@ -1,6 +1,4 @@
 #include "pstree.h"
-
-
 void deleteNode(psNode *root){
     if(!root)return;
     deleteNode(root->FirstSon);
@@ -19,7 +17,7 @@ static inline void cmd_root(int argc, char *argv[]){
     int cntPIDs =  getPIDs(pids);
     qsort(pids,cntPIDs,sizeof(int)*2,cmp_pid);// function well
     printf("cntPIDs: %d\n",cntPIDs);
-    // printArray(pids,cntPIDs);
+    printArray(pids,cntPIDs);
     //构建进程树
     psNode *root = NULL;
     // printNode(root);
@@ -49,7 +47,6 @@ static inline void exe_n(int argc, char *argv[]){
     deleteNode(root);
 }
 static inline void exe_V(int argc, char*argv[]){printf("pstree-32/64 (OS2024 - Ziyan Shi) version 0.0.1\nCopyright (C) 2024-2024 NJU and Ziyan Shi\nPSmisc comes with ABSOLUTELY NO WARRANTY.\nThis is free software, and you are welcome to redistribute it under the terms of the GNU General Public License.\nFor more information about these matters, see the files named COPYING\n");}
-
 static inline void exe_p(int argc, char *argv[]){
     int rootPID = GetRootPID(argc,argv);
     int **pids = (int**)malloc(1000*sizeof(int*));
