@@ -1,4 +1,5 @@
 #include "pstree.h"
+#include <getopt.h>
 
 struct option long_options[] = {
     {"version", no_argument, 0, 'V'},
