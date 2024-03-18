@@ -83,6 +83,10 @@ static inline void cmd(int argc, char *argv[]) {
         exe_V(argc, argv);
         option_processed = 1; // 设置标志变量
         break;
+        case 'version':
+        exe_V(argc, argv);
+        option_processed = 1; // 设置标志变量
+        break;
         default:
         printf("<usage> pstree [-npV]\n");
         option_processed = 1; // 设置标志变量
