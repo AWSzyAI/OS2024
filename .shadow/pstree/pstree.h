@@ -518,7 +518,7 @@ static inline void ConstructTree(psNode *p, int **pids, int cntPIDs, int pid){
 static inline void readargs(int argc, char *argv[]){
     for (int i = 0; i < argc; i++) {
         assert(argv[i]);
-        printf("argv[%d] = %s\n", i, argv[i]);
+        // printf("argv[%d] = %s\n", i, argv[i]);
     }
 }
 #endif // PSTREE_H
