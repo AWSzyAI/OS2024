@@ -1,6 +1,11 @@
 #include "pstree.h"
 
-
+struct option long_options[] = {
+    {"version", no_argument, 0, 'V'},
+    {"show-pids",optional_argument,0,'p'},
+    {"numeric-sort",optional_argument,0,'n'},
+    {0, 0, 0, 0}
+};
 
 void deleteNode(psNode *root){
     if(!root)return;
@@ -68,7 +73,7 @@ static inline void exe_p(int argc, char *argv[]){
 static inline void cmd(int argc, char *argv[]) {
     int opt;
     int option_processed = 0; // 标志变量
-    while((opt=getopt(argc,argv,"npV"))!=-1){
+    while((opt=getopt_long(argc,argv,"npV",long_options,NULL))!=-1){
         switch (opt)
         {
         case 'n':
@@ -82,9 +87,7 @@ static inline void cmd(int argc, char *argv[]) {
         case 'V':
         exe_V(argc, argv);
         option_processed = 1; // 设置标志变量
-        break;
-        case '?': // Add a case for '?' to handle unknown options
-            
+        break;    
         default:
             if (strcmp(argv[optind - 1], "-V") == 0 || strcmp(argv[optind - 1], "--version") == 0) {
                     exe_V(argc, argv);
