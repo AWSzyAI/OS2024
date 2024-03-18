@@ -79,14 +79,19 @@ static inline void cmd(int argc, char *argv[]) {
         exe_p(argc, argv);
         option_processed = 1; // 设置标志变量
         break;
-        case 'V':
-        exe_V(argc, argv);
-        option_processed = 1; // 设置标志变量
-        break;
-        case 'version':
-        exe_V(argc, argv);
-        option_processed = 1; // 设置标志变量
-        break;
+        // case 'V':
+        // exe_V(argc, argv);
+        // option_processed = 1; // 设置标志变量
+        // break;
+        case '?': // Add a case for '?' to handle unknown options
+            if (strcmp(argv[optind - 1], "-V") == 0 || strcmp(argv[optind - 1], "--version") == 0) {
+                exe_V(argc, argv);
+                option_processed = 1;
+            } else {
+                printf("<usage> pstree [-npV]\n");
+                option_processed = 1;
+            }
+            break;  
         default:
         printf("<usage> pstree [-npV]\n");
         option_processed = 1; // 设置标志变量
