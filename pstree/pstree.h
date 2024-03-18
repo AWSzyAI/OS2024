@@ -149,7 +149,13 @@ static inline void PrintTree_p(int rootPID,psNode *root){
         while(!isEmpty(stack)){
             q = pop(stack);
             printf(isLastSibling(q)?"   ":" │ ");
-            for(int j=0;j<strlen(q->name);j++)printf(" ");
+            int pid_len = 0;
+            int x = q->pid;
+            while(x){
+                x/=10;
+                pid_len++;
+            }
+            for(int j=0;j<strlen(q->name)+2+pid_len;j++)printf(" ");
         }
         deleteStack(stack);
         printf(isLastSibling(child)?" └─":" ├─");
@@ -518,7 +524,7 @@ static inline void ConstructTree(psNode *p, int **pids, int cntPIDs, int pid){
 static inline void readargs(int argc, char *argv[]){
     for (int i = 0; i < argc; i++) {
         assert(argv[i]);
-        printf("argv[%d] = %s\n", i, argv[i]);
+        // printf("argv[%d] = %s\n", i, argv[i]);
     }
 }
 #endif // PSTREE_H
