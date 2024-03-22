@@ -4,4 +4,6 @@
 !Makefile
 !*.c
 !*.h
+!*.py
+!*.md
 !/szy
