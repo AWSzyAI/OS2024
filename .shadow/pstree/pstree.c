@@ -321,7 +321,7 @@ int countPIDs(){
     if(dir)closedir(dir);
     return count;
 }
-static inline int getPIDs(int **pids){
+int getPIDs(int **pids){
     /*
     -1 代表失败
     */
@@ -332,8 +332,8 @@ static inline int getPIDs(int **pids){
 
     int count = 1;
     int pid,ppid;
-    pids[0][0] = 1;
-    pids[0][1] = 0;
+    // pids[0][0] = 1;
+    // pids[0][1] = 0;
     while((entry = readdir(dir)) != NULL){
         if(isNumeric(entry->d_name)){
             pid  = atoi(entry->d_name);
