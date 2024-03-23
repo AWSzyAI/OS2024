@@ -112,7 +112,12 @@ static inline void PrintTree_p(int rootPID,psNode *root){
     psNode *child = root->FirstSon;
 
     // printf("%s", root->name);
-    printf("%s(%d)", root->name,root->pid);
+    if(root->pid != 0){
+        printf("%s(%d)", root->name,root->pid);
+    }else{
+        printf("%s()", root->name);
+    }
+    
     if(!child)return;
     if(isLastSibling(child)){
         printf("───");
@@ -354,7 +359,7 @@ static inline psNode * NewNode(int pid){
     if(pid == 0){
         psNode *node = (psNode*)malloc(sizeof(psNode));
         node->pid = 0;
-        node->name = "root";
+        node->name = "?";
         node->ppid = 0;
         node->depth = 0;
         node->Parent = NULL;
