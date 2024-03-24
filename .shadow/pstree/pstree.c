@@ -492,7 +492,7 @@ static inline psNode * addNewNode(int pid, psNode *root){
     }
     return root;
 }
-static inline void ConstructTree_name(psNode *p, int **pids, int cntPIDs, int pid){
+void ConstructTree_name(psNode *p, int **pids, int cntPIDs, int pid){
 
     for(int i=0;i<cntPIDs;i++){
         if(pids[i][1] == pid){
@@ -567,7 +567,7 @@ static inline void cmd_root(int argc, char *argv[]){
     for(int i=0;i<(CNT_PIDs+10);i++){
         pids[i] = (int*)malloc(2*sizeof(int));
     }
-    int cntPIDs =  getPIDs(pids);
+    int cntPIDs =  getPIDs(&pids);
     qsort(pids,cntPIDs,sizeof(int)*2,cmp_pid);// function well
     // printf("cntPIDs: %d\n",cntPIDs);
     // printArray(pids,cntPIDs);
