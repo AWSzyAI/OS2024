@@ -541,7 +541,7 @@ static inline void ConstructTree(psNode *p, int pids[3000][2], int cntPIDs, int 
 static inline void readargs(int argc, char *argv[]){
     for (int i = 0; i < argc; i++) {
         assert(argv[i]);
-        // printf("argv[%d] = %s\n", i, argv[i]);
+        printf("argv[%d] = %s\n", i, argv[i]);
     }
 }
 
@@ -603,8 +603,8 @@ static inline void exe_n(int argc, char *argv[]){
     // free(pids);
     deleteNode(root);
 }
-static inline void exe_V(int argc, char*argv[]){printf("pstree (PSmisc) 23.4\nCopyright (C) 1993-2020 Werner Almesberger and Craig Small\n\nPSmisc comes with ABSOLUTELY NO WARRANTY.\nThis is free software, and you are welcome to redistribute it under\nthe terms of the GNU General Public License.\nFor more information about these matters, see the files named COPYING.\n");}
-static inline void exe_p(int argc, char *argv[]){
+void exe_V(int argc, char*argv[]){printf("pstree (PSmisc) 23.4\nCopyright (C) 1993-2020 Werner Almesberger and Craig Small\n\nPSmisc comes with ABSOLUTELY NO WARRANTY.\nThis is free software, and you are welcome to redistribute it under\nthe terms of the GNU General Public License.\nFor more information about these matters, see the files named COPYING.\n");}
+void exe_p(int argc, char *argv[]){
     int rootPID = GetRootPID(argc,argv);
     int CNT_PIDs = countPIDs();
     // volatile int **pids = (volatile int**)malloc((CNT_PIDs+10)*sizeof(int*));
