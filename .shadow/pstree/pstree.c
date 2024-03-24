@@ -515,7 +515,7 @@ void ConstructTree_name(psNode *p, volatile int **pids, int cntPIDs, int pid){
     }
 }
 
-static inline void ConstructTree(psNode *p, int **pids, int cntPIDs, int pid){
+static inline void ConstructTree(psNode *p, volatile int **pids, int cntPIDs, int pid){
     for(int i=0;i<cntPIDs;i++){
         if(pids[i][1] == pid){
             psNode *q = NewNode(pids[i][0]);
