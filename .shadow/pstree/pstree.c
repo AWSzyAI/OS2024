@@ -588,7 +588,7 @@ static inline void cmd_root(int argc, char *argv[]){
 static inline void exe_n(int argc, char *argv[]){
     int rootPID = GetRootPID(argc,argv);
     int CNT_PIDs = countPIDs();
-    int **pids = (int**)malloc((CNT_PIDs+10)*sizeof(int*));
+    volatile int **pids = (int**)malloc((CNT_PIDs+10)*sizeof(int*));
     for(int i=0;i<(CNT_PIDs+10);i++){
         pids[i] = (int*)malloc(2*sizeof(int));
     }
@@ -605,7 +605,7 @@ static inline void exe_V(int argc, char*argv[]){printf("pstree-32/64 (OS2024 - Z
 static inline void exe_p(int argc, char *argv[]){
     int rootPID = GetRootPID(argc,argv);
     int CNT_PIDs = countPIDs();
-    int **pids = (int**)malloc((CNT_PIDs+10)*sizeof(int*));
+    volatile int **pids = (int**)malloc((CNT_PIDs+10)*sizeof(int*));
     for(int i=0;i<(CNT_PIDs+10);i++){
         pids[i] = (int*)malloc(2*sizeof(int));
     }
