@@ -351,7 +351,7 @@ int getPIDs(int **pids){
         }
         // entry = readdir(dir);
     }
-    
+
     if(dir)closedir(dir);
     return count;
 }
@@ -569,7 +569,7 @@ static inline void cmd_root(int argc, char *argv[]){
         pids[i] = (int*)malloc(2*sizeof(int));
     }
     int cntPIDs =  getPIDs(pids);
-    qsort(pids,cntPIDs,sizeof(int)*2,cmp_pid);// function well
+    qsort(&pids,cntPIDs,sizeof(int)*2,cmp_pid);// function well
     // printf("cntPIDs: %d\n",cntPIDs);
     // printArray(pids,cntPIDs);
     //构建进程树
