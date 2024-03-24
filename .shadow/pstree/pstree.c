@@ -326,7 +326,7 @@ int countPIDs(){
     if(dir)closedir(dir);
     return count;
 }
-int getPIDs(int **pids){
+int getPIDs(int pids[3000][2]){
     /*
     -1 代表失败
     */
