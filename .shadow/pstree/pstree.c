@@ -326,7 +326,7 @@ int countPIDs(){
     if(dir)closedir(dir);
     return count;
 }
-int getPIDs(volatile int **pids){
+int getPIDs(int **pids){
     /*
     -1 代表失败
     */
@@ -493,7 +493,7 @@ static inline psNode * addNewNode(int pid, psNode *root){
     }
     return root;
 }
-void ConstructTree_name(psNode *p, volatile int **pids, int cntPIDs, int pid){
+void ConstructTree_name(psNode *p, int **pids, int cntPIDs, int pid){
 
     for(int i=0;i<cntPIDs;i++){
         if(pids[i][1] == pid){
@@ -515,7 +515,7 @@ void ConstructTree_name(psNode *p, volatile int **pids, int cntPIDs, int pid){
     }
 }
 
-static inline void ConstructTree(psNode *p, volatile int **pids, int cntPIDs, int pid){
+static inline void ConstructTree(psNode *p, int **pids, int cntPIDs, int pid){
     for(int i=0;i<cntPIDs;i++){
         if(pids[i][1] == pid){
             psNode *q = NewNode(pids[i][0]);
@@ -564,10 +564,11 @@ static inline void cmd_root(int argc, char *argv[]){
     int rootPID = GetRootPID(argc,argv);
     // get all PIDs
     int CNT_PIDs = countPIDs();
-    volatile int **pids = (volatile int**)malloc((CNT_PIDs+10)*sizeof(int*));//不应该被优化
-    for(int i=0;i<(CNT_PIDs+10);i++){
-        pids[i] = (int*)malloc(2*sizeof(int));
-    }
+    // volatile int **pids = (volatile int**)malloc((CNT_PIDs+10)*sizeof(int*));//不应该被优化
+    int pids[3000][2]={0};
+    // for(int i=0;i<(CNT_PIDs+10);i++){
+    //     pids[i] = (int*)malloc(2*sizeof(int));
+    // }
     int cntPIDs =  getPIDs(pids);
     qsort(pids,cntPIDs,sizeof(int)*2,cmp_pid);// function well
     // printf("cntPIDs: %d\n",cntPIDs);
@@ -588,10 +589,11 @@ static inline void cmd_root(int argc, char *argv[]){
 static inline void exe_n(int argc, char *argv[]){
     int rootPID = GetRootPID(argc,argv);
     int CNT_PIDs = countPIDs();
-    volatile int **pids = (volatile int**)malloc((CNT_PIDs+10)*sizeof(int*));
-    for(int i=0;i<(CNT_PIDs+10);i++){
-        pids[i] = (int*)malloc(2*sizeof(int));
-    }
+    // volatile int **pids = (volatile int**)malloc((CNT_PIDs+10)*sizeof(int*));
+    int pids[3000][2]={0};
+    // for(int i=0;i<(CNT_PIDs+10);i++){
+    //     pids[i] = (int*)malloc(2*sizeof(int));
+    // }
     int cntPIDs =  getPIDs(pids);
     qsort(pids,cntPIDs,sizeof(int)*2,cmp_pid);// function well
     psNode *root = NULL;
@@ -605,10 +607,11 @@ static inline void exe_V(int argc, char*argv[]){printf("pstree-32/64 (OS2024 - Z
 static inline void exe_p(int argc, char *argv[]){
     int rootPID = GetRootPID(argc,argv);
     int CNT_PIDs = countPIDs();
-    volatile int **pids = (volatile int**)malloc((CNT_PIDs+10)*sizeof(int*));
-    for(int i=0;i<(CNT_PIDs+10);i++){
-        pids[i] = (int*)malloc(2*sizeof(int));
-    }
+    // volatile int **pids = (volatile int**)malloc((CNT_PIDs+10)*sizeof(int*));
+    int pids[3000][2]={0};
+    // for(int i=0;i<(CNT_PIDs+10);i++){
+    //     pids[i] = (int*)malloc(2*sizeof(int));
+    // }
     int cntPIDs =  getPIDs(pids);
     qsort(pids,cntPIDs,sizeof(int)*2,cmp_pid);// function well
     psNode *root = NULL;
