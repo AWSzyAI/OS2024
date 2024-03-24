@@ -326,7 +326,7 @@ int countPIDs(){
     if(dir)closedir(dir);
     return count;
 }
-int getPIDs(int **pids){
+int getPIDs(volatile int **pids){
     /*
     -1 代表失败
     */
@@ -493,7 +493,7 @@ static inline psNode * addNewNode(int pid, psNode *root){
     }
     return root;
 }
-void ConstructTree_name(psNode *p, int **pids, int cntPIDs, int pid){
+void ConstructTree_name(psNode *p, volatile int **pids, int cntPIDs, int pid){
 
     for(int i=0;i<cntPIDs;i++){
         if(pids[i][1] == pid){
