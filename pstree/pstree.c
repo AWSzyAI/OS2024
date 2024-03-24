@@ -112,7 +112,12 @@ static inline void PrintTree_p(int rootPID,psNode *root){
     psNode *child = root->FirstSon;
 
     // printf("%s", root->name);
-    printf("%s(%d)", root->name,root->pid);
+    if(root->pid != 0){
+        printf("%s(%d)", root->name,root->pid);
+    }else{
+        printf("%s()", root->name);
+    }
+    
     if(!child)return;
     if(isLastSibling(child)){
         printf("───");
@@ -307,7 +312,21 @@ static inline int getPPID(int targetPID){
     free(process.name);
     return process.ppid;
 }
-static inline int getPIDs(int **pids){
+
+int countPIDs(){
+    DIR *dir;
+    struct dirent *entry;
+    dir = opendir("/proc/");
+    if(dir == NULL){perror("opendir error");return -1;}
+    int count = 1;
+    int pid,ppid;
+    while((entry = readdir(dir)) != NULL){
+        if(isNumeric(entry->d_name))count++;
+    }
+    if(dir)closedir(dir);
+    return count;
+}
+int getPIDs(int pids[3000][2]){
     /*
     -1 代表失败
     */
@@ -332,6 +351,7 @@ static inline int getPIDs(int **pids){
         }
         // entry = readdir(dir);
     }
+
     if(dir)closedir(dir);
     return count;
 }
@@ -340,7 +360,7 @@ static inline psNode * NewNode(int pid){
     if(pid == 0){
         psNode *node = (psNode*)malloc(sizeof(psNode));
         node->pid = 0;
-        node->name = "root";
+        node->name = "?";
         node->ppid = 0;
         node->depth = 0;
         node->Parent = NULL;
@@ -473,7 +493,7 @@ static inline psNode * addNewNode(int pid, psNode *root){
     }
     return root;
 }
-static inline void ConstructTree_name(psNode *p, int **pids, int cntPIDs, int pid){
+void ConstructTree_name(psNode *p, int pids[3000][2], int cntPIDs, int pid){
 
     for(int i=0;i<cntPIDs;i++){
         if(pids[i][1] == pid){
@@ -495,7 +515,7 @@ static inline void ConstructTree_name(psNode *p, int **pids, int cntPIDs, int pi
     }
 }
 
-static inline void ConstructTree(psNode *p, int **pids, int cntPIDs, int pid){
+static inline void ConstructTree(psNode *p, int pids[3000][2], int cntPIDs, int pid){
     for(int i=0;i<cntPIDs;i++){
         if(pids[i][1] == pid){
             psNode *q = NewNode(pids[i][0]);
@@ -543,10 +563,12 @@ static inline void cmd_root(int argc, char *argv[]){
     //读取参数，定义root PID
     int rootPID = GetRootPID(argc,argv);
     // get all PIDs
-    int **pids = (int**)malloc(1000*sizeof(int*));
-    for(int i=0;i<1000;i++){
-        pids[i] = (int*)malloc(2*sizeof(int));
-    }
+    int CNT_PIDs = countPIDs();
+    // volatile int **pids = (volatile int**)malloc((CNT_PIDs+10)*sizeof(int*));//不应该被优化
+    int pids[3000][2]={0};
+    // for(int i=0;i<(CNT_PIDs+10);i++){
+    //     pids[i] = (int*)malloc(2*sizeof(int));
+    // }
     int cntPIDs =  getPIDs(pids);
     qsort(pids,cntPIDs,sizeof(int)*2,cmp_pid);// function well
     // printf("cntPIDs: %d\n",cntPIDs);
@@ -561,38 +583,42 @@ static inline void cmd_root(int argc, char *argv[]){
     //最后输出进程树
     PrintTree(rootPID,root);
     //释放内存
-    free(pids);
+    // free(pids);
     deleteNode(root);
 }
 static inline void exe_n(int argc, char *argv[]){
     int rootPID = GetRootPID(argc,argv);
-    int **pids = (int**)malloc(1000*sizeof(int*));
-    for(int i=0;i<1000;i++){
-        pids[i] = (int*)malloc(2*sizeof(int));
-    }
+    int CNT_PIDs = countPIDs();
+    // volatile int **pids = (volatile int**)malloc((CNT_PIDs+10)*sizeof(int*));
+    int pids[3000][2]={0};
+    // for(int i=0;i<(CNT_PIDs+10);i++){
+    //     pids[i] = (int*)malloc(2*sizeof(int));
+    // }
     int cntPIDs =  getPIDs(pids);
     qsort(pids,cntPIDs,sizeof(int)*2,cmp_pid);// function well
     psNode *root = NULL;
     root = addNewNode(rootPID, root);
     ConstructTree(root, pids, cntPIDs, rootPID);
     PrintTree(rootPID,root);
-    free(pids);
+    // free(pids);
     deleteNode(root);
 }
 static inline void exe_V(int argc, char*argv[]){printf("pstree-32/64 (OS2024 - Ziyan Shi) version 0.0.1\nCopyright (C) 2024-2024 NJU and Ziyan Shi\nPSmisc comes with ABSOLUTELY NO WARRANTY.\nThis is free software, and you are welcome to redistribute it under the terms of the GNU General Public License.\nFor more information about these matters, see the files named COPYING\n");}
 static inline void exe_p(int argc, char *argv[]){
     int rootPID = GetRootPID(argc,argv);
-    int **pids = (int**)malloc(1000*sizeof(int*));
-    for(int i=0;i<1000;i++){
-        pids[i] = (int*)malloc(2*sizeof(int));
-    }
+    int CNT_PIDs = countPIDs();
+    // volatile int **pids = (volatile int**)malloc((CNT_PIDs+10)*sizeof(int*));
+    int pids[3000][2]={0};
+    // for(int i=0;i<(CNT_PIDs+10);i++){
+    //     pids[i] = (int*)malloc(2*sizeof(int));
+    // }
     int cntPIDs =  getPIDs(pids);
     qsort(pids,cntPIDs,sizeof(int)*2,cmp_pid);// function well
     psNode *root = NULL;
     root = addNewNode(rootPID, root);
     ConstructTree(root, pids, cntPIDs, rootPID);
     PrintTree_p(rootPID,root);
-    free(pids);
+    // free(pids);
     deleteNode(root);
 }
 static inline void cmd(int argc, char *argv[]) {
