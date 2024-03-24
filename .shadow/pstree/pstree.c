@@ -564,7 +564,7 @@ static inline void cmd_root(int argc, char *argv[]){
     int rootPID = GetRootPID(argc,argv);
     // get all PIDs
     int CNT_PIDs = countPIDs();
-    int **pids = (int**)malloc((CNT_PIDs+10)*sizeof(int*));
+    volatile int **pids = (int**)malloc((CNT_PIDs+10)*sizeof(int*));//不应该被优化
     for(int i=0;i<(CNT_PIDs+10);i++){
         pids[i] = (int*)malloc(2*sizeof(int));
     }
