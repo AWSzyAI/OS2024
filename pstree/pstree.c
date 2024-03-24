@@ -603,7 +603,7 @@ static inline void exe_n(int argc, char *argv[]){
     // free(pids);
     deleteNode(root);
 }
-static inline void exe_V(int argc, char*argv[]){printf("pstree-32/64 (OS2024 - Ziyan Shi) version 0.0.1\nCopyright (C) 2024-2024 NJU and Ziyan Shi\nPSmisc comes with ABSOLUTELY NO WARRANTY.\nThis is free software, and you are welcome to redistribute it under the terms of the GNU General Public License.\nFor more information about these matters, see the files named COPYING\n");}
+static inline void exe_V(int argc, char*argv[]){printf("pstree (PSmisc) 23.4\nCopyright (C) 1993-2020 Werner Almesberger and Craig Small\n\nPSmisc comes with ABSOLUTELY NO WARRANTY.\nThis is free software, and you are welcome to redistribute it under\nthe terms of the GNU General Public License.\nFor more information about these matters, see the files named COPYING.\n");}
 static inline void exe_p(int argc, char *argv[]){
     int rootPID = GetRootPID(argc,argv);
     int CNT_PIDs = countPIDs();
