@@ -1,6 +1,7 @@
 NAME := hello
 SRCS := hello.c
 export ARCH := x86-qemu
+AM_HOME := /home/ziyan/Lessons/os-workbench/abstract-machine
 
 include $(AM_HOME)/Makefile
 
