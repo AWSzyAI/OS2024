@@ -8,9 +8,9 @@
 #include "mini-rv32ima.h"
 
 #define RAM_SIZE (64*1024*1024) // Just default RAM amount is 64MB.
-#define RAM_TEXT_START   0
+#define RAM_TEXT_START   0 // RAM 中的文本段（通常用于存储程序的代码）的起始地址
 #define RAM_TEXT_END     RAM_STACK_START
-#define RAM_STACK_START (RAM_SIZE/2)
+#define RAM_STACK_START (RAM_SIZE/2) // RAM 中的栈段（通常用于存储函数调用的上下文，局部变量）的起始地址
 #define RAM_STACK_END    RAM_SIZE
 
 void DumpState(struct CPUState * core) {
@@ -18,13 +18,14 @@ void DumpState(struct CPUState * core) {
 	uint32_t pc_offset = pc - RAM_TEXT_START;
 	uint32_t ir = 0;
 	printf(" PC:%08x", pc);
-	if (pc_offset >= 0 && pc_offset < RAM_TEXT_END - 3) {
+	if (pc_offset >= 0 && pc_offset < RAM_TEXT_END - 3) {//RAM_TEXT_END - 3是因为指令的长度是4字节
 		ir = *((uint32_t*)(&((uint8_t*)core->mem)[pc_offset]));
 		printf(" [%08x]", ir);
 	} else {
 		printf(" [xxxxxxxx]");
     }
     printf("\n");
+
     uint32_t * regs = core->regs;
 	printf("  Z:%08x  ra:%08x  sp:%08x  gp:%08x\n",  regs[Z], regs[RA], regs[SP], regs[GP]);
     printf(" tp:%08x  t0:%08x  t1:%08x  t2:%08x\n", regs[TP], regs[T0], regs[T1], regs[T2]);
@@ -34,7 +35,8 @@ void DumpState(struct CPUState * core) {
     printf(" s4:%08x  s5:%08x  s6:%08x  s7:%08x\n", regs[S4], regs[S5], regs[S6], regs[S7]);
     printf(" s8:%08x  s9:%08x s10:%08x s11:%08x\n", regs[S8], regs[S9], regs[S10], regs[S11]);
     printf(" t3:%08x  t4:%08x  t5:%08x  t6:%08x\n", regs[T3], regs[T4], regs[T5], regs[T6]);
-	uint32_t * csrs = core->csrs;
+	
+    uint32_t * csrs = core->csrs;//（Control and Status Register，控制和状态寄存器）
     printf("CYCLEL:%08x CYCLEH:%08x EXTRAFLAGS:%08x\n", csrs[CYCLEL], csrs[CYCLEH], csrs[EXTRAFLAGS]);
     printf("stack (sp:%08x):\n", regs[2]);
     for (int sp = regs[2]; sp < core->mem_size; sp += sizeof(int32_t)) {
@@ -43,9 +45,9 @@ void DumpState(struct CPUState * core) {
     printf("%#08x\n", RAM_STACK_END);
     printf("\n");
 }
-int xtoi(char * s) {
+int xtoi(char * s) {//将十六进制字符串转换为整数
     int res = 0;
-    for (int i = 2; s[i]; i ++) {
+    for (int i = 2; s[i]; i ++) {//i=2, 十六进制数通常以 0x 开头，所以这里跳过了前两个字符
         res *= 16;
         if (s[i] >= 'a' && s[i] <= 'f') {
             res =+ s[i] - 'a';
