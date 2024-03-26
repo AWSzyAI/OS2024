@@ -1,4 +1,5 @@
 all: sum
+TLIB_PATH := /home/ziyan/Lessons/os-workbench/thread-lib
 
 CFLAGS := -O2 -I$(TLIB_PATH)
 
