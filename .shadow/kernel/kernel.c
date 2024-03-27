@@ -81,7 +81,7 @@ void draw_file(char *path){
   //解析path对应的jpg文件，获取像素数据
   int color = 0xff0000;
   for(int j = 0; j < h; j+=h/10){
-    for(int i = 0; i < w * h; i++){
+    for(int i = 0; i < w; i++){
       pixels[i] = color;
     }
     color = color + 0x0000ff;
