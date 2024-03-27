@@ -53,7 +53,7 @@ void splash() {
   }
 }
 
-void L0(char *path){
+void L0(){
   AM_GPU_CONFIG_T info = {0};
   ioe_read(AM_GPU_CONFIG, &info);
   w = info.width;
@@ -173,7 +173,7 @@ void L0(char *path){
       }
     }
   }
-  
+
 }
 
 // Operating system is a C program!
@@ -184,8 +184,8 @@ int main(const char *args) {
   puts(args);  // make run mainargs=xxx
   puts("\"\n");
 
-  splash();
-  // L0("./szy.png");
+  // splash();
+  L0();
 
 
   puts("Press any key to see its key code...\n");
