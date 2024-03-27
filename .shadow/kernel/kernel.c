@@ -79,13 +79,16 @@ void draw_file(char *path){
   };
 
   //解析path对应的jpg文件，获取像素数据
-  int color = 0xff0000;
-  for(int j = 0; j < h; j+=h/10){
-    for(int i = 0; i < w; i++){
-      pixels[i] = color;
+  for (int x = 0; x * SIDE <= w; x ++) {
+    for (int y = 0; y * SIDE <= h; y++) {
+      if(x % 2 == 0 && y % 2 == 0){
+        pixels[x + y * w] = 0x800080; // purple
+      }else{
+        pixels[x + y * w] = 0x00ff00; // green
+      }
     }
-    color = color + 0x0000ff;
   }
+
   
   ioe_write(AM_GPU_FBDRAW, &event);
 
