@@ -23,6 +23,9 @@ void print_key() {
     puts("Key pressed: ");
     puts(key_names[event.keycode]);
     puts("\n");
+    if(event.keycode == AM_KEY_ESCAPE){
+      halt(0);
+    }
   }
 }
 
@@ -53,126 +56,22 @@ void splash() {
   }
 }
 
-void L0(){
+
+//szy.jpg 800px*600px
+
+void draw_file(char *path){
   AM_GPU_CONFIG_T info = {0};
   ioe_read(AM_GPU_CONFIG, &info);
   w = info.width;
   h = info.height;
+  //w h support 320×200、640×480、800×600px
 
-  int x = 0;
-  int y = 0;
-  for (; x * SIDE <= w/4; x ++) {
-    for (; y * SIDE <= h/4; y++) {
-      if ((x & 1) ^ (y & 1)) {
-        draw_tile(x * SIDE, y * SIDE, SIDE, SIDE, 0xffffff); // white
-      }
-    }
-  }
-  for (; x * SIDE <= w/4; x ++) {
-    for (; y * SIDE <= h/2; y++) {
-      if ((x & 1) ^ (y & 1)) {
-        draw_tile(x * SIDE, y * SIDE, SIDE, SIDE, 0xff0000); // red
-      }
-    }
-  }
-  for (; x * SIDE <= w/4; x ++) {
-    for (; y * SIDE <= h/4*3; y++) {
-      if ((x & 1) ^ (y & 1)) {
-        draw_tile(x * SIDE, y * SIDE, SIDE, SIDE, 0x00ff00); // green
-      }
-    }
-  }
-  for (; x * SIDE <= w/4; x ++) {
-    for (; y * SIDE <= h; y++) {
-      if ((x & 1) ^ (y & 1)) {
-        draw_tile(x * SIDE, y * SIDE, SIDE, SIDE, 0x0000ff); // blue
-      }
-    }
-  }
-  for (; x * SIDE <= w/2; x ++) {
-    for (; y * SIDE <= h/4; y++) {
-      if ((x & 1) ^ (y & 1)) {
-        draw_tile(x * SIDE, y * SIDE, SIDE, SIDE, 0xffff00); // yellow
-      }
-    }
-  }
-  for (; x * SIDE <= w/2; x ++) {
-    for (; y * SIDE <= h/2; y++) {
-      if ((x & 1) ^ (y & 1)) {
-        draw_tile(x * SIDE, y * SIDE, SIDE, SIDE, 0xff00ff); // purple
-      }
-    }
-  }
-  for (; x * SIDE <= w/2; x ++) {
-    for (; y * SIDE <= h/4*3; y++) {
-      if ((x & 1) ^ (y & 1)) {
-        draw_tile(x * SIDE, y * SIDE, SIDE, SIDE, 0x00ffff); // cyan
-      }
-    }
-  }
-  for (; x * SIDE <= w/2; x ++) {
-    for (; y * SIDE <= h; y++) {
-      if ((x & 1) ^ (y & 1)) {
-        draw_tile(x * SIDE, y * SIDE, SIDE, SIDE, 0x000000); // black
-      }
-    }
-  }
-  for (; x * SIDE <= w/4*3; x ++) {
-    for (; y * SIDE <= h/4; y++) {
-      if ((x & 1) ^ (y & 1)) {
-        draw_tile(x * SIDE, y * SIDE, SIDE, SIDE, 0x7f7f7f); // gray
-      }
-    }
-  }
-  for (; x * SIDE <= w/4*3; x ++) {
-    for (; y * SIDE <= h/2; y++) {
-      if ((x & 1) ^ (y & 1)) {
-        draw_tile(x * SIDE, y * SIDE, SIDE, SIDE, 0x7f0000); // dark red
-      }
-    }
-  }
-  for (; x * SIDE <= w/4*3; x ++) {
-    for (; y * SIDE <= h/4*3; y++) {
-      if ((x & 1) ^ (y & 1)) {
-        draw_tile(x * SIDE, y * SIDE, SIDE, SIDE, 0x007f00); // dark green
-      }
-    }
-  }
-  for (; x * SIDE <= w/4*3; x ++) {
-    for (; y * SIDE <= h; y++) {
-      if ((x & 1) ^ (y & 1)) {
-        draw_tile(x * SIDE, y * SIDE, SIDE, SIDE, 0x00007f); // dark blue
-      }
-    }
-  }
-  for (; x * SIDE <= w; x ++) {
-    for (; y * SIDE <= h/4; y++) {
-      if ((x & 1) ^ (y & 1)) {
-        draw_tile(x * SIDE, y * SIDE, SIDE, SIDE, 0x7f7f00); // dark yellow
-      }
-    }
-  }
-  for (; x * SIDE <= w; x ++) {
-    for (; y * SIDE <= h/2; y++) {
-      if ((x & 1) ^ (y & 1)) {
-        draw_tile(x * SIDE, y * SIDE, SIDE, SIDE, 0x7f007f); // dark purple
-      }
-    }
-  }
-  for (; x * SIDE <= w; x ++) {
-    for (; y * SIDE <= h/4*3; y++) {
-      if ((x & 1) ^ (y & 1)) {
-        draw_tile(x * SIDE, y * SIDE, SIDE, SIDE, 0x007f7f); // dark cyan
-      }
-    }
-  }
-  for (; x * SIDE <= w; x ++) {
-    for (; y * SIDE <= h; y++) {
-      if ((x & 1) ^ (y & 1)) {
-        draw_tile(x * SIDE, y * SIDE, SIDE, SIDE, 0x7f7f7f); // gray
-      }
-    }
-  }
+  // read the file,judge jpg, png...
+  // read the file, get the width and height of the picture
+  // read the file, get the pixel data of the picture
+  // draw the picture on the screen
+
+  
 
 }
 
@@ -184,8 +83,8 @@ int main(const char *args) {
   puts(args);  // make run mainargs=xxx
   puts("\"\n");
 
-  // splash();
-  L0();
+  splash();
+  // draw_file("./szy.png");
 
 
   puts("Press any key to see its key code...\n");
