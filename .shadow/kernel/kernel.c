@@ -3,6 +3,7 @@
 #include <klib.h>
 #include <klib-macros.h>
 
+
 #define SIDE 16
 
 static int w, h;  // Screen size
@@ -52,6 +53,9 @@ void splash() {
   }
 }
 
+void L0(char *path){
+}
+
 // Operating system is a C program!
 int main(const char *args) {
   ioe_init();
@@ -60,7 +64,9 @@ int main(const char *args) {
   puts(args);  // make run mainargs=xxx
   puts("\"\n");
 
-  // splash();
+  splash();
+  // L0("./szy.png");
+
 
   puts("Press any key to see its key code...\n");
   while (1) {
