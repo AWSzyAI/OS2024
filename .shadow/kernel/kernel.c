@@ -58,6 +58,8 @@ void splash() {
 
 
 //szy.jpg 800px*600px
+//szy.jpg: JPEG image data, JFIF standard 1.01, resolution (DPI), 
+//density 120x120, segment length 16, baseline, precision 8, 800x600, components 3
 
 void draw_file(char *path){
   AM_GPU_CONFIG_T info = {0};
@@ -70,8 +72,22 @@ void draw_file(char *path){
   // read the file, get the width and height of the picture
   // read the file, get the pixel data of the picture
   // draw the picture on the screen
+  uint32_t pixels[w * h]; // WARNING: large stack-allocated memory
+  AM_GPU_FBDRAW_T event = {
+    .x = 0, .y = 0, .w = w, .h = h, .sync = 1,
+    .pixels = pixels,
+  };
 
+  //解析path对应的jpg文件，获取像素数据
+  int color = 0xff0000;
+  for(int j = 0; j < h; j+=h/10){
+    for(int i = 0; i < w * h; i++){
+      pixels[i] = color;
+    }
+    color = color + 0x0000ff;
+  }
   
+  ioe_write(AM_GPU_FBDRAW, &event);
 
 }
 
@@ -83,8 +99,8 @@ int main(const char *args) {
   puts(args);  // make run mainargs=xxx
   puts("\"\n");
 
-  splash();
-  // draw_file("./szy.png");
+  // splash();
+  draw_file("./szy.png");
 
 
   puts("Press any key to see its key code...\n");
