@@ -66,31 +66,24 @@ void draw_file(char *path){
   ioe_read(AM_GPU_CONFIG, &info);
   w = info.width;
   h = info.height;
-  //w h support 320×200、640×480、800×600px
-
-  // read the file,judge jpg, png...
-  // read the file, get the width and height of the picture
-  // read the file, get the pixel data of the picture
-  // draw the picture on the screen
-  uint32_t pixels[w * h]; // WARNING: large stack-allocated memory
-  AM_GPU_FBDRAW_T event = {
-    .x = 0, .y = 0, .w = w, .h = h, .sync = 1,
-    .pixels = pixels,
-  };
-
-  //解析path对应的jpg文件，获取像素数据
   for (int x = 0; x * SIDE <= w; x ++) {
     for (int y = 0; y * SIDE <= h; y++) {
-      if(x % 2 == 0 && y % 2 == 0){
-        pixels[x + y * w] = 0x800080; // purple
-      }else{
-        pixels[x + y * w] = 0x00ff00; // green
+      int choice=x%10;
+      switch(choice){
+        case 0: draw_tile(x * SIDE, y * SIDE, SIDE, SIDE, 0x000000); break;
+        case 1: draw_tile(x * SIDE, y * SIDE, SIDE, SIDE, 0x0000ff); break;
+        case 2: draw_tile(x * SIDE, y * SIDE, SIDE, SIDE, 0x00ff00); break;
+        case 3: draw_tile(x * SIDE, y * SIDE, SIDE, SIDE, 0x00ffff); break;
+        case 4: draw_tile(x * SIDE, y * SIDE, SIDE, SIDE, 0xff0000); break;
+        case 5: draw_tile(x * SIDE, y * SIDE, SIDE, SIDE, 0xff00ff); break;
+        case 6: draw_tile(x * SIDE, y * SIDE, SIDE, SIDE, 0xffff00); break;
+        case 7: draw_tile(x * SIDE, y * SIDE, SIDE, SIDE, 0xffffff); break;
+        case 8: draw_tile(x * SIDE, y * SIDE, SIDE, SIDE, 0x000000); break;
+        case 9: draw_tile(x * SIDE, y * SIDE, SIDE, SIDE, 0x006400); break;
+        default: draw_tile(x * SIDE, y * SIDE, SIDE, SIDE, 0x000000); break;
       }
     }
   }
-
-  
-  ioe_write(AM_GPU_FBDRAW, &event);
 
 }
 
