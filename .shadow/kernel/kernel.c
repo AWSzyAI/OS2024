@@ -100,7 +100,10 @@ void draw_szy(int x, int y, int w, int h) {
   };
   for(int i=0;i<w;i++){
     for(int j=0;j<h;j++){
-      pixels[i*w+j] = mergeRGB(0xff,0xff,0xff);
+      uint8_t r = 0xff;
+      uint8_t g = 0xff;
+      uint8_t b = 0xff;
+      pixels[i*w+j] = (r << 16) | (g << 8) | b;
     }
   }
   ioe_write(AM_GPU_FBDRAW, &event);
