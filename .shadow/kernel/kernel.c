@@ -89,12 +89,12 @@ void draw_szy() {
   // assert(w==800&&h==600);
   for(int i=0;i<w;i++){
     for(int j=0;j<h;j++){
-      // uint8_t r = 0xff;
-      // uint8_t g = 0xff;
-      // uint8_t b = 0xff;
+      unsigned char r = 0x00;
+      unsigned char g = 0x64;
+      unsigned char b = 0x00;
       // *(pixels+i*w+j) = (r << 16) | (g << 8) | b;
-      draw_tile(i, j, 1, 1, 0x006400);
-      // draw_tile(i, j, 1, 1, (r << 16) | (g << 8) | b);
+      // draw_tile(i, j, 1, 1, 0x006400);
+      draw_tile(i, j, 1, 1, (r << 16) | (g << 8)|b);
     }
   }
 }
