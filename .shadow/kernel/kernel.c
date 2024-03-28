@@ -56,13 +56,10 @@ void splash() {
   }
 }
 
-uint32_t mergeRGB(unsigned char r, unsigned char g, unsigned char b) {
-  return (r << 16) | (g << 8) | b;
-}
 
 
 void L0();
-void draw_szy(int x, int y, int w, int h);
+void draw_szy();
 
 // Operating system is a C program!
 int main(const char *args) {
@@ -72,10 +69,10 @@ int main(const char *args) {
   puts(args);  // make run mainargs=xxx
   puts("\"\n");
   
-  L0();
+  // L0();
   // splash();
   // draw_file("./szy.png");
-  // draw_szy(0,0,800,600);  
+  draw_szy();  
 
   puts("Press any key to see its key code...\n");
   while (1) {
@@ -84,7 +81,7 @@ int main(const char *args) {
   return 0;
 }
 
-void draw_szy(int x, int y, int w, int h) {
+void draw_szy() {
   AM_GPU_CONFIG_T info = {0};
   ioe_read(AM_GPU_CONFIG, &info);
   w = info.width;
@@ -94,15 +91,18 @@ void draw_szy(int x, int y, int w, int h) {
 
   uint32_t pixels[w*h]; // WARNING: large stack-allocated memory
   AM_GPU_FBDRAW_T event = {
-    .x = x, .y = x, .w = w, .h = h, .sync = 1,
+    .x = 0, .y = 0, .w = w, .h = h, .sync = 1,
     .pixels = pixels,
   };
+
+  
   for(int i=0;i<w;i++){
     for(int j=0;j<h;j++){
       uint8_t r = 0xff;
       uint8_t g = 0xff;
       uint8_t b = 0xff;
-      *(pixels+i*w+j) = (r << 16) | (g << 8) | b;
+      // *(pixels+i*w+j) = (r << 16) | (g << 8) | b;
+      draw_tile(i, j, 1, 1, (r << 16) | (g << 8) | b);
     }
   }
   ioe_write(AM_GPU_FBDRAW, &event);
