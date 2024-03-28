@@ -103,7 +103,7 @@ void draw_szy(int x, int y, int w, int h) {
       uint8_t r = 0xff;
       uint8_t g = 0xff;
       uint8_t b = 0xff;
-      pixels[i*w+j] = (r << 16) | (g << 8) | b;
+      *(pixels+i*w+j) = (r << 16) | (g << 8) | b;
     }
   }
   ioe_write(AM_GPU_FBDRAW, &event);
