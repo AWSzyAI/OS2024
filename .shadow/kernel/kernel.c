@@ -98,9 +98,11 @@ void draw_szy(int x, int y, int w, int h) {
     .x = x, .y = x, .w = w, .h = h, .sync = 1,
     .pixels = pixels,
   };
-  // for (int i = 0; i < w*h; i++) {
-  //   pixels[i] = mergeRGB(szy_rgb[3*i],szy_rgb[3*i+1],szy_rgb[3*i+2]);
-  // }
+  for(int i=0;i<w;i++){
+    for(int j=0;j<h;j++){
+      pixels[i*w+j] = mergeRGB(0xff,0xff,0xff);
+    }
+  }
   ioe_write(AM_GPU_FBDRAW, &event);
 }
 
