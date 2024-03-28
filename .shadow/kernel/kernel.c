@@ -73,10 +73,9 @@ int main(const char *args) {
   puts("\"\n");
   
   // L0();
-  // splash();
+  splash();
   // draw_file("./szy.png");
-  draw_szy(0,0,800,600);  
-
+  // draw_szy(0,0,800,600);  
 
   puts("Press any key to see its key code...\n");
   while (1) {
