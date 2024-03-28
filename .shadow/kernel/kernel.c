@@ -89,12 +89,6 @@ void draw_szy() {
 
   assert(w==800&&h==600);
 
-  uint32_t pixels[w*h]; // WARNING: large stack-allocated memory
-  AM_GPU_FBDRAW_T event = {
-    .x = 0, .y = 0, .w = w, .h = h, .sync = 1,
-    .pixels = pixels,
-  };
-
   
   for(int i=0;i<w;i++){
     for(int j=0;j<h;j++){
@@ -105,7 +99,7 @@ void draw_szy() {
       draw_tile(i, j, 1, 1, (r << 16) | (g << 8) | b);
     }
   }
-  ioe_write(AM_GPU_FBDRAW, &event);
+  
 }
 
 
