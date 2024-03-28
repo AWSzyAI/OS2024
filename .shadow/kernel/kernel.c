@@ -4,6 +4,7 @@
 #include <klib-macros.h>
 
 
+
 #define SIDE 16
 static int w, h;  // Screen size
 
@@ -94,6 +95,10 @@ void draw_szy() {
       unsigned char b = 0x00;
       // *(pixels+i*w+j) = (r << 16) | (g << 8) | b;
       // draw_tile(i, j, 1, 1, 0x006400);
+
+      // unsigned char r = *(szy_rgb+(i*w+j)*3);
+      // unsigned char g = *(szy_rgb+(i*w+j)*3+1);
+      // unsigned char b = *(szy_rgb+(i*w+j)*3+2);
       draw_tile(i, j, 1, 1, (r << 16) | (g << 8)|b);
     }
   }
