@@ -72,8 +72,8 @@ int main(const char *args) {
   puts(args);  // make run mainargs=xxx
   puts("\"\n");
   
-  // L0();
-  splash();
+  L0();
+  // splash();
   // draw_file("./szy.png");
   // draw_szy(0,0,800,600);  
 
