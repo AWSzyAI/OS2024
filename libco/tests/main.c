@@ -13,7 +13,7 @@ static void add_count() {
 static int get_count() {
     return g_count;
 }
-
+ 
 static void work_loop(void *arg) {
     const char *s = (const char*)arg;
     for (int i = 0; i < 100; ++i) {
