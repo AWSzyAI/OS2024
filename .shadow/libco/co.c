@@ -2,6 +2,8 @@
 #include <stdlib.h>
 
 struct co {
+    int id;
+    
 };
 
 struct co *co_start(const char *name, void (*func)(void *), void *arg) {
@@ -15,4 +17,6 @@ void co_wait(struct co *co) {
 }
 
 void co_yield() {
+    //当前协程主动让出 CPU，调度执行其他协程
+    
 }
