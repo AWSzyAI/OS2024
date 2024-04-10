@@ -69,14 +69,15 @@ struct co *co_start(const char *name, void (*func)(void *), void *arg) {
     co->arg = arg;
     co->status = CO_NEW;
     co->waiterp = NULL;
+
     debug("co_start(%s):%s\n",co->name,"CO_NEW");
-    int val=setjmp(co->context.env);
-    if(val==0){
-        debug("Calling func\n");
-        co->func(co->arg);
-    }else{
-        debug("Back to co_start\n");
-    }
+
+    // int val=setjmp(co->context.env);
+    // if(val==0){
+    //     debug("Calling func\n");
+    // }else{
+    //     debug("Back to co_start\n");
+    // }
     // 新状态机的 %rsp 寄存器应该指向它独立的堆栈，
     // 以便在调用 co_yield 时能够恢复到这个堆栈。
     // 为了实现这一点，我们需要设置一个新的堆栈指针，
@@ -84,11 +85,9 @@ struct co *co_start(const char *name, void (*func)(void *), void *arg) {
     // %rip 寄存器应该指向 co_start 传递的 func 参数。
     // 根据 32/64-bit，参数也应该被保存在正确的位置 
 
-    if(current==NULL){
-        current = co;
-    }else{
-        co_stack[co_stack_count++] = co;
-    }
+    
+    co_stack[co_stack_count++] = co;
+    
 
     return co;
 }
@@ -120,38 +119,28 @@ struct co* next_co(){
 void co_yield() {
     debug("co_yield()\n");
     
+    // 在 co_yield() 被调用时，setjmp 保存寄存器现场后会立即返回 0，
     int val = setjmp(current->context.env);
     if (val == 0) {// 保存当前的执行环境
+        // 此时我们需要选择下一个待运行的协程 (相当于修改 current)，
         debug("%s\n",current->name);
-        
-    } else { // 当 longjmp 被调用时，程序会回到这里
-        // ?
-    }
-
-    // 1-保存当前协程的上下文 (context)，包括寄存器 (register) 和堆栈指针 (stack pointer)
-    setcontext(&current->context);
-    current->status = CO_RUNNING;
-    
-    // 2-选择一个另一个协程，
-    current = next_co();
-
-    
-    // 3- 恢复选定协程的状态并运行
-    getcontext(&current->context);
-    
-    if (current->status == CO_NEW) {
+        current->status = CO_WAITING;
+        current = next_co();
+        // 并切换到这个协程运行。
+        // longjmp(current->context.env, 1);//?
         current->status = CO_RUNNING;
         current->func(current->arg);
-    } else {
+    } else { // 当 longjmp 被调用时，程序会回到这里,恢复当前的执行环境，继续执行
+        debug("Back to co_yield\n");
         current->status = CO_RUNNING;
-        setcontext(&current->context);
+        longjmp(current->context.env, 1);
     }
 }
 
 
 __attribute__((constructor))
-void init() {
-    debug("init\n");
+void co_init() {
+    debug("co_init()\n");
     current = co_start("main", NULL, NULL);
 }
 
