@@ -10,6 +10,8 @@
     // swapcontext(&current->context, &co->context);
 
 
+#include<stdio.h>
+
 struct context{
     uint64_t rax;//存储函数的返回值
     
