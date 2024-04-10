@@ -49,8 +49,14 @@ struct co {
 };
 
 struct co* current;
-struct co* co_pool[128];
-int co_pool_count = 0;
+//协程池
+// struct co* co_pool[128];
+// int co_pool_count = 0;
+
+//协程栈
+struct co* co_stack[128];
+int co_stack_count = 0;
+
 
 
 //func(arg)被 co_start() 调用，从头开始运行
@@ -78,6 +84,12 @@ struct co *co_start(const char *name, void (*func)(void *), void *arg) {
     // }
     // p->waiterp = co;
     debug("co_start\n");
+    if(current==NULL){
+        current = co;
+    }else{
+        co_stack[co_stack_count++] = co;
+    }
+
     return co;
 }
 
@@ -86,48 +98,40 @@ void co_wait(struct co *co) {
     // 执行co的函数
     co->status=CO_WAITING;
     debug("co_wait\n");
-    co->func(co->arg);
+    co->func(co->arg); 
     co->status=CO_DEAD;
     debug("co_wait end\n");
     free(co);// 每个协程只能被 co_wait 一次
 }
 
+struct co* next_co(){
+    //选择另一个状态为`CO_RUNNING`或`CO_WAITING`的协程
+    struct co* co = NULL;
+    for(int i=0;i<co_stack_count;i++){
+        if(co_stack[i]->status==CO_RUNNING || co_stack[i]->status==CO_WAITING){
+            co = co_stack[i];
+            break;
+        }
+    }
+    return co;
+}
+
+
 void co_yield() {
-    
-    // 保存当前协程的上下文 (context)，包括寄存器 (register) 和堆栈指针 (stack pointer)
     debug("co_yield\n");
-    debug("%s\n",current->name);
     debug("debug name\n");
+
+    // 1-保存当前协程的上下文 (context)，包括寄存器 (register) 和堆栈指针 (stack pointer)
     setcontext(&current->context);
     current->status = CO_RUNNING;
     
-    //选择一个另一个协程，
-    //选择另一个状态为`CO_RUNNING`或`CO_WAITING`的协程
-    struct co *ready_co_list[64];
-    int ready_co_count = 0;
-    for (int i = 0; i < co_pool_count; i++) {
-        if (co_pool[i]->status == CO_RUNNING || co_pool[i]->status == CO_WAITING) {
-            ready_co_list[ready_co_count++] = co_pool[i];
-        }
-    }
-    // 如果没有其他可运行的协程，直接返回
-    if (ready_co_count == 0) {
-        return;
-    }
+    // 2-选择一个另一个协程，
+    current = next_co();
 
-    // 初始化随机数生成器
-    srand(time(NULL));
-
-    // 随机选择一个协程
-    int next_co_index = rand() % ready_co_count;
-
-    // 切换到选定的协程
-    current = ready_co_list[next_co_index];
-
-    // 将寄存器加载到 CPU 上    
-    // 恢复选定协程的状态并运行
+    
+    // 3- 恢复选定协程的状态并运行
     getcontext(&current->context);
-    printf("get context %d\n",next_co_index);
+    
     if (current->status == CO_NEW) {
         current->status = CO_RUNNING;
         current->func(current->arg);
