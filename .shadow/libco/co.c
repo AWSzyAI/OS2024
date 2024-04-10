@@ -63,13 +63,14 @@ void getcontext(struct context *ctx) {
         "mov %%r13, %13;"
         "mov %%r14, %14;"
         "mov %%r15, %15;"
-        "mov %%rip, %16;"
+        "lea (%%rip), %%rax;"
+        "mov %%rax, %16;"
         : "=m"(ctx->rax), "=m"(ctx->rcx), "=m"(ctx->rdx), "=m"(ctx->rsi), "=m"(ctx->rdi),
           "=m"(ctx->r8), "=m"(ctx->r9), "=m"(ctx->r10), "=m"(ctx->r11), "=m"(ctx->rbx),
           "=m"(ctx->rbp), "=m"(ctx->rsp), "=m"(ctx->r12), "=m"(ctx->r13), "=m"(ctx->r14),
           "=m"(ctx->r15), "=m"(ctx->rip)
         :
-        : "memory"
+        : "memory", "rax"
     );
 }
 
