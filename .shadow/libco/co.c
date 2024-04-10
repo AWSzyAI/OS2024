@@ -86,6 +86,7 @@ struct co *co_start(const char *name, void (*func)(void *), void *arg) {
     //     p=p->waiterp;
     // }
     // p->waiterp = co;
+    printf("co_start\n");
     return co;
 }
 
