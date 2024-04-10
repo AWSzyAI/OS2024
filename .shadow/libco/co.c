@@ -18,35 +18,12 @@
     #define debug(...)
 #endif
 
-struct context{
-    uint64_t rax;//存储函数的返回值
-    
-
-    uint64_t rcx;
-    uint64_t rdx;
-    uint64_t rsi;
-    uint64_t rdi;// Argument register in x86-64
-    uint64_t r8;
-    uint64_t r9;
-
-    uint64_t r10;
-    uint64_t r11;
-
-    //callee saved/non-volatile registers/call preserved
-    uint64_t rbx;
-    uint64_t rbp;
-    uint64_t rsp;//register stack pointer
-    uint64_t r12;
-    uint64_t r13;
-    uint64_t r14;
-    uint64_t r15;
-    
-
-    uint64_t rip;// Instruction pointer
+#if __x86_64__
+struct context {
+    uint64_t rax, rcx, rdx, rsi, rdi, r8, r9, r10, r11, rbx, rbp, rsp, r12, r13, r14, r15, rip;
 };
 
 void getcontext(struct context *ctx) {
-    #if __x86_64__
     asm volatile(
         "mov %%rax, %0;"
         "mov %%rcx, %1;"
@@ -73,24 +50,6 @@ void getcontext(struct context *ctx) {
         :
         : "memory", "rax"
     );
-#else
-    asm volatile(
-        "mov %%eax, %0;"
-        "mov %%ecx, %1;"
-        "mov %%edx, %2;"
-        "mov %%esi, %3;"
-        "mov %%edi, %4;"
-        "mov %%ebx, %5;"
-        "mov %%ebp, %6;"
-        "mov %%esp, %7;"
-        "lea (%%eip), %%eax;"
-        "mov %%eax, %8;"
-        : "=m"(ctx->eax), "=m"(ctx->ecx), "=m"(ctx->edx), "=m"(ctx->esi), "=m"(ctx->edi),
-          "=m"(ctx->ebx), "=m"(ctx->ebp), "=m"(ctx->esp), "=m"(ctx->eip)
-        :
-        : "memory", "eax"
-    );
-#endif
 }
 
 void setcontext(const struct context *ctx) {
@@ -118,9 +77,52 @@ void setcontext(const struct context *ctx) {
           "m"(ctx->r8), "m"(ctx->r9), "m"(ctx->r10), "m"(ctx->r11), "m"(ctx->rbx),
           "m"(ctx->rbp), "m"(ctx->rsp), "m"(ctx->r12), "m"(ctx->r13), "m"(ctx->r14),
           "m"(ctx->r15), "m"(ctx->rip)
-        : "memory", "rax"
+        : "rax"
     );
 }
+#else
+struct context {
+    uint32_t eax, ecx, edx, esi, edi, ebx, ebp, esp, eip;
+};
+
+void getcontext(struct context *ctx) {
+    asm volatile(
+        "mov %%eax, %0;"
+        "mov %%ecx, %1;"
+        "mov %%edx, %2;"
+        "mov %%esi, %3;"
+        "mov %%edi, %4;"
+        "mov %%ebx, %5;"
+        "mov %%ebp, %6;"
+        "mov %%esp, %7;"
+        "lea (%%eip), %%eax;"
+        "mov %%eax, %8;"
+        : "=m"(ctx->eax), "=m"(ctx->ecx), "=m"(ctx->edx), "=m"(ctx->esi), "=m"(ctx->edi),
+          "=m"(ctx->ebx), "=m"(ctx->ebp), "=m"(ctx->esp), "=m"(ctx->eip)
+        :
+        : "memory", "eax"
+    );
+}
+
+void setcontext(const struct context *ctx) {
+    asm volatile(
+        "mov %0, %%eax;"
+        "mov %1, %%ecx;"
+        "mov %2, %%edx;"
+        "mov %3, %%esi;"
+        "mov %4, %%edi;"
+        "mov %5, %%ebx;"
+        "mov %6, %%ebp;"
+        "mov %7, %%esp;"
+        "mov %8, %%eax;"
+        "jmp *%%eax;"
+        :
+        : "m"(ctx->eax), "m"(ctx->ecx), "m"(ctx->edx), "m"(ctx->esi), "m"(ctx->edi),
+          "m"(ctx->ebx), "m"(ctx->ebp), "m"(ctx->esp), "m"(ctx->eip)
+        : "eax"
+    );
+}
+#endif
 
 #define STACK_SIZE 8192
 
