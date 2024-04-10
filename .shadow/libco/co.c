@@ -72,7 +72,7 @@ struct co *co_start(const char *name, void (*func)(void *), void *arg) {
     struct co *co = malloc(sizeof(struct co));
     assert(co != NULL);
 
-    co->name = *name;
+    co->name = name;
     co->func = func;
     co->arg = arg;
     co->status = CO_NEW;
