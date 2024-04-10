@@ -91,8 +91,10 @@ struct co *co_start(const char *name, void (*func)(void *), void *arg) {
 void co_wait(struct co *co) {
     // 执行co的函数
     co->status=CO_WAITING;
+    printf("co_wait\n");
     co->func(co->arg);
     co->status=CO_DEAD;
+    printf("co_wait end\n");
     free(co);// 每个协程只能被 co_wait 一次
 }
 
