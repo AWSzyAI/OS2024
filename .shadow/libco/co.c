@@ -33,7 +33,7 @@ void getcontext(struct context *ctx) {
     }
 }
 
-void setcontext(const struct context *ctx) {
+void setcontext(struct context *ctx) {
     longjmp(ctx->env, 1);
 }
 
@@ -73,7 +73,7 @@ struct co *co_start(const char *name, void (*func)(void *), void *arg) {
     assert(co != NULL);
 
     setjmp(co->context.env);
-    
+
 
 
     // 新状态机的 %rsp 寄存器应该指向它独立的堆栈，
