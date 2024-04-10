@@ -95,7 +95,8 @@ void co_wait(struct co *co) {
 void co_yield() {
     
     // 保存当前协程的上下文 (context)，包括寄存器 (register) 和堆栈指针 (stack pointer)
-    debug("co_yield\n",current->name);
+    debug("co_yield\n");
+    debug(current->name);
     setcontext(&current->context);
     current->status = CO_RUNNING;
     
