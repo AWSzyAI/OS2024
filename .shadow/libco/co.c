@@ -138,20 +138,24 @@ struct co *co_start(const char *name, void (*func)(void *), void *arg) {
     struct co *co = malloc(sizeof(struct co));
     assert(co != NULL);
 
-
+#if __x86_64__
+    co->context.rsp = (uint64_t)co->stack + STACK_SIZE;
+    co->context.rip = (uint64_t)func;
+    //(x86-64 参数在 %rdi 寄存器，而 x86 参数在堆栈中)
+    co->context.rdi = (uint64_t)arg;
+#else
+    co->context.rsp = (uint32_t)co->stack + STACK_SIZE;
+    co->context.rip = (uint32_t)func;
+    co->context.rdi = (uint32_t)arg;
+#endif
     // 新状态机的 %rsp 寄存器应该指向它独立的堆栈，
     // 以便在调用 co_yield 时能够恢复到这个堆栈。
     // 为了实现这一点，我们需要设置一个新的堆栈指针，
     // 并将 %rsp 寄存器指向这个新的堆栈。
-    co->context.rsp = (uint64_t)co->stack + STACK_SIZE;
     // %rip 寄存器应该指向 co_start 传递的 func 参数。
-    co->context.rip = (uint64_t)func;
-
     // 根据 32/64-bit，参数也应该被保存在正确的位置 
+
     
-    
-    
-    //(x86-64 参数在 %rdi 寄存器，而 x86 参数在堆栈中)
     co->name = name;
     co->func = func;
     co->arg = arg;
