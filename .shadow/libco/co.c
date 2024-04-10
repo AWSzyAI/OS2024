@@ -124,8 +124,9 @@ void co_wait(struct co *co) {
     }
     // 执行co的函数
     co->status=CO_DEAD;
-    free(co);// 每个协程只能被 co_wait 一次
     debug("free(%s):%s\n",co->name,"CO_DEAD");
+    free(co);// 每个协程只能被 co_wait 一次
+    
 }
 
 struct co* next_co(){
