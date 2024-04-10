@@ -72,12 +72,16 @@ struct co *co_start(const char *name, void (*func)(void *), void *arg) {
 
     debug("co_start(%s):%s\n",co->name,"CO_NEW");
 
-    // int val=setjmp(co->context.env);
-    // if(val==0){
-    //     debug("Calling func\n");
-    // }else{
-    //     debug("Back to co_start\n");
-    // }
+    int val=setjmp(co->context.env);
+    if(val==0){
+        debug("Calling func\n");
+    }else{
+        debug("Back to co_start\n");
+        co->status = CO_RUNNING;
+        debug("func(%s)\n",co->name);
+        co->func(co->arg);
+        debug("func(%s) done\n",co->name);
+    }
     // 新状态机的 %rsp 寄存器应该指向它独立的堆栈，
     // 以便在调用 co_yield 时能够恢复到这个堆栈。
     // 为了实现这一点，我们需要设置一个新的堆栈指针，
@@ -104,12 +108,11 @@ void co_wait(struct co *co) {
         }
         // 如果 co 的状态是`CO_RUNNING`，那么将当前协程的状态设置为`CO_WAITING`，
         // 并将 co 的 waiterp 指向当前协程
-        if(co->status==CO_RUNNING){
+        if(co->status==CO_RUNNING || co->status==CO_WAITING || co->status==CO_NEW){
             current->status = CO_WAITING;
-            co->waiterp = current;
+            co->waiterp = current;//?
             // 并切换到这个协程运行。
-            
-            longjmp(co->context.env, 1);
+            longjmp(co->context.env, 1);//co_start(co)时，setjmp(co->context.env)返回1
         }
     } else {
         // 当 longjmp 被调用时，程序会回到这里,恢复当前的执行环境，继续执行
