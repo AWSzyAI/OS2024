@@ -108,6 +108,7 @@ void co_wait(struct co *co) {
             current->status = CO_WAITING;
             co->waiterp = current;
             // 并切换到这个协程运行。
+            co->func(co->arg);
             longjmp(co->context.env, 1);
         }
     } else {
