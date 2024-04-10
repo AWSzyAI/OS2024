@@ -37,7 +37,7 @@ enum co_state{
 
 #define STACK_SIZE 8192
 struct co {
-    const char *name;// 协程的名字,用于调试,可选,可以为NULL
+    char *name;// 协程的名字,用于调试,可选,可以为NULL
     // co_start 指定的入口地址和参数,func(arg)
     void (*func)(void *);
     void *arg;
@@ -60,7 +60,7 @@ int co_stack_count = 0;
 
 
 //func(arg)被 co_start() 调用，从头开始运行
-struct co *co_start(const char *name, void (*func)(void *), void *arg) {
+struct co *co_start(char *name, void (*func)(void *), void *arg) {
     //co会被return，所以需要malloc();来保存co的数据。
     struct co *co = malloc(sizeof(struct co));
     assert(co != NULL);
@@ -69,7 +69,7 @@ struct co *co_start(const char *name, void (*func)(void *), void *arg) {
     co->arg = arg;
     co->status = CO_NEW;
     co->waiterp = NULL;
-    debug("co_start(%s):%s\n",co->name,co->status==CO_NEW?"CO_NEW":"CO_RUNNING");
+    debug("co_start(%s):%s\n",co->name,"CO_NEW");
 
     if(setjmp(co->context.env)){
         debug("从 co_yield 返回");
