@@ -119,7 +119,6 @@ struct co* next_co(){
 
 void co_yield() {
     debug("co_yield\n");
-    debug("debug name\n");
 
     // 1-保存当前协程的上下文 (context)，包括寄存器 (register) 和堆栈指针 (stack pointer)
     setcontext(&current->context);
