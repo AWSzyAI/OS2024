@@ -120,7 +120,7 @@ struct co* next_co(){
 void co_yield() {
     debug("co_yield()\n");
     
-    int val = setjmp(&current->context.env);
+    int val = setjmp(current->context.env);
     if (val == 0) {// 保存当前的执行环境
         debug("%s\n",current->name);
         
