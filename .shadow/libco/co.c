@@ -12,6 +12,12 @@
 
 #include<stdio.h>
 
+#ifdef LOCAL_MACHINE
+    #define debug(...) printf(__VA_ARGS__)
+#else
+    #define debug(...)
+#endif
+
 struct context{
     uint64_t rax;//存储函数的返回值
     
@@ -19,7 +25,7 @@ struct context{
     uint64_t rcx;
     uint64_t rdx;
     uint64_t rsi;
-    uint64_t rdi;
+    uint64_t rdi;// Argument register in x86-64
     uint64_t r8;
     uint64_t r9;
 
@@ -36,7 +42,7 @@ struct context{
     uint64_t r15;
     
 
-    uint64_t rip;
+    uint64_t rip;// Instruction pointer
 };
 
 #define STACK_SIZE 8192
@@ -55,8 +61,8 @@ struct co {
 
     enum co_state   status;  //协程状态
     struct co *     waiterp; // 是否有其他协程在等待当前协程
-    // struct context  context; // 寄存器现场
-    ucontext_t context;
+    struct context  context; // 寄存器现场
+    // ucontext_t context;
     uint8_t         stack[STACK_SIZE]; // 协程的堆栈
 
 
@@ -64,7 +70,7 @@ struct co {
 
 struct co* current;
 //协程池
-struct co* co_pool[1024];
+struct co* co_pool[128];
 int co_pool_count = 0;
 
 
@@ -73,21 +79,28 @@ struct co *co_start(const char *name, void (*func)(void *), void *arg) {
     //co会被return，所以需要malloc();来保存co的数据。
     struct co *co = malloc(sizeof(struct co));
     assert(co != NULL);
-
+    
+    // 新状态机的 %rsp 寄存器应该指向它独立的堆栈，
+    co->context.rsp = (uint64_t)co->stack + STACK_SIZE;
+    // %rip 寄存器应该指向 co_start 传递的 func 参数。
+    co->context.rip = (uint64_t)func;
+    // 根据 32/64-bit，参数也应该被保存在正确的位置 
+    
+    //(x86-64 参数在 %rdi 寄存器，而 x86 参数在堆栈中)
     co->name = name;
     co->func = func;
     co->arg = arg;
     co->status = CO_NEW;
     co->waiterp = NULL;
     co->context = (ucontext_t){0};
-    // co->context.rsp = (uint64_t)co->stack + STACK_SIZE;
+    
     
     // struct co* p = current->waiterp;
     // while(!p){
     //     p=p->waiterp;
     // }
     // p->waiterp = co;
-    printf("co_start\n");
+    debug("co_start\n");
     return co;
 }
 
@@ -103,10 +116,13 @@ void co_wait(struct co *co) {
 }
 
 void co_yield() {
+    
     // 保存当前协程的上下文 (context)，包括寄存器 (register) 和堆栈指针 (stack pointer)
     printf("co_yield\n");
     setcontext(&current->context);
     current->status = CO_RUNNING;
+    
+    //选择一个另一个协程，
     //选择另一个状态为`CO_RUNNING`或`CO_WAITING`的协程
     struct co *ready_co_list[64];
     int ready_co_count = 0;
@@ -128,7 +144,8 @@ void co_yield() {
 
     // 切换到选定的协程
     current = ready_co_list[next_co_index];
-    
+
+    // 将寄存器加载到 CPU 上    
     // 恢复选定协程的状态并运行
     getcontext(&current->context);
     printf("get context %d\n",next_co_index);
