@@ -79,6 +79,7 @@ struct co *co_start(const char *name, void (*func)(void *), void *arg) {
     co->arg = arg;
     co->status = CO_NEW;
     co->waiterp = NULL;
+    co->context = (ucontext_t){0};
     // co->context.rsp = (uint64_t)co->stack + STACK_SIZE;
     
     // struct co* p = current->waiterp;
