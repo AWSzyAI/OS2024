@@ -82,12 +82,6 @@ struct co *co_start(const char *name, void (*func)(void *), void *arg) {
     // %rip 寄存器应该指向 co_start 传递的 func 参数。
     // 根据 32/64-bit，参数也应该被保存在正确的位置 
 
-    // struct co* p = current->waiterp;
-    // while(!p){
-    //     p=p->waiterp;
-    // }
-    // p->waiterp = co;
-    
     if(current==NULL){
         current = co;
     }else{
@@ -129,7 +123,7 @@ void co_yield() {
     current->status = CO_RUNNING;
     
     // 2-选择一个另一个协程，
-    current = next_co();
+    // current = next_co();
 
     
     // 3- 恢复选定协程的状态并运行
