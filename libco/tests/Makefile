@@ -8,12 +8,12 @@ test: libco all
 	@echo "==== TEST 32 bit ===="
 	@LD_LIBRARY_PATH=.. ./libco-test-32
 
-libco-test-64: main.c
+libco-test-64: main.c 
 
 libco:
 	@cd .. && make -s
 
-libco-test-64: main.c
+libco-test-64: main.c ab.c
 	gcc -I.. -L.. -m64 main.c -o libco-test-64 -lco-64
 
 libco-test-32: main.c

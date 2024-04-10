@@ -1,41 +1,32 @@
 #include "co.h"
 #include <stdlib.h>
 #include <stdint.h>
-#include <ucontext.h>
-    // getcontext(&current->context);
-    // setcontext(&current->context);
-    // makecontext(&current->context, (void (*)(void))func, 1, arg);
-    // swapcontext(&current->context, &co->context);
+#include <assert.h>
+#include <time.h>
+#include <setjmp.h>
+#include<stdio.h>
+
+#ifdef LOCAL_MACHINE
+    #define debug(...) printf(__VA_ARGS__)
+#else
+    #define debug(...)
+#endif
 
 
-struct context{
-    uint64_t rax;//存储函数的返回值
-    
-
-    uint64_t rcx;
-    uint64_t rdx;
-    uint64_t rsi;
-    uint64_t rdi;
-    uint64_t r8;
-    uint64_t r9;
-
-    uint64_t r10;
-    uint64_t r11;
-
-    //callee saved/non-volatile registers/call preserved
-    uint64_t rbx;
-    uint64_t rbp;
-    uint64_t rsp;//register stack pointer
-    uint64_t r12;
-    uint64_t r13;
-    uint64_t r14;
-    uint64_t r15;
-    
-
-    uint64_t rip;
+struct context {
+    jmp_buf env;
 };
 
-#define STACK_SIZE 8192
+void getcontext(struct context *ctx) {
+    if (setjmp(ctx->env) == 0) {
+        return;
+    }
+}
+
+void setcontext(struct context *ctx) {
+    longjmp(ctx->env, 1);
+}
+
 
 enum co_state{
     CO_NEW,     // 新创建，还未执行过
@@ -44,23 +35,28 @@ enum co_state{
     CO_DEAD     // 已经结束，但还未释放资源
 };
 
+#define STACK_SIZE 8192
 struct co {
-    char *name;
-    void (*func)(void *);// co_start 指定的入口地址和参数
+    const char *name;// 协程的名字,用于调试,可选,可以为NULL
+    // co_start 指定的入口地址和参数,func(arg)
+    void (*func)(void *);
     void *arg;
-
     enum co_state   status;  //协程状态
-    struct co *     waiterp; // 是否有其他协程在等待当前协程
-    struct context  context; // 寄存器现场
-    uint8_t         stack[STACK_SIZE]; // 协程的堆栈
-
-
+    struct co *     waiterp; // 是否有其他协程在等待当前协程,可选,可以为NULL,
+                             // 用于实现co_wait,co_yield,co_start等函数
+    struct context  context; // 寄存器现场,用于保存当前协程的寄存器状态,包括栈指针,栈基址等
+    uint8_t         stack[STACK_SIZE]; // 协程的堆栈,用于保存当前协程的栈帧
 };
 
 struct co* current;
 //协程池
-struct co* co_pool[1024];
-int co_pool_count = 0;
+// struct co* co_pool[128];
+// int co_pool_count = 0;
+
+//协程栈
+struct co* co_stack[128];
+int co_stack_count = 0;
+
 
 
 //func(arg)被 co_start() 调用，从头开始运行
@@ -68,64 +64,116 @@ struct co *co_start(const char *name, void (*func)(void *), void *arg) {
     //co会被return，所以需要malloc();来保存co的数据。
     struct co *co = malloc(sizeof(struct co));
     assert(co != NULL);
-
     co->name = name;
     co->func = func;
     co->arg = arg;
     co->status = CO_NEW;
     co->waiterp = NULL;
-    co->context.rsp = (uint64_t)co->stack + STACK_SIZE;
-    
-    // struct co* p = current->waiterp;
-    // while(!p){
-    //     p=p->waiterp;
+
+    debug("co_start(%s):%s\n",co->name,"CO_NEW");
+
+    // int val=setjmp(co->context.env);
+    // if(val==0){
+    //     debug("Calling func\n");
+    // }else{
+    //     debug("Back to co_start\n");
     // }
-    // p->waiterp = co;
+    // 新状态机的 %rsp 寄存器应该指向它独立的堆栈，
+    // 以便在调用 co_yield 时能够恢复到这个堆栈。
+    // 为了实现这一点，我们需要设置一个新的堆栈指针，
+    // 并将 %rsp 寄存器指向这个新的堆栈。
+    // %rip 寄存器应该指向 co_start 传递的 func 参数。
+    // 根据 32/64-bit，参数也应该被保存在正确的位置 
+
+    
+    co_stack[co_stack_count++] = co;
+    
+
     return co;
 }
 
 //当前协程需要等待，直到 co 协程的执行完成才能继续执行 (类似于 pthread_join)
 void co_wait(struct co *co) {
-    // 执行co的函数
-    co->status=CO_WAITING;
-    co->func(co->arg);
-    co->status=CO_DEAD;
-    free(co);// 每个协程只能被 co_wait 一次
-}
-
-void co_yield() {
-    // 保存当前协程的上下文 (context)，包括寄存器 (register) 和堆栈指针 (stack pointer)
-    setcontext(&current->context);
-    current->status = CO_RUNNING;
-    //选择另一个状态为`CO_RUNNING`或`CO_WAITING`的协程
-    struct co *ready_co_list[64];
-    int ready_co_count = 0;
-    for (int i = 0; i < co_pool_count; i++) {
-        if (co_pool[i]->status == CO_RUNNING || co_pool[i]->status == CO_WAITING) {
-            ready_co_list[ready_co_count++] = co_pool[i];
+    debug("co_wait(%s)\n",co->name);
+    //保存当前的执行环境
+    int val = setjmp(current->context.env);
+    if (val == 0) {
+        // 如果 co 的状态是`CO_DEAD`，那么直接返回
+        if(co->status==CO_DEAD){
+            return;
+        }
+        // 如果 co 的状态是`CO_RUNNING`，那么将当前协程的状态设置为`CO_WAITING`，
+        // 并将 co 的 waiterp 指向当前协程
+        if(co->status==CO_RUNNING){
+            current->status = CO_WAITING;
+            co->waiterp = current;
+            // 并切换到这个协程运行。
+            longjmp(co->context.env, 1);
+        }
+    } else {
+        // 当 longjmp 被调用时，程序会回到这里,恢复当前的执行环境，继续执行
+        debug("Back to co_wait\n");
+        current->status = CO_RUNNING;
+        // 如果 co 的状态是`CO_WAITING`，那么将 co 的状态设置为`CO_DEAD`，
+        // 并将 co 的 waiterp 设置为 NULL
+        if(co->status==CO_WAITING){
+            co->status = CO_DEAD;
+            co->waiterp = NULL;
         }
     }
-    // 如果没有其他可运行的协程，直接返回
-    if (ready_co_count == 0) {
-        return;
+    // 执行co的函数
+    co->status=CO_DEAD;
+    free(co);// 每个协程只能被 co_wait 一次
+    debug("free(%s):%s\n",co->name,"CO_DEAD");
+}
+
+struct co* next_co(){
+    //选择另一个状态为`CO_RUNNING`或`CO_WAITING`的协程
+    struct co* co = NULL;
+    for(int i=0;i<co_stack_count;i++){
+        if(co_stack[i]->status==CO_RUNNING || co_stack[i]->status==CO_WAITING){
+            co = co_stack[i];
+            break;
+        }
     }
+    return co;
+}
 
-    // 初始化随机数生成器
-    srand(time(NULL));
 
-    // 随机选择一个协程
-    int next_co_index = rand() % ready_co_count;
-
-    // 切换到选定的协程
-    current = ready_co_list[next_co_index];
-    // 恢复选定协程的状态并运行
-    getcontext(&current->context);
-    if (current->status == CO_NEW) {
+void co_yield() {
+    debug("co_yield()\n");
+    
+    // 在 co_yield() 被调用时，setjmp 保存寄存器现场后会立即返回 0，
+    int val = setjmp(current->context.env);
+    if (val == 0) {// 保存当前的执行环境
+        // 此时我们需要选择下一个待运行的协程 (相当于修改 current)，
+        debug("%s\n",current->name);
+        current->status = CO_WAITING;
+        debug("next_co()?\n");
+        current = next_co();
+        debug("next_co()!\n");
+        debug("%s\n",current->name);
+        // 并切换到这个协程运行。
+        // longjmp(current->context.env, 1);//?
         current->status = CO_RUNNING;
         current->func(current->arg);
-    } else {
+        debug("func(%s)\n",current->name);
+    } else { // 当 longjmp 被调用时，程序会回到这里,恢复当前的执行环境，继续执行
+        debug("Back to co_yield\n");
         current->status = CO_RUNNING;
-        setcontext(&current->context);
+        longjmp(current->context.env, 1);
     }
 }
 
+
+__attribute__((constructor))
+void co_init() {
+    debug("co_init()\n");
+    current = co_start("main", NULL, NULL);
+}
+
+__attribute__((destructor))
+void fini() {
+    debug("fini\n");
+    free(current);
+}
