@@ -69,7 +69,7 @@ struct co *co_start(const char *name, void (*func)(void *), void *arg) {
     co->arg = arg;
     co->status = CO_NEW;
     co->waiterp = NULL;
-    debug("co_start\n");
+    debug("co_start(%s):%s\n",co->name,co->status==CO_NEW?"CO_NEW":"CO_RUNNING");
 
     if(setjmp(co->context.env)){
         debug("从 co_yield 返回");
@@ -144,3 +144,15 @@ void co_yield() {
     }
 }
 
+
+__attribute__((constructor))
+void init() {
+    debug("init\n");
+    current = co_start("main", NULL, NULL);
+}
+
+__attribute__((destructor))
+void fini() {
+    debug("fini\n");
+    free(current);
+}
