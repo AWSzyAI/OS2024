@@ -127,8 +127,10 @@ void co_yield() {
 
     // 切换到选定的协程
     current = ready_co_list[next_co_index];
+    
     // 恢复选定协程的状态并运行
     getcontext(&current->context);
+    printf("get context %d\n",next_co_index);
     if (current->status == CO_NEW) {
         current->status = CO_RUNNING;
         current->func(current->arg);
