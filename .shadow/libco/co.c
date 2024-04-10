@@ -135,12 +135,16 @@ struct co *co_start(const char *name, void (*func)(void *), void *arg) {
     //co会被return，所以需要malloc();来保存co的数据。
     struct co *co = malloc(sizeof(struct co));
     assert(co != NULL);
-    
+    co->context= (struct context){0};
     // 新状态机的 %rsp 寄存器应该指向它独立的堆栈，
     co->context.rsp = (uint64_t)co->stack + STACK_SIZE;
     // %rip 寄存器应该指向 co_start 传递的 func 参数。
     co->context.rip = (uint64_t)func;
     // 根据 32/64-bit，参数也应该被保存在正确的位置 
+    co->context.rdi = (uint64_t)arg;
+    co->context.rsi = (uint64_t)name;
+    co->context.rdx = (uint64_t)co;
+    
     
     //(x86-64 参数在 %rdi 寄存器，而 x86 参数在堆栈中)
     co->name = name;
@@ -148,7 +152,7 @@ struct co *co_start(const char *name, void (*func)(void *), void *arg) {
     co->arg = arg;
     co->status = CO_NEW;
     co->waiterp = NULL;
-    co->context = (ucontext_t){0};
+    
     
     
     // struct co* p = current->waiterp;
