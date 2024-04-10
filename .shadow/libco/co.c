@@ -128,10 +128,12 @@ void co_yield() {
         debug("next_co()?\n");
         current = next_co();
         debug("next_co()!\n");
+        debug("%s\n",current->name);
         // 并切换到这个协程运行。
         // longjmp(current->context.env, 1);//?
         current->status = CO_RUNNING;
         current->func(current->arg);
+        debug("func(%s)\n",current->name);
     } else { // 当 longjmp 被调用时，程序会回到这里,恢复当前的执行环境，继续执行
         debug("Back to co_yield\n");
         current->status = CO_RUNNING;
