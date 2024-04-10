@@ -73,6 +73,7 @@ struct co *co_start(const char *name, void (*func)(void *), void *arg) {
 
     if(setjmp(co->context.env)){
         debug("从 co_yield 返回");
+        debug("我是%s\n",co->name);
         return co;
     }
     // 新状态机的 %rsp 寄存器应该指向它独立的堆栈，
@@ -123,7 +124,7 @@ void co_yield() {
     current->status = CO_RUNNING;
     
     // 2-选择一个另一个协程，
-    // current = next_co();
+    current = next_co();
 
     
     // 3- 恢复选定协程的状态并运行
