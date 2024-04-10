@@ -125,7 +125,9 @@ void co_yield() {
         // 此时我们需要选择下一个待运行的协程 (相当于修改 current)，
         debug("%s\n",current->name);
         current->status = CO_WAITING;
+        debug("next_co()?\n");
         current = next_co();
+        debug("next_co()!\n");
         // 并切换到这个协程运行。
         // longjmp(current->context.env, 1);//?
         current->status = CO_RUNNING;
