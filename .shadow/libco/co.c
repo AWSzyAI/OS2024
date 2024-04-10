@@ -165,9 +165,9 @@ struct co *co_start(const char *name, void (*func)(void *), void *arg) {
     //(x86-64 参数在 %rdi 寄存器，而 x86 参数在堆栈中)
     co->context.rdi = (uint64_t)arg;
 #else
-    co->context.rsp = (uint32_t)co->stack + STACK_SIZE;
-    co->context.rip = (uint32_t)func;
-    co->context.rdi = (uint32_t)arg;
+    co->context.esp = (uint32_t)co->stack + STACK_SIZE;
+    co->context.eip = (uint32_t)func;
+    co->context.edi = (uint32_t)arg;
 #endif
     // 新状态机的 %rsp 寄存器应该指向它独立的堆栈，
     // 以便在调用 co_yield 时能够恢复到这个堆栈。
