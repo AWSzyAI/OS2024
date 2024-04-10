@@ -69,8 +69,12 @@ struct co *co_start(const char *name, void (*func)(void *), void *arg) {
     co->arg = arg;
     co->status = CO_NEW;
     co->waiterp = NULL;
+    debug("co_start\n");
 
-    setjmp(co->context.env);
+    if(setjmp(co->context.env)){
+        debug("从 co_yield 返回");
+        return co;
+    }
     // 新状态机的 %rsp 寄存器应该指向它独立的堆栈，
     // 以便在调用 co_yield 时能够恢复到这个堆栈。
     // 为了实现这一点，我们需要设置一个新的堆栈指针，
@@ -83,7 +87,7 @@ struct co *co_start(const char *name, void (*func)(void *), void *arg) {
     //     p=p->waiterp;
     // }
     // p->waiterp = co;
-    debug("co_start\n");
+    
     if(current==NULL){
         current = co;
     }else{
