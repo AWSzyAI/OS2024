@@ -69,9 +69,10 @@ struct co *co_start(const char *name, void (*func)(void *), void *arg) {
     co->arg = arg;
     co->status = CO_NEW;
     co->waiterp = NULL;
-
+    co_stack[co_stack_count++] = co;
+    
     debug("co_start(%s):%s\n",co->name,"CO_NEW");
-
+    
     int val=setjmp(co->context.env);
     if(val==0){
         debug("Calling func\n");
@@ -90,7 +91,7 @@ struct co *co_start(const char *name, void (*func)(void *), void *arg) {
     // 根据 32/64-bit，参数也应该被保存在正确的位置 
 
     
-    co_stack[co_stack_count++] = co;
+    
     
 
     return co;
