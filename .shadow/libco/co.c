@@ -3,6 +3,8 @@
 #include <stdint.h>
 #include <assert.h>
 #include <time.h>
+#include <setjmp.h>
+
 // #include <ucontext.h>
     // getcontext(&current->context);
     // setcontext(&current->context);
@@ -18,111 +20,22 @@
     #define debug(...)
 #endif
 
-#if __x86_64__
+
+#include <setjmp.h>
+
 struct context {
-    uint64_t rax, rcx, rdx, rsi, rdi, r8, r9, r10, r11, rbx, rbp, rsp, r12, r13, r14, r15, rip;
+    jmp_buf env;
 };
 
 void getcontext(struct context *ctx) {
-    asm volatile(
-        "mov %%rax, %0;"
-        "mov %%rcx, %1;"
-        "mov %%rdx, %2;"
-        "mov %%rsi, %3;"
-        "mov %%rdi, %4;"
-        "mov %%r8, %5;"
-        "mov %%r9, %6;"
-        "mov %%r10, %7;"
-        "mov %%r11, %8;"
-        "mov %%rbx, %9;"
-        "mov %%rbp, %10;"
-        "mov %%rsp, %11;"
-        "mov %%r12, %12;"
-        "mov %%r13, %13;"
-        "mov %%r14, %14;"
-        "mov %%r15, %15;"
-        "lea (%%rip), %%rax;"
-        "mov %%rax, %16;"
-        : "=m"(ctx->rax), "=m"(ctx->rcx), "=m"(ctx->rdx), "=m"(ctx->rsi), "=m"(ctx->rdi),
-          "=m"(ctx->r8), "=m"(ctx->r9), "=m"(ctx->r10), "=m"(ctx->r11), "=m"(ctx->rbx),
-          "=m"(ctx->rbp), "=m"(ctx->rsp), "=m"(ctx->r12), "=m"(ctx->r13), "=m"(ctx->r14),
-          "=m"(ctx->r15), "=m"(ctx->rip)
-        :
-        : "memory", "rax"
-    );
+    if (setjmp(ctx->env) == 0) {
+        return;
+    }
 }
 
 void setcontext(const struct context *ctx) {
-    asm volatile(
-        "mov %0, %%rax;"
-        "mov %1, %%rcx;"
-        "mov %2, %%rdx;"
-        "mov %3, %%rsi;"
-        "mov %4, %%rdi;"
-        "mov %5, %%r8;"
-        "mov %6, %%r9;"
-        "mov %7, %%r10;"
-        "mov %8, %%r11;"
-        "mov %9, %%rbx;"
-        "mov %10, %%rbp;"
-        "mov %11, %%rsp;"
-        "mov %12, %%r12;"
-        "mov %13, %%r13;"
-        "mov %14, %%r14;"
-        "mov %15, %%r15;"
-        "mov %16, %%rax;"
-        "jmp *%%rax;"
-        :
-        : "m"(ctx->rax), "m"(ctx->rcx), "m"(ctx->rdx), "m"(ctx->rsi), "m"(ctx->rdi),
-          "m"(ctx->r8), "m"(ctx->r9), "m"(ctx->r10), "m"(ctx->r11), "m"(ctx->rbx),
-          "m"(ctx->rbp), "m"(ctx->rsp), "m"(ctx->r12), "m"(ctx->r13), "m"(ctx->r14),
-          "m"(ctx->r15), "m"(ctx->rip)
-        : "rax"
-    );
+    longjmp(ctx->env, 1);
 }
-#else
-struct context {
-    uint32_t eax, ecx, edx, esi, edi, ebx, ebp, esp, eip;
-};
-
-void getcontext(struct context *ctx) {
-    asm volatile(
-        "mov %%eax, %0;"
-        "mov %%ecx, %1;"
-        "mov %%edx, %2;"
-        "mov %%esi, %3;"
-        "mov %%edi, %4;"
-        "mov %%ebx, %5;"
-        "mov %%ebp, %6;"
-        "mov %%esp, %7;"
-        "lea (%%eip), %%eax;"
-        "mov %%eax, %8;"
-        : "=m"(ctx->eax), "=m"(ctx->ecx), "=m"(ctx->edx), "=m"(ctx->esi), "=m"(ctx->edi),
-          "=m"(ctx->ebx), "=m"(ctx->ebp), "=m"(ctx->esp), "=m"(ctx->eip)
-        :
-        : "memory", "eax"
-    );
-}
-
-void setcontext(const struct context *ctx) {
-    asm volatile(
-        "mov %0, %%eax;"
-        "mov %1, %%ecx;"
-        "mov %2, %%edx;"
-        "mov %3, %%esi;"
-        "mov %4, %%edi;"
-        "mov %5, %%ebx;"
-        "mov %6, %%ebp;"
-        "mov %7, %%esp;"
-        "mov %8, %%eax;"
-        "jmp *%%eax;"
-        :
-        : "m"(ctx->eax), "m"(ctx->ecx), "m"(ctx->edx), "m"(ctx->esi), "m"(ctx->edi),
-          "m"(ctx->ebx), "m"(ctx->ebp), "m"(ctx->esp), "m"(ctx->eip)
-        : "eax"
-    );
-}
-#endif
 
 #define STACK_SIZE 8192
 
