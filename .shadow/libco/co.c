@@ -46,6 +46,7 @@ struct context{
 };
 
 void getcontext(struct context *ctx) {
+    #if __x86_64__
     asm volatile(
         "mov %%rax, %0;"
         "mov %%rcx, %1;"
@@ -72,6 +73,24 @@ void getcontext(struct context *ctx) {
         :
         : "memory", "rax"
     );
+#else
+    asm volatile(
+        "mov %%eax, %0;"
+        "mov %%ecx, %1;"
+        "mov %%edx, %2;"
+        "mov %%esi, %3;"
+        "mov %%edi, %4;"
+        "mov %%ebx, %5;"
+        "mov %%ebp, %6;"
+        "mov %%esp, %7;"
+        "lea (%%eip), %%eax;"
+        "mov %%eax, %8;"
+        : "=m"(ctx->eax), "=m"(ctx->ecx), "=m"(ctx->edx), "=m"(ctx->esi), "=m"(ctx->edi),
+          "=m"(ctx->ebx), "=m"(ctx->ebp), "=m"(ctx->esp), "=m"(ctx->eip)
+        :
+        : "memory", "eax"
+    );
+#endif
 }
 
 void setcontext(const struct context *ctx) {
