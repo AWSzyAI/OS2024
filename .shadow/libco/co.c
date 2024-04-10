@@ -96,7 +96,7 @@ void co_yield() {
     
     // 保存当前协程的上下文 (context)，包括寄存器 (register) 和堆栈指针 (stack pointer)
     debug("co_yield\n");
-    debug("%c\n",current->name);
+    debug("%s\n",current->name);
     setcontext(&current->context);
     current->status = CO_RUNNING;
     
