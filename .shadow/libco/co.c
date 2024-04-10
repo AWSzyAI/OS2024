@@ -92,13 +92,14 @@ void setcontext(const struct context *ctx) {
         "mov %13, %%r13;"
         "mov %14, %%r14;"
         "mov %15, %%r15;"
-        "mov %16, %%rip;"
+        "mov %16, %%rax;"
+        "jmp *%%rax;"
         :
         : "m"(ctx->rax), "m"(ctx->rcx), "m"(ctx->rdx), "m"(ctx->rsi), "m"(ctx->rdi),
           "m"(ctx->r8), "m"(ctx->r9), "m"(ctx->r10), "m"(ctx->r11), "m"(ctx->rbx),
           "m"(ctx->rbp), "m"(ctx->rsp), "m"(ctx->r12), "m"(ctx->r13), "m"(ctx->r14),
           "m"(ctx->r15), "m"(ctx->rip)
-        : "memory"
+        : "memory", "rax"
     );
 }
 
