@@ -3,7 +3,7 @@
 #include <stdint.h>
 #include <assert.h>
 #include <time.h>
-#include <ucontext.h>
+// #include <ucontext.h>
     // getcontext(&current->context);
     // setcontext(&current->context);
     // makecontext(&current->context, (void (*)(void))func, 1, arg);
@@ -44,6 +44,62 @@ struct context{
 
     uint64_t rip;// Instruction pointer
 };
+
+void getcontext(struct context *ctx) {
+    asm volatile(
+        "mov %%rax, %0;"
+        "mov %%rcx, %1;"
+        "mov %%rdx, %2;"
+        "mov %%rsi, %3;"
+        "mov %%rdi, %4;"
+        "mov %%r8, %5;"
+        "mov %%r9, %6;"
+        "mov %%r10, %7;"
+        "mov %%r11, %8;"
+        "mov %%rbx, %9;"
+        "mov %%rbp, %10;"
+        "mov %%rsp, %11;"
+        "mov %%r12, %12;"
+        "mov %%r13, %13;"
+        "mov %%r14, %14;"
+        "mov %%r15, %15;"
+        "mov %%rip, %16;"
+        : "=m"(ctx->rax), "=m"(ctx->rcx), "=m"(ctx->rdx), "=m"(ctx->rsi), "=m"(ctx->rdi),
+          "=m"(ctx->r8), "=m"(ctx->r9), "=m"(ctx->r10), "=m"(ctx->r11), "=m"(ctx->rbx),
+          "=m"(ctx->rbp), "=m"(ctx->rsp), "=m"(ctx->r12), "=m"(ctx->r13), "=m"(ctx->r14),
+          "=m"(ctx->r15), "=m"(ctx->rip)
+        :
+        : "memory"
+    );
+}
+
+void setcontext(const struct context *ctx) {
+    asm volatile(
+        "mov %0, %%rax;"
+        "mov %1, %%rcx;"
+        "mov %2, %%rdx;"
+        "mov %3, %%rsi;"
+        "mov %4, %%rdi;"
+        "mov %5, %%r8;"
+        "mov %6, %%r9;"
+        "mov %7, %%r10;"
+        "mov %8, %%r11;"
+        "mov %9, %%rbx;"
+        "mov %10, %%rbp;"
+        "mov %11, %%rsp;"
+        "mov %12, %%r12;"
+        "mov %13, %%r13;"
+        "mov %14, %%r14;"
+        "mov %15, %%r15;"
+        "mov %16, %%rip;"
+        :
+        : "m"(ctx->rax), "m"(ctx->rcx), "m"(ctx->rdx), "m"(ctx->rsi), "m"(ctx->rdi),
+          "m"(ctx->r8), "m"(ctx->r9), "m"(ctx->r10), "m"(ctx->r11), "m"(ctx->rbx),
+          "m"(ctx->rbp), "m"(ctx->rsp), "m"(ctx->r12), "m"(ctx->r13), "m"(ctx->r14),
+          "m"(ctx->r15), "m"(ctx->rip)
+        : "memory"
+    );
+}
 
 #define STACK_SIZE 8192
 
