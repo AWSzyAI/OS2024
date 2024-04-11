@@ -71,7 +71,7 @@ struct co *co_start(const char *name, void (*func)(void *), void *arg) {
     co->arg = arg;
     co->status = CO_NEW;
     //main就不要加进来了
-    
+    if(!co->func)co_stack[co_stack_count++] = co;
 
     // int val=setjmp(co->context.env);
     // if(val==0){
@@ -131,7 +131,6 @@ void co_wait(struct co *co) {
         if (val == 0) {
             current->status = CO_WAITING;
             co->waiterp = current;
-            if(!co->func)co_stack[co_stack_count++] = co;
             // 并切换到这个协程运行。
             current = co;
             if(current->status==CO_NEW){
@@ -157,7 +156,7 @@ struct co* next_co(){
     //选择另一个状态为`CO_RUNNING`或`CO_WAITING`的协程
     struct co* co = NULL;
     for(int i=0;i<co_stack_count;i++){
-        if(co_stack[i]->status==CO_RUNNING || co_stack[i]->status==CO_WAITING){
+        if(co_stack[i]->status==CO_RUNNING || co_stack[i]->status==CO_WAITING|| co_stack[i]->status==CO_NEW){
             co = co_stack[i];
             break;
         }
@@ -176,12 +175,12 @@ void co_yield() {
         debug("co_yield from (%s)\n",current->name);
         current->status = CO_WAITING;
         debug("next_co(%s):",current->name);
-        current = next_co();
+        current = next_co();//?
         debug("%s\n",current->name);
         // 并切换到这个协程运行。
         // longjmp(current->context.env, 1);//?
-        current->status = CO_RUNNING;
-        current->func(current->arg);
+        current->status = CO_RUNNING;//?
+        current->func(current->arg);//?
         debug("func(%s)\n",current->name);
     } else { // 当 longjmp 被调用时，程序会回到这里,恢复当前的执行环境，继续执行
         debug("Back to co_yield\n");
