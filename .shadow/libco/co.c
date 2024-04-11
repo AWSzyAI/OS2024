@@ -78,10 +78,10 @@ struct co *co_start(const char *name, void (*func)(void *), void *arg) {
         debug("Calling func\n");
     }else{
         debug("Back to co_start\n");
-        co->status = CO_RUNNING;
+        current->status = CO_RUNNING;
         debug("func(%s)\n",co->name);
-        // co->func(co->arg);
-        // debug("func(%s) done\n",co->name);
+        current->func(co->arg);
+        debug("func(%s) done\n",co->name);
     }
     // 新状态机的 %rsp 寄存器应该指向它独立的堆栈，
     // 以便在调用 co_yield 时能够恢复到这个堆栈。
