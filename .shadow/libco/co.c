@@ -96,32 +96,7 @@ struct co *co_start(const char *name, void (*func)(void *), void *arg) {
 //当前协程需要等待，直到 co 协程的执行完成才能继续执行 (类似于 pthread_join)
 void co_wait(struct co *co) {
     debug("co_wait(%s)\n",co->name);
-    
-    // int val = setjmp(current->context.env);
-    // if (val == 0) {
-    //     // 如果 co 的状态是`CO_DEAD`，那么直接返回
-    //     if(co->status==CO_DEAD){
-    //         return;
-    //     }
-    //     // 如果 co 的状态是`CO_RUNNING`，那么将当前协程的状态设置为`CO_WAITING`，
-    //     // 并将 co 的 waiterp 指向当前协程
-    //     if(co->status==CO_RUNNING || co->status==CO_WAITING || co->status==CO_NEW){
-    //         current->status = CO_WAITING;
-    //         co->waiterp = current;
-    //         // 并切换到这个协程运行。
-    //         longjmp(co->context.env, 1);//co_start(co)时，setjmp(co->context.env)返回1
-    //     }
-    // } else {
-    //     // 当 longjmp 被调用时，程序会回到这里,恢复当前的执行环境，继续执行
-    //     debug("Back to co_wait\n");
-    //     current->status = CO_RUNNING;
-    //     // 如果 co 的状态是`CO_WAITING`，那么将 co 的状态设置为`CO_DEAD`，
-    //     // 并将 co 的 waiterp 设置为 NULL
-    //     if(co->status==CO_WAITING){
-    //         co->status = CO_DEAD;
-    //         co->waiterp = NULL;
-    //     }
-    // }
+
     if(co->status==CO_DEAD){
         return;
     }
@@ -143,7 +118,6 @@ void co_wait(struct co *co) {
             // 当 longjmp 被调用时，程序会回到这里,恢复当前的执行环境，继续执行
             debug("Back to co_wait(%s)\n",current->name);
         }
-        
     }
     // 执行co的函数
     co->status=CO_DEAD;
@@ -192,8 +166,7 @@ void co_yield() {
         debug("func(%s)\n",current->name);
     } else { // 当 longjmp 被调用时，程序会回到这里,恢复当前的执行环境，继续执行
         debug("Back to co_yield\n");
-        current->status = CO_RUNNING;
-        longjmp(current->context.env, 1);
+        return;
     }
 }
 
