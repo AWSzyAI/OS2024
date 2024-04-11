@@ -58,6 +58,14 @@ struct co* current=NULL;
 struct co* co_stack[128];
 int co_stack_count = 0;
 
+void debugstack(){
+    debug("stack: \n");
+    for(int i=0;i<co_stack_count;i++){
+        debug("%s ",co_stack[i]->name);
+    }
+    debug("\n");
+}
+
 
 
 //func(arg)被 co_start() 调用，从头开始运行
@@ -72,6 +80,7 @@ struct co *co_start(const char *name, void (*func)(void *), void *arg) {
     co->status = CO_NEW;
     
     if(!co->func)co_stack[co_stack_count++] = co;
+    debugstack();
 
     // int val=setjmp(co->context.env);
     // if(val==0){
@@ -162,11 +171,11 @@ void co_yield() {
         // 此时我们需要选择下一个待运行的协程 (相当于修改 current)，
         debug("co_yield from (%s)\n",current->name);
         current->status = CO_WAITING;
-        debug("next_co(%s):%s",current->name,current->waiterp->name);
+        debug("next_co(%s):%s\n",current->name,current->waiterp->name);
     
         // current = next_co();
         current = next_wait(current);
-        debug("%s\n",current->name);
+        debug("current: %s\n",current->name);
         //now it's always yield to main however it should be thread-2
         // 并切换到这个协程运行。
         // longjmp(current->context.env, 1);//?
