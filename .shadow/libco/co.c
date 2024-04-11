@@ -4,7 +4,7 @@
 #include <assert.h>
 #include <time.h>
 #include <setjmp.h>
-#include<stdio.h>
+#include <stdio.h>
 
 #ifdef LOCAL_MACHINE
     #define debug(...) printf(__VA_ARGS__)
