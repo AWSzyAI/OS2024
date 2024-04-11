@@ -19,13 +19,13 @@ struct context {
 
 void getcontext(struct context *ctx) {
     if (setjmp(ctx->env) == 0) {
-        debug("getcontext()\n")
+        debug("getcontext()\n");
         return;
     }
 }
 
 void setcontext(struct context *ctx) {
-    debug("setcontext()\n")
+    debug("setcontext()\n");
     longjmp(ctx->env, 1);
 }
 
