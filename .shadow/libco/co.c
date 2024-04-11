@@ -111,8 +111,9 @@ void co_wait(struct co *co) {
         // 并将 co 的 waiterp 指向当前协程
         if(co->status==CO_RUNNING || co->status==CO_WAITING || co->status==CO_NEW){
             current->status = CO_WAITING;
-            co->waiterp = current;//?
+            // co->waiterp = current;//?
             // 并切换到这个协程运行。
+            current = co;
             longjmp(co->context.env, 1);//co_start(co)时，setjmp(co->context.env)返回1
         }
     } else {
