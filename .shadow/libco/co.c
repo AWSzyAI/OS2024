@@ -78,7 +78,7 @@ struct co *co_start(const char *name, void (*func)(void *), void *arg) {
         debug("Calling func\n");
     }else{
         debug("Back to co_start\n");
-        current->status = CO_RUNNING;
+        // current->status = CO_RUNNING;
         debug("func(%s)\n",co->name);
         // current->func(co->arg);
         debug("func(%s) done\n",co->name);
