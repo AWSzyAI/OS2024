@@ -70,7 +70,8 @@ struct co *co_start(const char *name, void (*func)(void *), void *arg) {
     co->func = func;
     co->arg = arg;
     co->status = CO_NEW;
-    //main就不要加进来了
+    co->waiterp = NULL;
+    current->waiterp = co;
     if(!co->func)co_stack[co_stack_count++] = co;
 
     // int val=setjmp(co->context.env);
@@ -162,7 +163,7 @@ void co_yield() {
         // 此时我们需要选择下一个待运行的协程 (相当于修改 current)，
         debug("co_yield from (%s)\n",current->name);
         current->status = CO_WAITING;
-        debug("next_co(%s):",current->name);
+        debug("next_co(%s):%s",current->name,current->waiterp->name);
     
         // current = next_co();
         current = next_wait(current);
