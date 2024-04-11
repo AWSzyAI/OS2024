@@ -59,7 +59,7 @@ struct co* co_stack[128];
 int co_stack_count = 0;
 
 void debugstack(){
-    debug("stack: \n");
+    debug("[stack]: ");
     for(int i=0;i<co_stack_count;i++){
         debug("%s ",co_stack[i]->name);
     }
