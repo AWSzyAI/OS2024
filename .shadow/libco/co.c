@@ -70,7 +70,8 @@ struct co *co_start(const char *name, void (*func)(void *), void *arg) {
     co->func = func;
     co->arg = arg;
     co->status = CO_NEW;
-    co_stack[co_stack_count++] = co;
+    //main就不要加进来了
+    if(!co->func)co_stack[co_stack_count++] = co;
 
     // int val=setjmp(co->context.env);
     // if(val==0){
@@ -171,12 +172,12 @@ void co_yield() {
     int val = setjmp(current->context.env);
     if (val == 0) {// 保存当前的执行环境
         // 此时我们需要选择下一个待运行的协程 (相当于修改 current)，
-        debug("%s\n",current->name);
+        debug("co_yield(%s)\n",current->name);
         current->status = CO_WAITING;
         debug("next_co()?\n");
         current = next_co();
         debug("next_co()!\n");
-        debug("%s\n",current->name);
+        debug("current: %s\n",current->name);
         // 并切换到这个协程运行。
         // longjmp(current->context.env, 1);//?
         current->status = CO_RUNNING;
