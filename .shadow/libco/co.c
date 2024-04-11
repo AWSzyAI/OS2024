@@ -50,11 +50,10 @@ struct co {
     uint8_t         stack[STACK_SIZE]; // 协程的堆栈,用于保存当前协程的栈帧
 };
 
-struct co* current;
+struct co* current=NULL;
 //协程池
 // struct co* co_pool[128];
 // int co_pool_count = 0;
-
 //协程栈
 struct co* co_stack[128];
 int co_stack_count = 0;
@@ -71,7 +70,6 @@ struct co *co_start(const char *name, void (*func)(void *), void *arg) {
     co->func = func;
     co->arg = arg;
     co->status = CO_NEW;
-    co->waiterp = NULL;
     co_stack[co_stack_count++] = co;
 
     // int val=setjmp(co->context.env);
@@ -85,7 +83,6 @@ struct co *co_start(const char *name, void (*func)(void *), void *arg) {
     //     debug("func(%s) done\n",co->name);
     // }
 
-    setcontext(&co->context);
     // 新状态机的 %rsp 寄存器应该指向它独立的堆栈，
     // 以便在调用 co_yield 时能够恢复到这个堆栈。
     // 为了实现这一点，我们需要设置一个新的堆栈指针，
