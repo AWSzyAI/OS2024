@@ -74,7 +74,7 @@ struct co *co_start(const char *name, void (*func)(void *), void *arg) {
     struct co *co = malloc(sizeof(struct co));
     assert(co != NULL);
     co->name = name;
-    debug("co_start(%s):%s %x\n",co->name,"CO_NEW",co->func);
+    debug("co_start(%s):%s %p\n",co->name,"CO_NEW",co->func);
     co->func = func;
     co->arg = arg;
     co->status = CO_NEW;
