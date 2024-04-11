@@ -141,6 +141,17 @@ struct co* next_co(){
     return co;
 }
 
+struct co* next_wait(struct co* co){
+    //选择另一个状态为`CO_RUNNING`或`CO_WAITING`的协程
+    struct co* co_wait = NULL;
+    co_wait = co->waiterp;
+    if(co_wait->status==CO_DEAD){
+        return next_wait(co_wait);
+    }
+    return co_wait;
+}
+
+
 
 void co_yield() {
     debug("co_yield()\n");
@@ -152,13 +163,11 @@ void co_yield() {
         debug("co_yield from (%s)\n",current->name);
         current->status = CO_WAITING;
         debug("next_co(%s):",current->name);
-        
-        current = next_co();
+    
+        // current = next_co();
+        current = next_wait(current);
         debug("%s\n",current->name);
         //now it's always yield to main however it should be thread-2
-
-
-
         // 并切换到这个协程运行。
         // longjmp(current->context.env, 1);//?
         current->status = CO_RUNNING;//?
