@@ -80,7 +80,7 @@ struct co *co_start(const char *name, void (*func)(void *), void *arg) {
         debug("Back to co_start\n");
         current->status = CO_RUNNING;
         debug("func(%s)\n",co->name);
-        current->func(co->arg);
+        // current->func(co->arg);
         debug("func(%s) done\n",co->name);
     }
     // 新状态机的 %rsp 寄存器应该指向它独立的堆栈，
