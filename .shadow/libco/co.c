@@ -70,8 +70,7 @@ struct co *co_start(const char *name, void (*func)(void *), void *arg) {
     co->func = func;
     co->arg = arg;
     co->status = CO_NEW;
-    co->waiterp = NULL;
-    current->waiterp = co;
+    
     if(!co->func)co_stack[co_stack_count++] = co;
 
     // int val=setjmp(co->context.env);
