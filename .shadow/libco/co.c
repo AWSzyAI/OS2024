@@ -128,7 +128,6 @@ void co_wait(struct co *co) {
         current->status = CO_WAITING;
         co->waiterp = current;
         // 并切换到这个协程运行。
-        getcontext(&current->context);
         current->func(current->arg);
     }
     // 执行co的函数
