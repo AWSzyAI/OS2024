@@ -70,7 +70,7 @@ struct co *co_start(const char *name, void (*func)(void *), void *arg) {
 
 
     
-    if(!co->func)co_pool[co_pool_count++] = co;
+    co_pool[co_pool_count++] = co;
     debugstack();
 
     return co;
@@ -90,13 +90,15 @@ void co_wait(struct co *co) {
 }
 
 struct co* next_co(){
-    //选择另一个状态为`CO_RUNNING`或`CO_WAITING`的协程
+    //随机选择另一个状态为`CO_RUNNING`或`CO_WAITING`的协程
     struct co* co = NULL;
+    int choose = time(NULL)%co_pool_count;
     for(int i=0;i<co_pool_count;i++){
-        if(co_pool[i]->status==CO_RUNNING || co_pool[i]->status==CO_WAITING){
-            co = co_pool[i];
-            break;
+        co = co_pool[choose];
+        if(co->status==CO_RUNNING||co->status==CO_WAITING){
+            return co;
         }
+        choose = (choose+1)%co_pool_count;
     }
     return co;
 }
