@@ -69,7 +69,7 @@ struct co *co_start(const char *name, void (*func)(void *), void *arg) {
     // 新创建的协程从函数 func 开始执行，并传入参数 arg。新创建的协程不会立即执行，而是调用 co_start 的协程继续执行。
 
 
-    if(!strcmp(co->name,"main"))assert(co->func != NULL);
+    
     if(!co->func)co_pool[co_pool_count++] = co;
     debugstack();
 
