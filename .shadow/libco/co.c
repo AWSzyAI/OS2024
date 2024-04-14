@@ -4,7 +4,7 @@
 #include <setjmp.h>
 #include <stdio.h>
 #include <string.h>
-
+#include <time.h>
 /*debug*/
 #include <assert.h>
 #ifdef LOCAL_MACHINE
