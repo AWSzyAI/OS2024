@@ -81,9 +81,7 @@ struct co *co_start(const char *name, void (*func)(void *), void *arg) {
 void co_wait(struct co *co) {
     assert(co != NULL);
     debug("co_wait(%s)\n",co->name);
-    if(!current){
-        current = co;
-    }
+
     while(co->status!=CO_DEAD){
         current->status = CO_WAITING;
         co_yield();
@@ -178,11 +176,11 @@ void co_yield() {
 }
 
 
-// __attribute__((constructor))
-// void co_init() {
-//     debug("co_init()\n");
-//     current = co_start("main", NULL, NULL);
-// }
+__attribute__((constructor))
+void co_init() {
+    debug("co_init()\n");
+    current = co_start("main", NULL, NULL);
+}
 
 __attribute__((destructor))
 void fini() {
