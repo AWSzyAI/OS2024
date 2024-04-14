@@ -115,7 +115,7 @@ void save_context(struct context *ctx,uint8_t *stack) {
         ctx->env[0].__jmpbuf[7] = (long)stack+STACK_SIZE-1;
         return;
     }else{//from longjmp
-        
+        debug("save_context() longjmp\n");
     }
     //pc
 }
@@ -167,7 +167,6 @@ void co_yield() {
         }else if(current->status==CO_RUNNING){
             debug("CO_RUNNING\n");
         }
-        
         current->status = CO_RUNNING;
         longjmp(current->context.env,1);
     }
