@@ -153,16 +153,17 @@ void co_yield() {
     current->status = CO_WAITING;
     // 选择下一个待运行的协程 (相当于修改 current)
     current = next_co();
-    
     debug("%s\n",current->name);//co_yield() main->Thread-1
 
     if(current->status==CO_NEW){//context is empty
+        debug("CO_NEW\n");
         current->status = CO_RUNNING;
         stack_switch_call(current->stack,current->func,(uintptr_t)current->arg);
     }else{//current->status==CO_WAITING
         current->status = CO_RUNNING;
         longjmp(current->context.env,1);
     }
+    debug("%s->func\n",current->name);
     current->func(current->arg);//?
 }
 
