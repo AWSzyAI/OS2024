@@ -96,7 +96,7 @@ struct co* next_co(){
     int choose = time(NULL)%co_pool_count;
     for(int i=0;i<co_pool_count;i++){
         co = co_pool[choose];
-        if(co->status==CO_RUNNING||co->status==CO_WAITING){
+        if(co->status==CO_RUNNING||co->status==CO_WAITING||co->status==CO_NEW){
             return co;
         }
         choose = (choose+1)%co_pool_count;
