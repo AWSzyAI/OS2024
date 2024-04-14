@@ -55,6 +55,7 @@ struct co *co_start(const char *name, void (*func)(void *), void *arg) {
     assert(co != NULL);
     co->name = name;
     debug("co_start(%s):%s\n",co->name,"CO_NEW");
+    func(arg);
     co->func = func;
     co->arg = arg;
     co->status = CO_NEW;
