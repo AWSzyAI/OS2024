@@ -83,7 +83,7 @@ void co_wait(struct co *co) {
     debug("co_wait(%s)\n",co->name);
 
     while(co->status!=CO_DEAD){
-        current->status = CO_WAITING;
+        // current->status = CO_WAITING;
         co_yield();
     }
     debug("free(%s):%s\n",co->name,"CO_DEAD");
@@ -174,13 +174,27 @@ void co_yield() {
     current->func(current->arg);//?
 }
 
-extern int main(int argc, char **argv);
+
 
 __attribute__((constructor))
 void co_init() {
-    debug("co_init()\n");
-    current = co_start("main", main, NULL);
+    // 创建一个协程来代表主线程
+    struct co *main_co = malloc(sizeof(struct co));
+    main_co->name = "main";
+    main_co->status = CO_RUNNING; // 主线程已经在运行
+    main_co->func = NULL; // 主线程不需要关联任何函数
+    main_co->arg = NULL;
+    main_co->stack = NULL; // 主线程已经有自己的栈
+    main_co->context = NULL; // 主线程的上下文将在第一次切换时保存
+
+    // 将主线程协程设置为当前协程
+    current = main_co;
 }
+
+// void co_init() {
+//     debug("co_init()\n");
+//     current = co_start("main", NULL, NULL);
+// }
 
 __attribute__((destructor))
 void fini() {
