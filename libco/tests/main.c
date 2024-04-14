@@ -24,6 +24,7 @@ static void work_loop(void *arg) {
 }
 
 static void work(void *arg) {
+    //必须接受一个 void * 参数，并且没有返回值。这是因为 co_start 的 func 参数的类型是 void (*)(void *)
     work_loop(arg);
 }
 
