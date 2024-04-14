@@ -58,20 +58,20 @@ struct co *co_start(const char *name, void (*func)(void *), void *arg) {
     co->arg = arg;
     co->status = CO_NEW;
     
+    //?
     co->waiterp = NULL;
+    //?
     co->context = (struct context){0};
+    //?
     co->stack[STACK_SIZE-1] = 1;
+
+    // 新创建的协程从函数 func 开始执行，并传入参数 arg。新创建的协程不会立即执行，而是调用 co_start 的协程继续执行。
 
 
     assert(co->func != NULL);
     if(!co->func)co_pool[co_pool_count++] = co;
     debugstack();
-    // 新状态机的 %rsp 寄存器应该指向它独立的堆栈，
-    // 以便在调用 co_yield 时能够恢复到这个堆栈。
-    // 为了实现这一点，我们需要设置一个新的堆栈指针，
-    // 并将 %rsp 寄存器指向这个新的堆栈。
-    // %rip 寄存器应该指向 co_start 传递的 func 参数。
-    // 根据 32/64-bit，参数也应该被保存在正确的位置 
+
     return co;
 }
 
@@ -79,16 +79,13 @@ struct co *co_start(const char *name, void (*func)(void *), void *arg) {
 void co_wait(struct co *co) {
     assert(co != NULL);
     debug("co_wait(%s)\n",co->name);
-
-    if(co->status==CO_DEAD){
-        return;
+    while(co->status!=CO_DEAD){
+        current->status = CO_WAITING;
+        co_yield();
     }
-    current->waiterp = co;
-    co_yield();
-    co->status=CO_DEAD;
     debug("free(%s):%s\n",co->name,"CO_DEAD");
-    free(co);// 每个协程只能被 co_wait 一次
-    
+    free(co);
+    return;
 }
 
 struct co* next_co(){
@@ -104,25 +101,65 @@ struct co* next_co(){
 }
 
 void save_context(struct context *ctx,uint8_t *stack) {
-    
+    //stack
+    int value = setjmp(ctx->env);
+    if(value == 0){
+        //设置新的堆栈 ？
+        ctx->env[0].__jmpbuf[6] = (long)stack+STACK_SIZE-1;
+        //设置新的栈基址 ？
+        ctx->env[0].__jmpbuf[7] = (long)stack+STACK_SIZE-1;
+        return;
+    }else{//from longjmp
+        
+    }
+    //pc
 }
-void restore_context(struct context *ctx,uint8_t *stack) {
-    
+
+
+static inline void
+stack_switch_call(void *sp, void *entry, uintptr_t arg) {
+    asm volatile (//编译器不应对这段汇编代码进行优化
+#if __x86_64__
+        "movq %0, %%rsp; movq %2, %%rdi; jmp *%1"
+          :
+          : "b"((uintptr_t)sp),//stack pointer
+            "d"(entry),//function pointer
+            "a"(arg)   //function argument
+          : "memory"
+#else
+        "movl %0, %%esp; movl %2, 4(%0); jmp *%1"
+          :
+          : "b"((uintptr_t)sp - 8),
+            "d"(entry),
+            "a"(arg)
+          : "memory"// 告诉编译器这段代码可能会改变内存的内容
+#endif
+    );
 }
+
 
 
 void co_yield() {
-    debug("co_yield()\n");
-    if(!current)return;
+    assert(current);
+    debug("co_yield() %s->",current->name);
+    
 
     // 保存当前的执行环境
     save_context(&current->context,current->stack);
+    current->status = CO_WAITING;
     // 选择下一个待运行的协程 (相当于修改 current)
     current = next_co();
-    // 并切换到这个协程运行。
-    restore_context(&current->context,current->stack);
-    debug("func(%s)\n",current->name); 
-    current->func(current->arg);
+    
+    debug("%s\n",current->name);//co_yield() main->Thread-1
+
+    if(current->status==CO_NEW){//context is empty
+        current->status = CO_RUNNING;
+        stack_switch_call(current->stack,current->func,current->arg);
+    }else{//current->status==CO_WAITING
+        current->status = CO_RUNNING;
+        longjmp(current->context.env,1);
+    }
+    current->func(current->arg);//?
 }
 
 
