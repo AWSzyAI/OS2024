@@ -154,7 +154,7 @@ void co_yield() {
 
     if(current->status==CO_NEW){//context is empty
         current->status = CO_RUNNING;
-        stack_switch_call(current->stack,current->func,&current->arg);
+        stack_switch_call(current->stack,current->func,(uintptr_t)current->arg);
     }else{//current->status==CO_WAITING
         current->status = CO_RUNNING;
         longjmp(current->context.env,1);
