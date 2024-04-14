@@ -175,11 +175,11 @@ void co_yield() {
 }
 
 
-__attribute__((constructor))
-void co_init() {
-    debug("co_init()\n");
-    current = co_start("main", NULL, NULL);
-}
+// __attribute__((constructor))
+// void co_init() {
+//     debug("co_init()\n");
+//     current = co_start("main", NULL, NULL);
+// }
 
 __attribute__((destructor))
 void fini() {
