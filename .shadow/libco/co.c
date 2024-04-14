@@ -174,11 +174,12 @@ void co_yield() {
     current->func(current->arg);//?
 }
 
+extern int main(int argc, char **argv);
 
 __attribute__((constructor))
 void co_init() {
     debug("co_init()\n");
-    current = co_start("main", NULL, NULL);
+    current = co_start("main", main, NULL);
 }
 
 __attribute__((destructor))
