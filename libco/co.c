@@ -81,8 +81,10 @@ struct co *co_start(const char *name, void (*func)(void *), void *arg) {
 void co_wait(struct co *co) {
     assert(co != NULL);
     debug("co_wait(%s)\n",co->name);
+    co->waiterp=current;
+
     while(co->status!=CO_DEAD){
-        current->status = CO_WAITING;
+        // current->status = CO_WAITING;
         co_yield();
     }
     debug("free(%s):%s\n",co->name,"CO_DEAD");
@@ -114,7 +116,7 @@ void save_context(struct context *ctx,uint8_t *stack) {
         ctx->env[0].__jmpbuf[7] = (long)stack+STACK_SIZE-1;
         return;
     }else{//from longjmp
-        
+        debug("save_context() longjmp\n");
     }
     //pc
 }
@@ -166,7 +168,6 @@ void co_yield() {
         }else if(current->status==CO_RUNNING){
             debug("CO_RUNNING\n");
         }
-        
         current->status = CO_RUNNING;
         longjmp(current->context.env,1);
     }
@@ -175,11 +176,26 @@ void co_yield() {
 }
 
 
+
 __attribute__((constructor))
 void co_init() {
-    debug("co_init()\n");
-    current = co_start("main", NULL, NULL);
+    // 创建一个协程来代表主线程
+    struct co *main_co = malloc(sizeof(struct co));
+    main_co->name = "main";
+    main_co->status = CO_RUNNING; // 主线程已经在运行
+    main_co->func = NULL; // 主线程不需要关联任何函数
+    main_co->arg = NULL;
+    main_co->stack = NULL; // 主线程已经有自己的栈
+    main_co->context = NULL; // 主线程的上下文将在第一次切换时保存
+
+    // 将主线程协程设置为当前协程
+    current = main_co;
 }
+
+// void co_init() {
+//     debug("co_init()\n");
+//     current = co_start("main", NULL, NULL);
+// }
 
 __attribute__((destructor))
 void fini() {
