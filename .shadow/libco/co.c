@@ -128,7 +128,7 @@ void co_yield() {
         current->status = CO_RUNNING;
         // stack_switch_call(current->stack,current->func,(uintptr_t)current->arg);
         debug("[Run] %s->func\n",current->name);
-        makecontext(&current->context, (void (*)(void))current->func, 1, current->arg);
+        // makecontext(&current->context, (void (*)(void))current->func, 1, current->arg);
         current->func(current->arg);
         
     }else{//current->status==CO_WAITING / CO_RUNNING
