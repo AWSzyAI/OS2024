@@ -185,9 +185,6 @@ void co_init() {
     main_co->status = CO_RUNNING; // 主线程已经在运行
     main_co->func = NULL; // 主线程不需要关联任何函数
     main_co->arg = NULL;
-    main_co->stack = NULL; // 主线程已经有自己的栈
-    main_co->context = NULL; // 主线程的上下文将在第一次切换时保存
-
     // 将主线程协程设置为当前协程
     current = main_co;
 }
