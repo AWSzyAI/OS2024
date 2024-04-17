@@ -114,22 +114,23 @@ struct co* next_co(){
     return co;
 }
 
-void save_context(struct context *ctx) {
-    //stack
-    int value = setjmp(ctx->env);
-    if(value == 0){
-        debug("save_context() setjmp\n");
-        // //设置新的堆栈 ？
-        // ctx->env[0].__jmpbuf[6] = (long)stack+STACK_SIZE-1;
-        // //设置新的栈基址 ？
-        // ctx->env[0].__jmpbuf[7] = (long)stack+STACK_SIZE-1;
-        makecontext(&ctx->env, (void (*)(void))co_yield, 0);
-        // pthread_create(&threads[NUM_THREADS], NULL, scheduler_function, NULL);
-        // pthread_join(threads[NUM_THREADS], NULL);
-        return;
-    }else{//from longjmp
-        debug("save_context() longjmp\n");
-    }
+void save_context(struct co* co) {
+    makecontext(&co->context, (void (*)(void))co_yield, 0);
+
+    // int value = setjmp(ctx->env);
+    // if(value == 0){
+    //     debug("save_context() setjmp\n");
+    //     // //设置新的堆栈 ？
+    //     // ctx->env[0].__jmpbuf[6] = (long)stack+STACK_SIZE-1;
+    //     // //设置新的栈基址 ？
+    //     // ctx->env[0].__jmpbuf[7] = (long)stack+STACK_SIZE-1;
+    //     makecontext(&ctx->env, (void (*)(void))co_yield, 0);
+    //     // pthread_create(&threads[NUM_THREADS], NULL, scheduler_function, NULL);
+    //     // pthread_join(threads[NUM_THREADS], NULL);
+    //     return;
+    // }else{//from longjmp
+    //     debug("save_context() longjmp\n");
+    // }
     //pc
 }
 
@@ -161,7 +162,7 @@ void co_yield() {
     assert(current);
     
     // 保存当前的执行环境
-    save_context(&current->context);
+    save_context(&current);
     debug("co_yield() %s->",current->name);
     current->status = CO_WAITING;
     // 选择下一个待运行的协程 (相当于修改 current)
