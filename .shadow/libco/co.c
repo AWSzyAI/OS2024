@@ -96,6 +96,10 @@ struct co* next_co(){
             choose = (choose+1)%co_pool_count;
             continue;
         }
+        if(co==current){
+            choose = (choose+1)%co_pool_count;
+            continue;
+        }
         if(co->status==CO_RUNNING || co->status==CO_WAITING){
             return co;
         }
