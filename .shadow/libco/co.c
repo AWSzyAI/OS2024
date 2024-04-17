@@ -105,7 +105,7 @@ void co_wait(struct co *co) {
     //     co_yield();
     // }
     debug("free(%s):%s\n",co->name,"CO_DEAD");
-    current = next_co();   
+    // current = next_co();   
     free(co);
     return;
 }
