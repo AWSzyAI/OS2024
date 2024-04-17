@@ -172,6 +172,7 @@ void co_yield() {
         current->status = CO_RUNNING;
         debug("longjmp\n");
         longjmp(current->context.env,1);
+        debug("longjmp end\n");
     }
     debug("%s->func\n",current->name);
     current->func(current->arg);//?
