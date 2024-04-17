@@ -146,7 +146,7 @@ void co_yield() {
         debug("CO_NEW\n");
         current->status = CO_RUNNING;
         // stack_switch_call(current->stack,current->func,(uintptr_t)current->arg);
-        debug("Run %s->func\n",current->name);
+        debug("[Run] %s->func\n",current->name);
         current->func(current->arg);
         
     }else{//current->status==CO_WAITING / CO_RUNNING
@@ -159,7 +159,7 @@ void co_yield() {
         swapcontext(&tmp->context, &current->context);
     }
     debug("%s->func\n",current->name);
-    current->func(current->arg);
+    // current->func(current->arg);
 }
 
 
