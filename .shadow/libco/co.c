@@ -105,7 +105,6 @@ void co_wait(struct co *co) {
         co_yield();
     }
     debug("free(%s):%s\n",co->name,"CO_DEAD");
-    // current = next_co();   
     free(co);
     return;
 }
@@ -114,19 +113,22 @@ void co_wait(struct co *co) {
 void co_yield() {
     assert(current);
     // makecontext(&current->context, (void (*)(void))co_yield, 0);
-
+    
+    //co_yield() main->Thread-1
     debug("co_yield() %s->",current->name);
     current->status = CO_WAITING;
     // 选择下一个待运行的协程 (相当于修改 current)
     struct co* tmp = current;
     current = next_co();
-    debug("%s\n",current->name);//co_yield() main->Thread-1
+    debug("%s\n",current->name);
 
+    // 保存当前协程的上下文,并切换到下一个协程的上下文
     if(current->status==CO_NEW){//context is empty
         debug("CO_NEW\n");
         current->status = CO_RUNNING;
         // stack_switch_call(current->stack,current->func,(uintptr_t)current->arg);
         debug("[Run] %s->func\n",current->name);
+        makecontext(&current->context, (void (*)(void))current->func, 1, current->arg);
         current->func(current->arg);
         
     }else{//current->status==CO_WAITING / CO_RUNNING
