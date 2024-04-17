@@ -1,10 +1,13 @@
 #include "co.h"
 #include <stdlib.h>
 #include <stdint.h>
-#include <setjmp.h>
 #include <stdio.h>
 #include <string.h>
 #include <time.h>
+
+#include <setjmp.h>
+#include <ucontext.h>
+
 /*debug*/
 #include <assert.h>
 #ifdef LOCAL_MACHINE
@@ -12,6 +15,7 @@
 #else
     #define debug(...)
 #endif
+
 
 
 enum co_state{
@@ -23,20 +27,23 @@ enum co_state{
 struct context {
     jmp_buf env;
 };
-#define STACK_SIZE 8192
+// #define STACK_SIZE 8192
 struct co {
     const char *name;// 协程的名字,用于调试,可选,可以为NULL
     void (*func)(void *);
     void *arg;
     enum co_state   status;  //协程状态
-    struct co *     waiterp; // 是否有其他协程在等待当前协程,可选,可以为NULL,
-    struct context  context; // 寄存器现场,用于保存当前协程的寄存器状态,包括栈指针,栈基址等
-    uint8_t         stack[STACK_SIZE]; // 协程的堆栈,用于保存当前协程的栈帧
+    // struct co *     waiterp; // 是否有其他协程在等待当前协程,可选,可以为NULL,
+    // struct context  context; // 寄存器现场,用于保存当前协程的寄存器状态,包括栈指针,栈基址等
+    ucontext_t     context;    // ucontext_t 结构,用于保存当前协程的寄存器状态,包括栈指针,栈基址等
+    // uint8_t         stack[STACK_SIZE]; // 协程的堆栈,用于保存当前协程的栈帧
 };
 
 struct co* current=NULL;
 struct co* co_pool[128];  
 int co_pool_count = 0;
+
+
 
 void debugstack(){
     debug("[stack]: ");
@@ -61,11 +68,11 @@ struct co *co_start(const char *name, void (*func)(void *), void *arg) {
     co->status = CO_NEW;
     
     //?
-    co->waiterp = NULL;
+    // co->waiterp = NULL;
     //?
-    co->context = (struct context){0};
+    getcontext(&co->context);
     //?
-    co->stack[STACK_SIZE-1] = 1;
+    // co->stack[STACK_SIZE-1] = 1;
 
     // 新创建的协程从函数 func 开始执行，并传入参数 arg。新创建的协程不会立即执行，而是调用 co_start 的协程继续执行。
 
@@ -81,7 +88,7 @@ struct co *co_start(const char *name, void (*func)(void *), void *arg) {
 void co_wait(struct co *co) {
     assert(co != NULL);
     debug("co_wait(%s)\n",co->name);
-    co->waiterp=current;
+    // co->waiterp=current;
 
     while(co->status!=CO_DEAD){
         // current->status = CO_WAITING;
@@ -106,19 +113,23 @@ struct co* next_co(){
     return co;
 }
 
-void save_context(struct context *ctx,uint8_t *stack) {
-    //stack
-    int value = setjmp(ctx->env);
-    if(value == 0){
-        debug("save_context() setjmp\n");
-        //设置新的堆栈 ？
-        ctx->env[0].__jmpbuf[6] = (long)stack+STACK_SIZE-1;
-        //设置新的栈基址 ？
-        ctx->env[0].__jmpbuf[7] = (long)stack+STACK_SIZE-1;
-        return;
-    }else{//from longjmp
-        debug("save_context() longjmp\n");
-    }
+void save_context(struct co* co) {
+    makecontext(&co->context, (void (*)(void))co_yield, 0);
+
+    // int value = setjmp(ctx->env);
+    // if(value == 0){
+    //     debug("save_context() setjmp\n");
+    //     // //设置新的堆栈 ？
+    //     // ctx->env[0].__jmpbuf[6] = (long)stack+STACK_SIZE-1;
+    //     // //设置新的栈基址 ？
+    //     // ctx->env[0].__jmpbuf[7] = (long)stack+STACK_SIZE-1;
+    //     makecontext(&ctx->env, (void (*)(void))co_yield, 0);
+    //     // pthread_create(&threads[NUM_THREADS], NULL, scheduler_function, NULL);
+    //     // pthread_join(threads[NUM_THREADS], NULL);
+    //     return;
+    // }else{//from longjmp
+    //     debug("save_context() longjmp\n");
+    // }
     //pc
 }
 
@@ -150,10 +161,11 @@ void co_yield() {
     assert(current);
     
     // 保存当前的执行环境
-    save_context(&current->context,current->stack);
+    save_context(current);
     debug("co_yield() %s->",current->name);
     current->status = CO_WAITING;
     // 选择下一个待运行的协程 (相当于修改 current)
+    struct co* tmp = current;
     current = next_co();
     debug("%s\n",current->name);//co_yield() main->Thread-1
 
@@ -171,7 +183,8 @@ void co_yield() {
         }
         current->status = CO_RUNNING;
         debug("longjmp\n");
-        longjmp(current->context.env,1);
+        // longjmp(current->context.env,1);
+        swapcontext(&tmp->context, &current->context);
         debug("longjmp end\n");
     }
     debug("%s->func\n",current->name);
