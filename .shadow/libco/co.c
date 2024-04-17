@@ -96,7 +96,7 @@ struct co* next_co(){
             choose = (choose+1)%co_pool_count;
             continue;
         }
-        if(co==current){
+        if(co->name==current->name){
             choose = (choose+1)%co_pool_count;
             continue;
         }
