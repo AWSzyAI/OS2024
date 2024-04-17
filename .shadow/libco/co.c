@@ -178,7 +178,7 @@ void co_yield() {
         // debug("longjmp end\n");
     }
     debug("%s->func\n",current->name);
-    current->func(current->arg);//?
+    
 }
 
 
