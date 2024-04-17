@@ -19,13 +19,7 @@
 #else
     #define debug(...)
 #endif
-void debugstack(){
-    debug("[stack]: ");
-    for(int i=0;i<co_pool_count;i++){
-        debug("%s ",co_pool[i]->name);
-    }
-    debug("\n");
-}
+
 
 
 enum co_state{
@@ -49,7 +43,13 @@ struct co {
 struct co* current=NULL;
 struct co* co_pool[128];  
 int co_pool_count = 0;
-
+void debugstack(){
+    debug("[stack]: ");
+    for(int i=0;i<co_pool_count;i++){
+        debug("%s ",co_pool[i]->name);
+    }
+    debug("\n");
+}
 
 //func(arg)被 co_start() 调用，从头开始运行
 struct co *co_start(const char *name, void (*func)(void *), void *arg) {
