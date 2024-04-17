@@ -27,7 +27,7 @@ enum co_state{
 struct context {
     jmp_buf env;
 };
-// #define STACK_SIZE 8192
+#define STACK_SIZE 8192
 struct co {
     const char *name;// 协程的名字,用于调试,可选,可以为NULL
     void (*func)(void *);
@@ -36,7 +36,7 @@ struct co {
     // struct co *     waiterp; // 是否有其他协程在等待当前协程,可选,可以为NULL,
     // struct context  context; // 寄存器现场,用于保存当前协程的寄存器状态,包括栈指针,栈基址等
     ucontext_t     context;    // ucontext_t 结构,用于保存当前协程的寄存器状态,包括栈指针,栈基址等
-    // uint8_t         stack[STACK_SIZE]; // 协程的堆栈,用于保存当前协程的栈帧
+    uint8_t         stack[STACK_SIZE]; // 协程的堆栈,用于保存当前协程的栈帧
 };
 
 struct co* current=NULL;
@@ -66,11 +66,13 @@ struct co *co_start(const char *name, void (*func)(void *), void *arg) {
     co->func = func;
     co->arg = arg;
     co->status = CO_NEW;
-    
-    //?
-    // co->waiterp = NULL;
-    //?
     getcontext(&co->context);
+    co->context.uc_stack.ss_sp = co->stack;
+    co->context.uc_stack.ss_size = sizeof(co->stack);
+    co->context.uc_link = &current->context;
+    makecontext(&co->context, (void (*)(void))co_yield, 0);
+    
+    // co->waiterp = NULL;
     //?
     // co->stack[STACK_SIZE-1] = 1;
 
@@ -161,7 +163,9 @@ void co_yield() {
     assert(current);
     
     // 保存当前的执行环境
-    save_context(current);
+    // save_context(current);
+    makecontext(&current->context, (void (*)(void))co_yield, 0);
+    
     debug("co_yield() %s->",current->name);
     current->status = CO_WAITING;
     // 选择下一个待运行的协程 (相当于修改 current)
