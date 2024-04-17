@@ -164,8 +164,8 @@ void co_yield() {
     
     // 保存当前的执行环境
     // save_context(current);
-    makecontext(&current->context, (void (*)(void))co_yield, 0);
-    
+    // makecontext(&current->context, (void (*)(void))co_yield, 0);
+
     debug("co_yield() %s->",current->name);
     current->status = CO_WAITING;
     // 选择下一个待运行的协程 (相当于修改 current)
