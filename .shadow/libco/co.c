@@ -72,19 +72,7 @@ struct co *co_start(const char *name, void (*func)(void *), void *arg) {
     return co;
 }
 
-//当前协程需要等待，直到 co 协程的执行完成才能继续执行 (类似于 pthread_join)
-void co_wait(struct co *co) {
-    assert(co != NULL);
-    debug("co_wait(%s)\n",co->name);
-    co_yield();
-    // while(co->status!=CO_DEAD){
-    //     // current->status = CO_WAITING;
-    //     co_yield();
-    // }
-    debug("free(%s):%s\n",co->name,"CO_DEAD");
-    free(co);
-    return;
-}
+
 
 struct co* next_co(){
     //随机选择另一个状态为`CO_RUNNING`或`CO_WAITING`的协程
@@ -105,6 +93,21 @@ struct co* next_co(){
         }
     }
     return co;
+}
+
+//当前协程需要等待，直到 co 协程的执行完成才能继续执行 (类似于 pthread_join)
+void co_wait(struct co *co) {
+    assert(co != NULL);
+    debug("co_wait(%s)\n",co->name);
+    co_yield();
+    // while(co->status!=CO_DEAD){
+    //     // current->status = CO_WAITING;
+    //     co_yield();
+    // }
+    debug("free(%s):%s\n",co->name,"CO_DEAD");
+    current = next_co();   
+    free(co);
+    return;
 }
 
 void save_context(struct co* co) {
