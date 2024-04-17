@@ -75,14 +75,12 @@ struct co *co_start(const char *name, void (*func)(void *), void *arg) {
 
 
 struct co* next_co(){
-    // int choose = time()%co_pool_count;
-    srand(time(NULL));
-    int choose = rand()%co_pool_count;
-    struct co* co = co_pool[choose];
-    if(co->status==CO_DEAD){
-        return next_co();
+    for(int i=0;i<co_pool_count;i++){
+        if(co_pool[i]==current){
+            return co_pool[(i+1)%co_pool_count];
+        }
     }
-    return co;
+    return NULL;
 }
 
 //当前协程需要等待，直到 co 协程的执行完成才能继续执行 (类似于 pthread_join)
