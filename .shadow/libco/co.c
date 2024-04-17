@@ -76,7 +76,8 @@ struct co *co_start(const char *name, void (*func)(void *), void *arg) {
 
 struct co* next_co(){
     // int choose = time()%co_pool_count;
-    int choose = rand(time)%co_pool_count;
+    srand(time(NULL));
+    int choose = rand()%co_pool_count;
     struct co* co = co_pool[choose];
     if(co->status==CO_DEAD){
         return next_co();
