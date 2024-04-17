@@ -110,6 +110,7 @@ void save_context(struct context *ctx,uint8_t *stack) {
     //stack
     int value = setjmp(ctx->env);
     if(value == 0){
+        debug("save_context() setjmp\n");
         //设置新的堆栈 ？
         ctx->env[0].__jmpbuf[6] = (long)stack+STACK_SIZE-1;
         //设置新的栈基址 ？
@@ -147,11 +148,10 @@ stack_switch_call(void *sp, void *entry, uintptr_t arg) {
 
 void co_yield() {
     assert(current);
-    debug("co_yield() %s->",current->name);
     
-
     // 保存当前的执行环境
     save_context(&current->context,current->stack);
+    debug("co_yield() %s->",current->name);
     current->status = CO_WAITING;
     // 选择下一个待运行的协程 (相当于修改 current)
     current = next_co();
@@ -160,8 +160,9 @@ void co_yield() {
     if(current->status==CO_NEW){//context is empty
         debug("CO_NEW\n");
         current->status = CO_RUNNING;
-        stack_switch_call(current->stack,current->func,(uintptr_t)current->arg);
-        debug("stack_switch_call\n");
+        // stack_switch_call(current->stack,current->func,(uintptr_t)current->arg);
+        current->func(current->arg);
+        debug("new func %s\n",current->name);
     }else{//current->status==CO_WAITING / CO_RUNNING
         if(current->status==CO_WAITING){
             debug("CO_WAITING\n");
@@ -169,7 +170,9 @@ void co_yield() {
             debug("CO_RUNNING\n");
         }
         current->status = CO_RUNNING;
+        debug("longjmp\n");
         longjmp(current->context.env,1);
+        debug("longjmp end\n");
     }
     debug("%s->func\n",current->name);
     current->func(current->arg);//?
@@ -185,9 +188,6 @@ void co_init() {
     main_co->status = CO_RUNNING; // 主线程已经在运行
     main_co->func = NULL; // 主线程不需要关联任何函数
     main_co->arg = NULL;
-    main_co->stack = NULL; // 主线程已经有自己的栈
-    main_co->context = NULL; // 主线程的上下文将在第一次切换时保存
-
     // 将主线程协程设置为当前协程
     current = main_co;
 }
