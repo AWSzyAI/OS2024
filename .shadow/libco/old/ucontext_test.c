@@ -41,7 +41,7 @@ void* scheduler_function(void* arg)
 
 int main()
 {
-    char coroutine_stacks[NUM_THREADS][STACK_SIZE];
+    char co_stack[NUM_THREADS][STACK_SIZE];
     pthread_t threads[NUM_THREADS + 1];
     int thread_ids[NUM_THREADS];
 
@@ -51,8 +51,8 @@ int main()
     // 创建协程上下文
     for (int i = 0; i < NUM_THREADS; i++) {
         getcontext(&coroutine_contexts[i]);
-        coroutine_contexts[i].uc_stack.ss_sp = coroutine_stacks[i];
-        coroutine_contexts[i].uc_stack.ss_size = sizeof(coroutine_stacks[i]);
+        coroutine_contexts[i].uc_stack.ss_sp = co_stack[i];
+        coroutine_contexts[i].uc_stack.ss_size = sizeof(co_stack[i]);
         coroutine_contexts[i].uc_link = &main_context;
         thread_ids[i] = i;
         makecontext(&coroutine_contexts[i], (void (*)(void))coroutine_function, 1, thread_ids[i]);
