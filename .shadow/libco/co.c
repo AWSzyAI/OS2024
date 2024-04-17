@@ -16,7 +16,6 @@
     #define debug(...)
 #endif
 
-#define STACK_SIZE 16384
 
 
 enum co_state{
@@ -28,7 +27,7 @@ enum co_state{
 struct context {
     jmp_buf env;
 };
-#define STACK_SIZE 8192
+// #define STACK_SIZE 8192
 struct co {
     const char *name;// 协程的名字,用于调试,可选,可以为NULL
     void (*func)(void *);
