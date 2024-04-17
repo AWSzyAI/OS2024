@@ -133,10 +133,7 @@ void save_context(struct co* co) {
 
 void co_yield() {
     assert(current);
-    
-    // 保存当前的执行环境
-    // save_context(current);
-    makecontext(&current->context, (void (*)(void))co_yield, 0);
+    // makecontext(&current->context, (void (*)(void))co_yield, 0);
 
     debug("co_yield() %s->",current->name);
     current->status = CO_WAITING;
@@ -149,8 +146,9 @@ void co_yield() {
         debug("CO_NEW\n");
         current->status = CO_RUNNING;
         // stack_switch_call(current->stack,current->func,(uintptr_t)current->arg);
+        debug("Run %s->func\n",current->name);
         current->func(current->arg);
-        debug("new func %s\n",current->name);
+        
     }else{//current->status==CO_WAITING / CO_RUNNING
         if(current->status==CO_WAITING){
             debug("CO_WAITING\n");
