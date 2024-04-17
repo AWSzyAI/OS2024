@@ -167,17 +167,18 @@ void co_yield() {
     }else{//current->status==CO_WAITING / CO_RUNNING
         if(current->status==CO_WAITING){
             debug("CO_WAITING\n");
+
         }else if(current->status==CO_RUNNING){
             debug("CO_RUNNING\n");
         }
         current->status = CO_RUNNING;
-        debug("longjmp\n");
+        // debug("longjmp\n");
         // longjmp(current->context.env,1);
         swapcontext(&tmp->context, &current->context);
-        debug("longjmp end\n");
+        // debug("longjmp end\n");
     }
     debug("%s->func\n",current->name);
-    // current->func(current->arg);//?
+    current->func(current->arg);//?
 }
 
 
