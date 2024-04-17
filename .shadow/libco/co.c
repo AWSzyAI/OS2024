@@ -76,12 +76,11 @@ struct co *co_start(const char *name, void (*func)(void *), void *arg) {
 void co_wait(struct co *co) {
     assert(co != NULL);
     debug("co_wait(%s)\n",co->name);
-    // co->waiterp=current;
-
-    while(co->status!=CO_DEAD){
-        // current->status = CO_WAITING;
-        co_yield();
-    }
+    co_yield();
+    // while(co->status!=CO_DEAD){
+    //     // current->status = CO_WAITING;
+    //     co_yield();
+    // }
     debug("free(%s):%s\n",co->name,"CO_DEAD");
     free(co);
     return;
