@@ -131,29 +131,6 @@ void save_context(struct co* co) {
 }
 
 
-static inline void
-stack_switch_call(void *sp, void *entry, uintptr_t arg) {
-    asm volatile (//编译器不应对这段汇编代码进行优化
-#if __x86_64__
-        "movq %0, %%rsp; movq %2, %%rdi; jmp *%1"
-          :
-          : "b"((uintptr_t)sp),//stack pointer
-            "d"(entry),//function pointer
-            "a"(arg)   //function argument
-          : "memory"
-#else
-        "movl %0, %%esp; movl %2, 4(%0); jmp *%1"
-          :
-          : "b"((uintptr_t)sp - 8),
-            "d"(entry),
-            "a"(arg)
-          : "memory"// 告诉编译器这段代码可能会改变内存的内容
-#endif
-    );
-}
-
-
-
 void co_yield() {
     assert(current);
     
@@ -177,7 +154,6 @@ void co_yield() {
     }else{//current->status==CO_WAITING / CO_RUNNING
         if(current->status==CO_WAITING){
             debug("CO_WAITING\n");
-
         }else if(current->status==CO_RUNNING){
             debug("CO_RUNNING\n");
         }
@@ -203,13 +179,32 @@ void co_init() {
     // co_pool[co_pool_count++] = main_co;
 }
 
-// void co_init() {
-//     debug("co_init()\n");
-//     current = co_start("main", NULL, NULL);
-// }
 
 __attribute__((destructor))
 void fini() {
     debug("fini\n");
     free(current);
 }
+
+
+
+// static inline void
+// stack_switch_call(void *sp, void *entry, uintptr_t arg) {
+//     asm volatile (//编译器不应对这段汇编代码进行优化
+// #if __x86_64__
+//         "movq %0, %%rsp; movq %2, %%rdi; jmp *%1"
+//           :
+//           : "b"((uintptr_t)sp),//stack pointer
+//             "d"(entry),//function pointer
+//             "a"(arg)   //function argument
+//           : "memory"
+// #else
+//         "movl %0, %%esp; movl %2, 4(%0); jmp *%1"
+//           :
+//           : "b"((uintptr_t)sp - 8),
+//             "d"(entry),
+//             "a"(arg)
+//           : "memory"// 告诉编译器这段代码可能会改变内存的内容
+// #endif
+//     );
+// }
