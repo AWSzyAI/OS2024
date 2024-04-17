@@ -110,6 +110,7 @@ void save_context(struct context *ctx,uint8_t *stack) {
     //stack
     int value = setjmp(ctx->env);
     if(value == 0){
+        debug("save_context() setjmp\n");
         //设置新的堆栈 ？
         ctx->env[0].__jmpbuf[6] = (long)stack+STACK_SIZE-1;
         //设置新的栈基址 ？
