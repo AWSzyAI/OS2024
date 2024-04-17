@@ -162,7 +162,7 @@ void co_yield() {
     assert(current);
     
     // 保存当前的执行环境
-    save_context(&current);
+    save_context(current);
     debug("co_yield() %s->",current->name);
     current->status = CO_WAITING;
     // 选择下一个待运行的协程 (相当于修改 current)
