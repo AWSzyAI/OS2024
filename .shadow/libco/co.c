@@ -99,35 +99,15 @@ struct co* next_co(){
 void co_wait(struct co *co) {
     assert(co != NULL);
     debug("co_wait(%s)\n",co->name);
-    co_yield();
-    // while(co->status!=CO_DEAD){
-    //     // current->status = CO_WAITING;
-    //     co_yield();
-    // }
+    // co_yield();
+    while(co->status!=CO_DEAD){
+        // current->status = CO_WAITING;
+        co_yield();
+    }
     debug("free(%s):%s\n",co->name,"CO_DEAD");
     // current = next_co();   
     free(co);
     return;
-}
-
-void save_context(struct co* co) {
-    makecontext(&co->context, (void (*)(void))co_yield, 0);
-
-    // int value = setjmp(ctx->env);
-    // if(value == 0){
-    //     debug("save_context() setjmp\n");
-    //     // //设置新的堆栈 ？
-    //     // ctx->env[0].__jmpbuf[6] = (long)stack+STACK_SIZE-1;
-    //     // //设置新的栈基址 ？
-    //     // ctx->env[0].__jmpbuf[7] = (long)stack+STACK_SIZE-1;
-    //     makecontext(&ctx->env, (void (*)(void))co_yield, 0);
-    //     // pthread_create(&threads[NUM_THREADS], NULL, scheduler_function, NULL);
-    //     // pthread_join(threads[NUM_THREADS], NULL);
-    //     return;
-    // }else{//from longjmp
-    //     debug("save_context() longjmp\n");
-    // }
-    //pc
 }
 
 
