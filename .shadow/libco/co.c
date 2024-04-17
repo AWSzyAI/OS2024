@@ -161,7 +161,7 @@ void co_yield() {
         debug("CO_NEW\n");
         current->status = CO_RUNNING;
         // stack_switch_call(current->stack,current->func,(uintptr_t)current->arg);
-        longjmp(current->context.env,1);
+        current->func(current->arg);
         debug("stack_switch_call\n");
     }else{//current->status==CO_WAITING / CO_RUNNING
         if(current->status==CO_WAITING){
