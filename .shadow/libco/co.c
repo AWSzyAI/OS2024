@@ -100,9 +100,9 @@ struct co* next_co(){
     if(co->status==CO_DEAD){
         return next_co();
     }
-    if(co->name==current->name){
-        return next_co();
-    }
+    // if(co->name==current->name){
+    //     return next_co();
+    // }
     return co;
 }
 
