@@ -56,13 +56,13 @@ void debug_co_pool(){
         snprintf(buffer, sizeof(buffer), "%d %s", i, co_pool[i]->name);
         debug("│ %-16s ", buffer);
         if(co_pool[i]->status==CO_NEW){
-            debug("CO_NEW      │\n");
+            debug("🍃      │\n");
         }else if(co_pool[i]->status==CO_RUNNING){
-            debug("CO_RUNNING  │\n");
+            debug("✅  │\n");
         }else if(co_pool[i]->status==CO_WAITING){
-            debug("CO_WAITING  │\n");
+            debug("⚠️  │\n");
         }else if(co_pool[i]->status==CO_DEAD){
-            debug("CO_DEAD     │\n");
+            debug("💀     │\n");
         }
         if (i > 0) {
             debug("├──────────────────────────────┤\n");
