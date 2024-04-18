@@ -124,9 +124,7 @@ struct co* next_co(){
     if(co->status==CO_DEAD||co->status==CO_NEW){
         return next_co();
     }
-    // if(co->status==CO_DEAD){
-    //     return next_co();
-    // }
+
     if(co->status==CO_RUNNING){
         return next_co();
     }
