@@ -10,6 +10,30 @@ ucontext_t main_context;
 ucontext_t coroutine_contexts[NUM_THREADS];
 int current_thread = 0;
 
+int g_count = 0;
+
+static void add_count() {
+    g_count++;
+}
+
+static int get_count() {
+    return g_count;
+}
+ 
+static void work_loop(void *arg) {
+    const char *s = (const char*)arg;
+    for (int i = 0; i < 100; ++i) {
+        printf("%s%d  ", s, get_count());
+        add_count();
+        co_yield();
+    }
+}
+
+static void work(void *arg) {
+    //必须接受一个 void * 参数，并且没有返回值。这是因为 co_start 的 func 参数的类型是 void (*)(void *)
+    work_loop(arg);
+}
+
 void coroutine_function(int thread_id)
 {
     while (1) {
@@ -27,6 +51,9 @@ int next_co()
     current_thread = (current_thread + 1) % NUM_THREADS;
     return current_thread;
 }
+
+
+
 
 void* scheduler_function(void* arg)
 {

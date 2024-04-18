@@ -110,11 +110,11 @@ struct co* next_co(){
 void co_wait(struct co *co) {
     assert(co != NULL);
     debug("co_wait(%s)\n",co->name);
-    co_yield();
-    // while(co->status!=CO_DEAD){
-    //     // current->status = CO_WAITING;
-    //     co_yield();
-    // }
+    // co_yield();
+    while(co->status!=CO_DEAD){
+        // current->status = CO_WAITING;
+        co_yield();
+    }
     debug("free(%s):%s\n",co->name,"CO_DEAD");
     co->status = CO_DEAD;
     refresh_co_pool();
