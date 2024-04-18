@@ -192,6 +192,7 @@ void co_init() {
 
 __attribute__((destructor))
 void fini() {
+    debug_co_pool();
     debug("fini\n");
     free(current);
 }
