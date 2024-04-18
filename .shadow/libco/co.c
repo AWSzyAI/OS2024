@@ -49,8 +49,8 @@ struct co* co_pool[128];
 int co_pool_count = 0;
 void debug_co_pool(){
     debug("[stack]: ----------\n");
-    for(int i=0;i<co_pool_count;i++){
-        debug("%d %s\n",i,co_pool[i]->name);
+    for(int i=co_pool_count-1;i>=0;i--){
+        debug("%d %s %s\n",i,co_pool[i]->name,co_pool[i]->status==CO_DEAD?"CO_DEAD":"CO_ALIVE");
     }
     debug("[stack]: ----------\n");
 }
