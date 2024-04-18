@@ -140,6 +140,7 @@ void co_wait(struct co *co) {
     while(co->status!=CO_DEAD){
         if(co->status==CO_NEW){
             co->func(co->arg);
+            co->status = CO_DEAD;
         }
         co_yield();
     }
