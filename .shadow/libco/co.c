@@ -112,20 +112,32 @@ struct co* next_co(){
     return co;
 }
 
+
+void co_exit() {
+    assert(current);
+    debug("free(%s)\n", current->name);
+    current->status = CO_DEAD;
+    refresh_co_pool();
+    free(current);
+    debug_co_pool();
+    return;
+}
+
 //当前协程需要等待，直到 co 协程的执行完成才能继续执行 (类似于 pthread_join)
 void co_wait(struct co *co) {
     assert(co != NULL);
     debug("co_wait(%s)\n",co->name);
     
-    if(co->status!=CO_DEAD)co_yield();
+    // if(co->status!=CO_DEAD){
+    //     co->status = CO_RUNNING;
+    //     co_yield();
+    // }
+    
     // while(co->status!=CO_DEAD){
     //     co_yield();
     // }
-    debug("free(%s)\n",co->name);
-    co->status = CO_DEAD;
-    refresh_co_pool();
-    free(co);
-    debug_co_pool();
+    co->func(co->arg);
+    co_exit();
     return;
 }
 
@@ -147,6 +159,7 @@ void co_yield() {
     if(current->status==CO_NEW){//context is empty
         debug("CO_NEW\n");
     }  
+    tmp->status = CO_WAITING;
     current->status = CO_RUNNING;
     swapcontext(&tmp->context, &current->context);   
 }
@@ -174,26 +187,3 @@ void fini() {
     debug("fini\n");
     free(current);
 }
-
-
-
-// static inline void
-// stack_switch_call(void *sp, void *entry, uintptr_t arg) {
-//     asm volatile (//编译器不应对这段汇编代码进行优化
-// #if __x86_64__
-//         "movq %0, %%rsp; movq %2, %%rdi; jmp *%1"
-//           :
-//           : "b"((uintptr_t)sp),//stack pointer
-//             "d"(entry),//function pointer
-//             "a"(arg)   //function argument
-//           : "memory"
-// #else
-//         "movl %0, %%esp; movl %2, 4(%0); jmp *%1"
-//           :
-//           : "b"((uintptr_t)sp - 8),
-//             "d"(entry),
-//             "a"(arg)
-//           : "memory"// 告诉编译器这段代码可能会改变内存的内容
-// #endif
-//     );
-// }
