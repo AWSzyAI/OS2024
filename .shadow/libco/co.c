@@ -132,7 +132,7 @@ void co_wait(struct co *co) {
     debug("free(%s)\n", current->name);
     current->status = CO_DEAD;
     refresh_co_pool();
-    free(current);
+    // free(current);
     
     return;
 }
