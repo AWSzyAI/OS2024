@@ -64,7 +64,6 @@ void debug_co_pool(){
         }else if(co_pool[i]->status==CO_DEAD){
             debug("💀          │\n");
         }
-        assert(co_pool[i]->status!=CO_DEAD);
         if (i > 0) {
             debug("├──────────────────────────────┤\n");
         }
