@@ -91,6 +91,7 @@ struct co* next_co(){
     // int choose = time()%co_pool_count;
     srand(time(NULL));
     int choose = rand()%co_pool_count;
+    choose = (choose+1)%co_pool_count;
     struct co* co = co_pool[choose];
     if(co->status==CO_DEAD){
         return next_co();
