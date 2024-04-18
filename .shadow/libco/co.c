@@ -127,7 +127,7 @@ void co_wait(struct co *co) {
 
 void co_yield() {
     assert(current);
-    // makecontext(&current->context, (void (*)(void))co_yield, 0);
+    makecontext(&current->context, (void (*)(void))co_yield, 0);
     
     //co_yield() main->Thread-1
     debug("co_yield() %s->",current->name);
@@ -150,12 +150,8 @@ void co_yield() {
             debug("CO_RUNNING\n");
         }
         current->status = CO_RUNNING;
-        swapcontext(&tmp->context, &current->context);
-        
-    }
-    
-    
-    
+        swapcontext(&tmp->context, &current->context);   
+    }   
 }
 
 
