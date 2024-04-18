@@ -1,16 +1,70 @@
 #include <stdio.h>
 #include <stdlib.h>
-#include <pthread.h>
 #include <ucontext.h>
+#include <stdint.h>
 
 #define STACK_SIZE 16384
-#define NUM_THREADS 3
+enum co_state{
+    CO_NEW,     // 新创建，还未执行过
+    CO_RUNNING, // 已经执行过
+    CO_WAITING, // 在 co_wait 上等待
+    CO_DEAD     // 已经结束，但还未释放资源
+};
 
-ucontext_t main_context;
-ucontext_t coroutine_contexts[NUM_THREADS];
-int current_thread = 0;
+typedef struct co {
+    const char *name;
+    void (*func)(void *);
+    void *arg;
+    enum co_state status;
+    ucontext_t context;
+    uint8_t stack[STACK_SIZE];
+} co;
 
-int g_count = 0;
+
+
+int g_count = 0; // 添加对 g_count 的定义
+
+static ucontext_t main_context; // 声明主协程的上下文
+
+static co *current_co = NULL;
+
+static void co_func_wrapper() {
+    current_co->func(current_co->arg);
+    current_co->status = CO_DEAD;
+    current_co = NULL;
+    // 切换到主协程
+    setcontext(&main_context);
+}
+
+co *co_start(const char *name, void (*func)(void *), void *arg) {
+    co *new_co = (co *)malloc(sizeof(co));
+    new_co->name = name;
+    new_co->func = func;
+    new_co->arg = arg;
+    new_co->status = CO_NEW;
+
+    getcontext(&(new_co->context));
+    new_co->context.uc_stack.ss_sp = new_co->stack;
+    new_co->context.uc_stack.ss_size = STACK_SIZE;
+    new_co->context.uc_link = &main_context; // 设置返回主协程
+    makecontext(&(new_co->context), co_func_wrapper, 0);
+
+    return new_co;
+}
+
+void co_wait(co *co_thread) {
+    while (co_thread->status != CO_DEAD) {
+        // 切换到主协程
+        swapcontext(&(co_thread->context), &main_context);
+    }
+}
+
+void co_yield() {
+    if (current_co != NULL) {
+        // 切换到主协程
+        swapcontext(&(current_co->context), &main_context);
+    }
+}
 
 static void add_count() {
     g_count++;
@@ -19,9 +73,9 @@ static void add_count() {
 static int get_count() {
     return g_count;
 }
- 
+
 static void work_loop(void *arg) {
-    const char *s = (const char*)arg;
+    const char *s = (const char *)arg;
     for (int i = 0; i < 100; ++i) {
         printf("%s%d  ", s, get_count());
         add_count();
@@ -30,66 +84,18 @@ static void work_loop(void *arg) {
 }
 
 static void work(void *arg) {
-    //必须接受一个 void * 参数，并且没有返回值。这是因为 co_start 的 func 参数的类型是 void (*)(void *)
     work_loop(arg);
 }
 
-void coroutine_function(int thread_id)
-{
-    while (1) {
-        printf("Coroutine %d: Start\n", thread_id);
-        printf("Coroutine %d: Yielding to main\n", thread_id);
-        swapcontext(&coroutine_contexts[thread_id], &main_context);
-        printf("Coroutine %d: Resumed\n", thread_id);
-        printf("Coroutine %d: End\n", thread_id);
-        swapcontext(&coroutine_contexts[thread_id], &main_context);
-    }
+static void test_1() {
+    co *thd1 = co_start("thread-1", work, "X");
+    co *thd2 = co_start("thread-2", work, "Y");
+
+    co_wait(thd1);
+    co_wait(thd2);
 }
 
-int next_co()
-{
-    current_thread = (current_thread + 1) % NUM_THREADS;
-    return current_thread;
-}
-
-
-
-
-void* scheduler_function(void* arg)
-{
-    while (1) {
-        int next_thread = next_co(); // 确定下一个要执行的协程
-        printf("Scheduler: Resuming coroutine %d\n", next_thread);
-        swapcontext(&main_context, &coroutine_contexts[next_thread]);
-    }
-
-    return NULL;
-}
-
-int main()
-{
-    char co_stack[NUM_THREADS][STACK_SIZE];
-    pthread_t threads[NUM_THREADS + 1];
-    int thread_ids[NUM_THREADS];
-
-    // 初始化主上下文
-    getcontext(&main_context);
-
-    // 创建协程上下文
-    for (int i = 0; i < NUM_THREADS; i++) {
-        getcontext(&coroutine_contexts[i]);
-        coroutine_contexts[i].uc_stack.ss_sp = co_stack[i];
-        coroutine_contexts[i].uc_stack.ss_size = sizeof(co_stack[i]);
-        coroutine_contexts[i].uc_link = &main_context;
-        thread_ids[i] = i;
-        makecontext(&coroutine_contexts[i], (void (*)(void))coroutine_function, 1, thread_ids[i]);
-    }
-
-    // 创建调度器线程
-    pthread_create(&threads[NUM_THREADS], NULL, scheduler_function, NULL);
-
-    // 加入主线程到调度器线程
-    pthread_join(threads[NUM_THREADS], NULL);
-
+int main() {
+    test_1();
     return 0;
 }
