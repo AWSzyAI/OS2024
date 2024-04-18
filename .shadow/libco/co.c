@@ -140,7 +140,7 @@ void co_yield() {
     struct co* tmp = current;
     current = next_co();
     debug("%s\n",current->name);
-    assert(current);
+    assert(current->name!=NULL);
     debug_co_pool();
 
     // 保存当前协程的上下文,并切换到下一个协程的上下文
