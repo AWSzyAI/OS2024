@@ -123,13 +123,9 @@ struct co* next_co(){
 
 void refresh_co_pool(){
     for(int i=0;i<co_pool_count;i++){
-        if(co_pool[i]->status==CO_DEAD){
+        if(co_pool[i]->status==CO_DEAD||co_pool[i]==NULL){
             struct co* tmp = co_pool[i];
-            for(int j=i;j<co_pool_count-1;j++){
-                co_pool[j] = co_pool[j+1];
-            }
-            debug("free(%s)\n", tmp->name);
-            free(tmp);
+            co_pool[i] = &dead_co;
         }
     }
 }
@@ -146,10 +142,10 @@ void co_wait(struct co *co) {
     co->status = CO_RUNNING;
     co_yield();
 
-    
-    // current->status = CO_DEAD;
+    debug("free(%s)\n", current->name);
+    current->status = CO_DEAD;
     refresh_co_pool();
-    // free(current);
+    free(current);
     
     return;
 }
