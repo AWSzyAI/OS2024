@@ -114,11 +114,15 @@ struct co *co_start(const char *name, void (*func)(void *), void *arg) {
 
 struct co* next_co(){
     int choose = rand()%co_pool_count;
-    // if(exist_alive()&&choose==0){
-    //     return next_co();
-    // }
+    if(exist_alive()&&choose==0){
+        return next_co();
+    }
     struct co* co = co_pool[choose];
-    if(co->status!=CO_WAITING){
+    if(co->status==CO_DEAD){
+        return next_co();
+    }
+
+    if(co->status==CO_RUNNING){
         return next_co();
     }
     return co;
@@ -128,12 +132,16 @@ struct co* next_co(){
 
 //当前协程需要等待，直到 co 协程的执行完成才能继续执行 (类似于 pthread_join)
 void co_wait(struct co *co) {
+    
+    assert(co != NULL);
     debug("co_wait(%s)\n",co->name);
-    
-    co->status = CO_WAITING;
-    co_yield();
+    if(co->status==CO_DEAD){
+        return;
+    }
+    current->status = CO_WAITING;
+    co->status = CO_RUNNING;
+    swapcontext(&current->context, &co->context);
 
-    
     debug("free(%s)\n", current->name);
     current->status = CO_DEAD;
     refresh_co_pool();
@@ -169,7 +177,6 @@ void co_init() {
     main_co->stack[STACK_SIZE-1] = 0;
     getcontext(&main_co->context);
     co_pool[co_pool_count++] = main_co;
-    co_wait(main_co);
     
     
     // struct co *main_co = co_start("main",NULL,NULL);
