@@ -119,8 +119,8 @@ void co_wait(struct co *co) {
     }
     
     co->status = CO_WAITING;
-    swapcontext(&current->context, &co->context);
-    // co_yield();
+    
+    co_yield();
 
     debug("free(%s)\n", current->name);
     current->status = CO_DEAD;
