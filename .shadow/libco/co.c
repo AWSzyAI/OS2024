@@ -41,6 +41,10 @@ struct co {
 };
 
 struct co* current=NULL;
+struct co dead_co={
+    .name = "dead",
+    .status = CO_DEAD
+};
 struct co* co_pool[128];  
 int co_pool_count = 0;
 void debugstack(){
@@ -50,6 +54,15 @@ void debugstack(){
     }
     debug("\n");
 }
+
+void refresh_co_pool(){
+    for(int i=0;i<co_pool_count;i++){
+        if(co_pool[i]->status==CO_DEAD){
+            co_pool[i] = &dead_co;
+        }
+    }
+}
+
 
 //func(arg)被 co_start() 调用，从头开始运行
 struct co *co_start(const char *name, void (*func)(void *), void *arg) {
@@ -75,24 +88,28 @@ struct co *co_start(const char *name, void (*func)(void *), void *arg) {
 
 
 struct co* next_co(){
-    for(int i=0;i<co_pool_count;i++){
-        if(co_pool[i]==current){
-            return co_pool[(i+1)%co_pool_count];
-        }
+    // int choose = time()%co_pool_count;
+    srand(time(NULL));
+    int choose = rand()%co_pool_count;
+    struct co* co = co_pool[choose];
+    if(co->status==CO_DEAD){
+        return next_co();
     }
-    return NULL;
+    return co;
 }
 
 //当前协程需要等待，直到 co 协程的执行完成才能继续执行 (类似于 pthread_join)
 void co_wait(struct co *co) {
     assert(co != NULL);
     debug("co_wait(%s)\n",co->name);
-    // co_yield();
-    while(co->status!=CO_DEAD){
-        // current->status = CO_WAITING;
-        co_yield();
-    }
+    co_yield();
+    // while(co->status!=CO_DEAD){
+    //     // current->status = CO_WAITING;
+    //     co_yield();
+    // }
     debug("free(%s):%s\n",co->name,"CO_DEAD");
+    co->status = CO_DEAD;
+    refresh_co_pool();
     free(co);
     return;
 }
