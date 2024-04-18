@@ -75,7 +75,7 @@ void refresh_co_pool(){
     }
 }
 int exist_alive(){
-    for(int i=0;i<co_pool_count;i++){
+    for(int i=1;i<co_pool_count;i++){
         if(!(co_pool[i]->status==CO_WAITING)){
             return 1;
         }
@@ -101,7 +101,6 @@ struct co *co_start(const char *name, void (*func)(void *), void *arg) {
     co->context.uc_stack.ss_sp = co->stack;
     co->context.uc_stack.ss_size = sizeof(co->stack);
     co->context.uc_link = &current->context;
-    // co->context.uc_link = &main_co->context;
     co->context.uc_stack.ss_flags = 0;
     
     makecontext(&co->context, (void (*)(void))co->func,1,co->arg);
