@@ -133,11 +133,11 @@ void co_wait(struct co *co) {
     co->status = CO_WAITING;
     co_yield();
 
-    if(current->status = CO_DEAD){
-        debug("free(%s)\n", current->name);
-        refresh_co_pool();
-        free(current);  
-    }
+    // if(current->status = CO_DEAD){
+    //     debug("free(%s)\n", current->name);
+    //     refresh_co_pool();
+    //     free(current);  
+    // }
     return;
 }
 
