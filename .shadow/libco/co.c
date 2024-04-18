@@ -138,18 +138,11 @@ void co_wait(struct co *co) {
 
 struct co* next_co(){
     int choose = rand()%co_pool_count;
-    if(exist_alive()&&choose==0){
-        return next_co();
-    }
     struct co* co = co_pool[choose];
-    if(co->status==CO_DEAD){
-        return next_co();
+    if(co->status==CO_RUNNING||co->status==CO_WAITING){
+        return co;
     }
-
-    if(co->status==CO_RUNNING){
-        return next_co();
-    }
-    return co;
+    return next_co();
 }
 void co_yield() {
     debug("co_yield() %s->",current->name);
