@@ -136,6 +136,7 @@ struct co* next_co(){
 void co_wait(struct co *co) {
     assert(co != NULL);
     debug("co_wait(%s)\n",co->name);
+    co_yield();
     
     assert(current);
     debug("free(%s)\n", current->name);
