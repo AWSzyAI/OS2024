@@ -169,6 +169,7 @@ void co_init() {
     main_co->stack[STACK_SIZE-1] = 0;
     getcontext(&main_co->context);
     co_pool[co_pool_count++] = main_co;
+    co_wait(main_co);
     
     
     // struct co *main_co = co_start("main",NULL,NULL);
