@@ -82,13 +82,16 @@ struct co *co_start(const char *name, void (*func)(void *), void *arg) {
     co->func = func;
     co->arg = arg;
     co->status = CO_NEW;
+    co->stack[STACK_SIZE-1] = 0;
 
     // 创建协程上下文
     getcontext(&co->context);
     co->context.uc_stack.ss_sp = co->stack;
     co->context.uc_stack.ss_size = sizeof(co->stack);
     co->context.uc_link = &current->context;
-    makecontext(&co->context, (void (*)(void))co_yield, 1);
+    co->context.uc_stack.ss_flags = 0;
+    co->context.uc_link = NULL;
+    makecontext(&co->context, (void (*)(void))co->func, 1,co->arg);
     co_pool[co_pool_count++] = co;
 
     debug_co_pool();   
@@ -98,21 +101,14 @@ struct co *co_start(const char *name, void (*func)(void *), void *arg) {
 
 
 struct co* next_co(){
-    // int choose = time()%co_pool_count;
-    
-    
     int choose = rand()%co_pool_count;
     if(exist_alive()&&choose==0){
         return next_co();
     }
-    // choose = (choose+1)%co_pool_count;
     struct co* co = co_pool[choose];
     if(co->status==CO_DEAD){
         return next_co();
     }
-    // if(co->name==current->name){
-    //     return next_co();
-    // }
     return co;
 }
 
@@ -138,8 +134,6 @@ void co_wait(struct co *co) {
 void co_yield() {
     assert(current);
     //co_yield() main->Thread-1
-
-    makecontext(&current->context, (void (*)(void))current->func, 1);
 
     debug("co_yield() %s->",current->name);
     current->status = CO_WAITING;
