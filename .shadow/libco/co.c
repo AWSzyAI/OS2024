@@ -101,7 +101,12 @@ void refresh_co_pool(){
     for(int i=0;i<co_pool_count;i++){
         if(co_pool[i]->status==CO_DEAD||co_pool[i]==NULL){
             struct co* tmp = co_pool[i];
-            co_pool[i] = &dead_co;
+            if(i+1<co_pool_count){
+                for(int j=i+1;j<co_pool_count;j++){
+                    co_pool[j-1] = co_pool[j];
+                }
+            }
+            co_pool_count--;
             free(tmp);
         }
     }
