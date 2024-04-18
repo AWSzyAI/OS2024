@@ -48,11 +48,11 @@ struct co dead_co={
 struct co* co_pool[128];  
 int co_pool_count = 0;
 void debug_co_pool(){
-    debug("[stack]: ");
+    debug("[stack]: ----------\n");
     for(int i=0;i<co_pool_count;i++){
-        debug("%s ",co_pool[i]->name);
+        debug("%d %s\n",i,co_pool[i]->name);
     }
-    debug("\n");
+    debug("[stack]: ----------\n");
 }
 
 void refresh_co_pool(){
