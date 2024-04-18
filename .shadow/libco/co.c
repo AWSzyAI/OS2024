@@ -56,13 +56,13 @@ void debug_co_pool(){
         snprintf(buffer, sizeof(buffer), "%d %s", i, co_pool[i]->name);
         debug("│ %-16s ", buffer);
         if(co_pool[i]->status==CO_NEW){
-            debug("🍃           │\n");
+            debug("🍃          │\n");
         }else if(co_pool[i]->status==CO_RUNNING){
-            debug("✅           │\n");
+            debug("✅          │\n");
         }else if(co_pool[i]->status==CO_WAITING){
-            debug("⌛️           │\n");
+            debug("⌛️          │\n");
         }else if(co_pool[i]->status==CO_DEAD){
-            debug("💀           │\n");
+            debug("💀          │\n");
         }
         if (i > 0) {
             debug("├──────────────────────────────┤\n");
@@ -141,6 +141,11 @@ void co_wait(struct co *co) {
     debug("co_wait(%s)\n",co->name);
     
     while(co->status!=CO_DEAD){
+        if(co->status==CO_NEW){
+            co->status = CO_RUNNING;
+            debug("co_wait(%s):%s\n",co->name,"CO_RUNNING");
+            swapcontext(&current->context, &co->context);
+        }
         co_yield();
     }
     
