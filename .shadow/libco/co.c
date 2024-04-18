@@ -157,7 +157,6 @@ void co_wait(struct co *co) {
 
 void co_yield() {
     assert(current);
-    //co_yield() main->Thread-1
 
     debug("co_yield() %s->",current->name);
     current->status = CO_WAITING;
@@ -170,10 +169,6 @@ void co_yield() {
     debug_co_pool();
 
     // 保存当前协程的上下文,并切换到下一个协程的上下文
-    if(current->status==CO_NEW){//context is empty
-        debug("CO_NEW\n");
-    }
-    
     swapcontext(&tmp->context, &current->context);   
 }
 
@@ -187,9 +182,12 @@ void co_init() {
     main_co->status = CO_RUNNING; // 主线程已经在运行
     main_co->func = NULL; // 主线程不需要关联任何函数
     main_co->arg = NULL;
+    main_co->stack[STACK_SIZE-1] = 0;
+    getcontext(&main_co->context);
+    co_pool[co_pool_count++] = main_co;
+
     // 将主线程协程设置为当前协程
     current = main_co;
-    // co_pool[co_pool_count++] = main_co;
     debug_co_pool();
     srand(time(NULL));
 }
