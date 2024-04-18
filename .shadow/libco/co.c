@@ -60,7 +60,7 @@ void debug_co_pool(){
         }else if(co_pool[i]->status==CO_RUNNING){
             debug("✅  │\n");
         }else if(co_pool[i]->status==CO_WAITING){
-            debug("⚠️  │\n");
+            debug("⌛️  │\n");
         }else if(co_pool[i]->status==CO_DEAD){
             debug("💀     │\n");
         }
