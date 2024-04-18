@@ -63,7 +63,7 @@ void refresh_co_pool(){
     }
 }
 int exist_alive(){
-    for(int i=1;i<co_pool_count;i++){
+    for(int i=0;i<co_pool_count;i++){
         if(co_pool[i]->status!=CO_DEAD){
             return 1;
         }
@@ -174,7 +174,7 @@ void co_init() {
     main_co->arg = NULL;
     // 将主线程协程设置为当前协程
     current = main_co;
-    co_pool[co_pool_count++] = main_co;
+    // co_pool[co_pool_count++] = main_co;
     debug_co_pool();
     srand(time(NULL));
 }
