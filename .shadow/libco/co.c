@@ -105,6 +105,7 @@ void refresh_co_pool(){
         if(co_pool[i]->status==CO_DEAD||co_pool[i]==NULL){
             struct co* tmp = co_pool[i];
             co_pool[i] = &dead_co;
+            free(tmp);
         }
     }
 }
@@ -147,13 +148,6 @@ struct co* next_co(){
         return next_co();
     }
     if(co->status==CO_DEAD){
-        if(co_pool_count>choose+1){
-            for(int i=choose+1;i<co_pool_count;i++){
-                co_pool[i-1] = co_pool[i];
-            }
-        }
-        co_pool_count--;
-        free(co);
         return next_co();
     }
     return co;
