@@ -121,7 +121,7 @@ struct co* next_co(){
         return next_co();
     }
     struct co* co = co_pool[choose];
-    if(co->status==CO_DEAD||co->status==CO_NEW){
+    if(co->status==CO_DEAD){
         return next_co();
     }
     if(co->status==CO_RUNNING){
