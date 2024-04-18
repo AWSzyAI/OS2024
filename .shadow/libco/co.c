@@ -75,7 +75,7 @@ void refresh_co_pool(){
     }
 }
 int exist_alive(){
-    for(int i=0;i<co_pool_count;i++){
+    for(int i=1;i<co_pool_count;i++){
         if(!(co_pool[i]->status==CO_WAITING)){
             return 1;
         }
@@ -114,7 +114,9 @@ struct co *co_start(const char *name, void (*func)(void *), void *arg) {
 
 struct co* next_co(){
     int choose = rand()%co_pool_count;
-    
+    if(exist_alive()&&choose==0){
+        return next_co();
+    }
     struct co* co = co_pool[choose];
     if(co->status==CO_DEAD){
         return next_co();
