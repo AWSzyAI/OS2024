@@ -134,7 +134,10 @@ void co_wait(struct co *co) {
     
     assert(co != NULL);
     debug("co_wait(%s)\n",co->name);
-
+    if(co->status==CO_DEAD){
+        return;
+    }
+    
     co->status = CO_RUNNING;
     co_yield();
 
