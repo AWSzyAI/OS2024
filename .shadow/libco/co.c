@@ -146,13 +146,7 @@ void co_yield() {
     // 保存当前协程的上下文,并切换到下一个协程的上下文
     if(current->status==CO_NEW){//context is empty
         debug("CO_NEW\n");
-    }else{//current->status==CO_WAITING / CO_RUNNING
-        if(current->status==CO_WAITING){
-            debug("CO_WAITING\n");
-        }else if(current->status==CO_RUNNING){
-            debug("CO_RUNNING\n");
-        }   
-    }   
+    }  
     current->status = CO_RUNNING;
     swapcontext(&tmp->context, &current->context);   
 }
