@@ -92,7 +92,7 @@ struct co *co_start(const char *name, void (*func)(void *), void *arg) {
 
 struct co* next_co(){
     // int choose = time()%co_pool_count;
-    srand(time(NULL));
+    
     int choose = rand()%co_pool_count;
 
     // choose = (choose+1)%co_pool_count;
@@ -173,6 +173,7 @@ void co_init() {
     // 将主线程协程设置为当前协程
     current = main_co;
     // co_pool[co_pool_count++] = main_co;
+    srand(time(NULL));
 }
 
 
