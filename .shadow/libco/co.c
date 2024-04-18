@@ -49,24 +49,22 @@ struct co dead_co={
 struct co* co_pool[128];  
 int co_pool_count = 0;
 void debug_co_pool(){
-    
-    debug("│                              │\n");
-    debug("├──────────────────────────────┤\n");
+    debug("├─────────────────────────┤\n");
     for(int i=co_pool_count-1;i>=0;i--){
         char buffer[20];
         snprintf(buffer, sizeof(buffer), "%d %s", i, co_pool[i]->name);
         debug("│ %-16s ", buffer);
         if(co_pool[i]->status==CO_NEW){
-            debug("🍃          │\n");
+            debug("🍃      │\n");
         }else if(co_pool[i]->status==CO_RUNNING){
-            debug("✅          │\n");
+            debug("✅      │\n");
         }else if(co_pool[i]->status==CO_WAITING){
-            debug("⌛️          │\n");
+            debug("⌛️      │\n");
         }else if(co_pool[i]->status==CO_DEAD){
-            debug("💀          │\n");
+            debug("💀      │\n");
         }
     }
-    debug("└──────────────────────────────┘\n");
+    debug("└─────────────────────────┘\n");
     
 }
 void refresh_co_pool(){
