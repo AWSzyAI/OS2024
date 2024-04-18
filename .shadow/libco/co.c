@@ -105,21 +105,7 @@ struct co *co_start(const char *name, void (*func)(void *), void *arg) {
 
 
 
-struct co* next_co(){
-    int choose = rand()%co_pool_count;
-    if(exist_alive()&&choose==0){
-        return next_co();
-    }
-    struct co* co = co_pool[choose];
-    if(co->status==CO_DEAD){
-        return next_co();
-    }
 
-    if(co->status==CO_RUNNING){
-        return next_co();
-    }
-    return co;
-}
 
 void refresh_co_pool(){
     for(int i=0;i<co_pool_count;i++){
@@ -150,7 +136,17 @@ void co_wait(struct co *co) {
     return;
 }
 
-
+struct co* next_co(){
+    int choose = rand()%co_pool_count;
+    // if(exist_alive()&&choose==0){
+    //     return next_co();
+    // }
+    struct co* co = co_pool[choose];
+    if(!co->status==CO_WAITING){
+        return next_co();
+    }
+    return co;
+}
 void co_yield() {
     debug("co_yield() %s->",current->name);
     current->status = CO_WAITING;
