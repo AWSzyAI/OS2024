@@ -142,7 +142,7 @@ struct co* next_co(){
     //     return next_co();
     // }
     struct co* co = co_pool[choose];
-    if(!co->status==CO_WAITING){
+    if(!(co->status==CO_WAITING)){
         return next_co();
     }
     return co;
