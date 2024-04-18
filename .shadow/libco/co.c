@@ -55,13 +55,13 @@ void debug_co_pool(){
         snprintf(buffer, sizeof(buffer), "%d %s", i, co_pool[i]->name);
         debug("│ %-16s ", buffer);
         if(co_pool[i]->status==CO_NEW){
-            debug("🍃      │\n");
+            debug("🍃     │\n");
         }else if(co_pool[i]->status==CO_RUNNING){
-            debug("✅      │\n");
+            debug("✅     │\n");
         }else if(co_pool[i]->status==CO_WAITING){
-            debug("⌛️      │\n");
+            debug("⌛️     │\n");
         }else if(co_pool[i]->status==CO_DEAD){
-            debug("💀      │\n");
+            debug("💀     │\n");
         }
     }
     debug("└─────────────────────────┘\n");
@@ -75,7 +75,7 @@ void refresh_co_pool(){
     }
 }
 int exist_alive(){
-    for(int i=1;i<co_pool_count;i++){
+    for(int i=0;i<co_pool_count;i++){
         if(!(co_pool[i]->status==CO_WAITING)){
             return 1;
         }
@@ -114,15 +114,11 @@ struct co *co_start(const char *name, void (*func)(void *), void *arg) {
 
 struct co* next_co(){
     int choose = rand()%co_pool_count;
-    if(exist_alive()&&choose==0){
-        return next_co();
-    }
+    // if(exist_alive()&&choose==0){
+    //     return next_co();
+    // }
     struct co* co = co_pool[choose];
-    if(co->status==CO_DEAD){
-        return next_co();
-    }
-
-    if(co->status==CO_RUNNING){
+    if(co->status!=CO_WAITING){
         return next_co();
     }
     return co;
@@ -132,15 +128,10 @@ struct co* next_co(){
 
 //当前协程需要等待，直到 co 协程的执行完成才能继续执行 (类似于 pthread_join)
 void co_wait(struct co *co) {
-    
-    assert(co != NULL);
     debug("co_wait(%s)\n",co->name);
-    if(co->status==CO_DEAD){
-        return;
-    }
-    co->status = CO_WAITING;
-    swapcontext(&current->context, &co->context);
     
+    co->status = CO_WAITING;
+    co_yield();
 
     debug("free(%s)\n", current->name);
     current->status = CO_DEAD;
