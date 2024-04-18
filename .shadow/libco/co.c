@@ -140,7 +140,7 @@ void co_wait(struct co *co) {
 struct co* next_co(){
     int choose = rand()%co_pool_count;
     struct co* co = co_pool[choose];
-    if(exist_alive()&& co->name=="main"){
+    if(exist_alive()&& choose==0){
         return next_co();
     }
     if(co->status==CO_RUNNING){
