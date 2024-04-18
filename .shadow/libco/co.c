@@ -142,9 +142,7 @@ void co_wait(struct co *co) {
     
     while(co->status!=CO_DEAD){
         if(co->status==CO_NEW){
-            co->status = CO_RUNNING;
-            debug("co_wait(%s):%s\n",co->name,"CO_RUNNING");
-            swapcontext(&current->context, &co->context);
+            co->func(co->arg);
         }
         co_yield();
     }
