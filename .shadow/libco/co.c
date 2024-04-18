@@ -125,7 +125,7 @@ void co_wait(struct co *co) {
     debug("free(%s)\n", current->name);
     current->status = CO_DEAD;
     refresh_co_pool();
-    free(current);
+    // free(current);
     
     return;
 }
@@ -144,6 +144,16 @@ struct co* next_co(){
     }
     struct co* co = co_pool[choose];
     if(co->status==CO_RUNNING){
+        return next_co();
+    }
+    if(co->status==CO_DEAD){
+        if(co_pool_count>choose+1){
+            for(int i=choose+1;i<co_pool_count;i++){
+                co_pool[i-1] = co_pool[i];
+            }
+        }
+        co_pool_count--;
+        free(co);
         return next_co();
     }
     return co;
