@@ -97,6 +97,7 @@ struct co *co_start(const char *name, void (*func)(void *), void *arg) {
     debug_co_pool();   
     
     co->func(co->arg);
+    debug("%s->func() Done, %s\n",co->name,"CO_DEAD");
     co->status = CO_DEAD;
 
     return co;
