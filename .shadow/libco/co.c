@@ -193,6 +193,11 @@ void co_init() {
 __attribute__((destructor))
 void fini() {
     debug_co_pool();
+    for(int i=1;i<co_pool_count;i++){
+        free(co_pool[i]);
+    }
+    co_pool_count = 1;
+    debug_co_pool();
     debug("fini\n");
     free(current);
 }
