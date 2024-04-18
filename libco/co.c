@@ -41,6 +41,7 @@ struct co {
 };
 
 struct co* current=NULL;
+struct co* main_co=NULL;
 struct co dead_co={
     .name = "dead",
     .status = CO_DEAD
@@ -48,27 +49,22 @@ struct co dead_co={
 struct co* co_pool[128];  
 int co_pool_count = 0;
 void debug_co_pool(){
-    
-    debug("│                              │\n");
-    debug("├──────────────────────────────┤\n");
+    debug("├─────────────────────────┤\n");
     for(int i=co_pool_count-1;i>=0;i--){
         char buffer[20];
         snprintf(buffer, sizeof(buffer), "%d %s", i, co_pool[i]->name);
         debug("│ %-16s ", buffer);
         if(co_pool[i]->status==CO_NEW){
-            debug("🍃          │\n");
+            debug("🍃     │\n");
         }else if(co_pool[i]->status==CO_RUNNING){
-            debug("✅          │\n");
+            debug("✅     │\n");
         }else if(co_pool[i]->status==CO_WAITING){
-            debug("⌛️          │\n");
+            debug("⌛️     │\n");
         }else if(co_pool[i]->status==CO_DEAD){
-            debug("💀          │\n");
-        }
-        if (i > 0) {
-            debug("├──────────────────────────────┤\n");
+            debug("💀     │\n");
         }
     }
-    debug("└──────────────────────────────┘\n");
+    debug("└─────────────────────────┘\n");
     
 }
 void refresh_co_pool(){
@@ -79,8 +75,8 @@ void refresh_co_pool(){
     }
 }
 int exist_alive(){
-    for(int i=1;i<co_pool_count;i++){
-        if(co_pool[i]->status!=CO_DEAD){
+    for(int i=0;i<co_pool_count;i++){
+        if(!(co_pool[i]->status==CO_WAITING)){
             return 1;
         }
     }
@@ -105,8 +101,9 @@ struct co *co_start(const char *name, void (*func)(void *), void *arg) {
     co->context.uc_stack.ss_sp = co->stack;
     co->context.uc_stack.ss_size = sizeof(co->stack);
     co->context.uc_link = &current->context;
+    // co->context.uc_link = &main_co->context;
     co->context.uc_stack.ss_flags = 0;
-    co->context.uc_link = NULL;
+    
     makecontext(&co->context, (void (*)(void))co->func,1,co->arg);
     co_pool[co_pool_count++] = co;
     debug_co_pool();   
@@ -117,13 +114,14 @@ struct co *co_start(const char *name, void (*func)(void *), void *arg) {
 
 struct co* next_co(){
     int choose = rand()%co_pool_count;
-    // if(exist_alive()&&choose==0){
-    //     return next_co();
-    // }
+    if(exist_alive()&&choose==0){
+        return next_co();
+    }
     struct co* co = co_pool[choose];
     if(co->status==CO_DEAD){
         return next_co();
     }
+
     if(co->status==CO_RUNNING){
         return next_co();
     }
@@ -134,30 +132,26 @@ struct co* next_co(){
 
 //当前协程需要等待，直到 co 协程的执行完成才能继续执行 (类似于 pthread_join)
 void co_wait(struct co *co) {
+    
     assert(co != NULL);
     debug("co_wait(%s)\n",co->name);
-    
-    while(co->status!=CO_DEAD){
-        // if(co->status==CO_NEW){
-        //     co->func(co->arg);
-        //     co->status = CO_DEAD;
-        // }
-        co_yield();
+    if(co->status==CO_DEAD){
+        return;
     }
-    
-    assert(current);
+    current->status = CO_WAITING;
+    co->status = CO_RUNNING;
+    swapcontext(&current->context, &co->context);
+
     debug("free(%s)\n", current->name);
     current->status = CO_DEAD;
     refresh_co_pool();
     free(current);
-    debug_co_pool();
+    // debug_co_pool();
     return;
 }
 
 
 void co_yield() {
-    assert(current);
-
     debug("co_yield() %s->",current->name);
     current->status = CO_WAITING;
     // 选择下一个待运行的协程 (相当于修改 current)
@@ -165,9 +159,7 @@ void co_yield() {
     current = next_co();
     current->status = CO_RUNNING;
     debug("%s\n",current->name);
-    assert(current->name!=NULL);
     debug_co_pool();
-
     // 保存当前协程的上下文,并切换到下一个协程的上下文
     swapcontext(&tmp->context, &current->context);   
 }
@@ -185,6 +177,10 @@ void co_init() {
     main_co->stack[STACK_SIZE-1] = 0;
     getcontext(&main_co->context);
     co_pool[co_pool_count++] = main_co;
+    
+    
+    // struct co *main_co = co_start("main",NULL,NULL);
+    
 
     // 将主线程协程设置为当前协程
     current = main_co;
