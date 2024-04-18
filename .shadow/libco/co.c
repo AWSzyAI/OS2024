@@ -48,23 +48,28 @@ struct co dead_co={
 struct co* co_pool[128];  
 int co_pool_count = 0;
 void debug_co_pool(){
-    debug("┌────────────────────\n");
-    debug("│[stack]\n");
+    debug("┌────────────────────┐\n");
+    debug("│[stack]             │\n");
+    debug("├────────────────────┤\n");
     for(int i=co_pool_count-1;i>=0;i--){
-        debug("│ %d %s ",i,co_pool[i]->name);
+        char buffer[20];
+        snprintf(buffer, sizeof(buffer), "%d %s", i, co_pool[i]->name);
+        debug("│ %-16s ", buffer);
         if(co_pool[i]->status==CO_NEW){
-            debug("CO_NEW\n");
+            debug("CO_NEW        │\n");
         }else if(co_pool[i]->status==CO_RUNNING){
-            debug("CO_RUNNING\n");
+            debug("CO_RUNNING    │\n");
         }else if(co_pool[i]->status==CO_WAITING){
-            debug("CO_WAITING\n");
+            debug("CO_WAITING    │\n");
         }else if(co_pool[i]->status==CO_DEAD){
-            debug("CO_DEAD\n");
+            debug("CO_DEAD       │\n");
+        }
+        if (i > 0) {
+            debug("├────────────────────┤\n");
         }
     }
-    debug("└────────────────────\n");
+    debug("└────────────────────┘\n");
 }
-
 void refresh_co_pool(){
     for(int i=0;i<co_pool_count;i++){
         if(co_pool[i]->status==CO_DEAD||co_pool[i]==NULL){
