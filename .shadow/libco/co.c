@@ -106,13 +106,9 @@ struct co *co_start(const char *name, void (*func)(void *), void *arg) {
     co->context.uc_link = &current->context;
     co->context.uc_stack.ss_flags = 0;
     co->context.uc_link = NULL;
-    makecontext(&co->context, (void (*)(void))co->func,co->arg);
+    makecontext(&co->context, (void (*)(void))co->func,1,co->arg);
     co_pool[co_pool_count++] = co;
-
     debug_co_pool();   
-    
-    
-
     return co;
 }
 
