@@ -164,7 +164,7 @@ void co_init() {
     main_co->arg = NULL;
     // 将主线程协程设置为当前协程
     current = main_co;
-    // co_pool[co_pool_count++] = main_co;
+    co_pool[co_pool_count++] = main_co;
     srand(time(NULL));
 }
 
