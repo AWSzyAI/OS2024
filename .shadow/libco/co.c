@@ -97,9 +97,6 @@ struct co *co_start(const char *name, void (*func)(void *), void *arg) {
 }
 
 
-
-
-
 void refresh_co_pool(){
     for(int i=0;i<co_pool_count;i++){
         if(co_pool[i]->status==CO_DEAD||co_pool[i]==NULL){
@@ -130,7 +127,7 @@ void co_wait(struct co *co) {
     
     return;
 }
-int exist_alive(){
+int exist_alive_co(){
     for(int i=1;i<co_pool_count;i++){
         if((co_pool[i]->status==CO_WAITING||co_pool[i]->status==CO_RUNNING)){
             return 1;
@@ -140,7 +137,7 @@ int exist_alive(){
 }
 struct co* next_co(){
     int choose = rand()%co_pool_count;
-    if(exist_alive()&&choose==0){
+    if(exist_alive_co()&&choose==0){
         return next_co();
     }
     struct co* co = co_pool[choose];
@@ -192,11 +189,7 @@ void co_init() {
 
 __attribute__((destructor))
 void fini() {
-    debug_co_pool();
-    for(int i=1;i<co_pool_count;i++){
-        free(co_pool[i]);
-    }
-    co_pool_count = 1;
+    
     debug_co_pool();
     debug("fini\n");
     free(current);
