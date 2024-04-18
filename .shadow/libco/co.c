@@ -57,7 +57,7 @@ void debug_co_pool(){
 
 void refresh_co_pool(){
     for(int i=0;i<co_pool_count;i++){
-        if(co_pool[i]->status==CO_DEAD){
+        if(co_pool[i]->status==CO_DEAD||co_pool[i]==NULL){
             co_pool[i] = &dead_co;
         }
     }
