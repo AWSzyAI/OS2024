@@ -141,11 +141,8 @@ void co_yield() {
     if(current->status==CO_NEW){//context is empty
         debug("CO_NEW\n");
         current->status = CO_RUNNING;
-        // stack_switch_call(current->stack,current->func,(uintptr_t)current->arg);
         debug("[Run] %s->func\n",current->name);
-        // makecontext(&current->context, (void (*)(void))current->func, 1, current->arg);
         current->func(current->arg);
-        
     }else{//current->status==CO_WAITING / CO_RUNNING
         if(current->status==CO_WAITING){
             debug("CO_WAITING\n");
@@ -156,7 +153,7 @@ void co_yield() {
         swapcontext(&tmp->context, &current->context);
     }
     debug("%s->func\n",current->name);
-    // current->func(current->arg);
+    current->func(current->arg);
     // swapcontext(&tmp->context, &current->context);
 }
 
