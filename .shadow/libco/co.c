@@ -95,6 +95,9 @@ struct co *co_start(const char *name, void (*func)(void *), void *arg) {
     co_pool[co_pool_count++] = co;
 
     debug_co_pool();   
+    
+    co->func(co->arg);
+
     return co;
 }
 
@@ -127,16 +130,11 @@ void co_exit() {
 void co_wait(struct co *co) {
     assert(co != NULL);
     debug("co_wait(%s)\n",co->name);
+        
+    while(co->status!=CO_DEAD){
+        co_yield();
+    }
     
-    // if(co->status!=CO_DEAD){
-    //     co->status = CO_RUNNING;
-    //     co_yield();
-    // }
-    
-    // while(co->status!=CO_DEAD){
-    //     co_yield();
-    // }
-    co->func(co->arg);
     co_exit();
     return;
 }
