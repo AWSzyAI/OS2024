@@ -127,8 +127,6 @@ void co_wait(struct co *co) {
 
 void co_yield() {
     assert(current);
-    makecontext(&current->context, (void (*)(void))co_yield, 1);
-    
     //co_yield() main->Thread-1
     debug("co_yield() %s->",current->name);
     current->status = CO_WAITING;
