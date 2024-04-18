@@ -68,14 +68,7 @@ void debug_co_pool(){
     
 }
 
-int exist_alive(){
-    for(int i=1;i<co_pool_count;i++){
-        if(!(co_pool[i]->status==CO_WAITING)){
-            return 1;
-        }
-    }
-    return 0;
-}
+
 
 //func(arg)被 co_start() 调用，从头开始运行
 struct co *co_start(const char *name, void (*func)(void *), void *arg) {
@@ -135,17 +128,20 @@ void co_wait(struct co *co) {
     
     return;
 }
-
+int exist_alive(){
+    for(int i=1;i<co_pool_count;i++){
+        if((co_pool[i]->status==CO_WAITING||co_pool[i]->status==CO_RUNNING)){
+            return 1;
+        }
+    }
+    return 0;
+}
 struct co* next_co(){
     int choose = rand()%co_pool_count;
     if(exist_alive()&&choose==0){
         return next_co();
     }
     struct co* co = co_pool[choose];
-    if(co->status==CO_DEAD){
-        return next_co();
-    }
-
     if(co->status==CO_RUNNING){
         return next_co();
     }
