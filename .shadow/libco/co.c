@@ -28,7 +28,7 @@ enum co_state{
     CO_WAITING, // 在 co_wait 上等待
     CO_DEAD     // 已经结束，但还未释放资源
 };
-#define STACK_SIZE 16384
+#define STACK_SIZE 8192
 struct co {
     const char *    name;// 协程的名字,用于调试,可选,可以为NULL
     void            (*func)(void *);
@@ -56,13 +56,13 @@ void debug_co_pool(){
         snprintf(buffer, sizeof(buffer), "%d %s", i, co_pool[i]->name);
         debug("│ %-16s ", buffer);
         if(co_pool[i]->status==CO_NEW){
-            debug("🍃      │\n");
+            debug("🍃          │\n");
         }else if(co_pool[i]->status==CO_RUNNING){
-            debug("✅  │\n");
+            debug("✅          │\n");
         }else if(co_pool[i]->status==CO_WAITING){
-            debug("⌛️  │\n");
+            debug("⌛️          │\n");
         }else if(co_pool[i]->status==CO_DEAD){
-            debug("💀     │\n");
+            debug("💀          │\n");
         }
         if (i > 0) {
             debug("├──────────────────────────────┤\n");
