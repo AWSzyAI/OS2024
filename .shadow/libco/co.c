@@ -30,11 +30,11 @@ enum co_state{
 };
 #define STACK_SIZE 16384
 struct co {
-    const char *name;// 协程的名字,用于调试,可选,可以为NULL
-    void (*func)(void *);
-    void *arg;
+    const char *    name;// 协程的名字,用于调试,可选,可以为NULL
+    void            (*func)(void *);
+    void *          arg;
     enum co_state   status;  //协程状态
-    ucontext_t     context;    // ucontext_t 结构,用于保存当前协程的寄存器状态,包括栈指针,栈基址等
+    ucontext_t      context;    // ucontext_t 结构,用于保存当前协程的寄存器状态,包括栈指针,栈基址等
     uint8_t         stack[STACK_SIZE]; // 协程的堆栈,用于保存当前协程的栈帧
     // struct co *     waiterp; // 是否有其他协程在等待当前协程,可选,可以为NULL,
     // struct context  context; // 寄存器现场,用于保存当前协程的寄存器状态,包括栈指针,栈基址等
@@ -119,7 +119,6 @@ void co_wait(struct co *co) {
     
     if(co->status!=CO_DEAD)co_yield();
     // while(co->status!=CO_DEAD){
-    //     // current->status = CO_WAITING;
     //     co_yield();
     // }
     debug("free(%s)\n",co->name);
@@ -141,6 +140,7 @@ void co_yield() {
     struct co* tmp = current;
     current = next_co();
     debug("%s\n",current->name);
+    assert(current);
     debug_co_pool();
 
     // 保存当前协程的上下文,并切换到下一个协程的上下文
