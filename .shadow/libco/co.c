@@ -105,8 +105,8 @@ struct co *co_start(const char *name, void (*func)(void *), void *arg) {
     getcontext(&co->context);
     co->context.uc_stack.ss_sp = co->stack;
     co->context.uc_stack.ss_size = sizeof(co->stack);
-    // co->context.uc_link = &current->context;
-    co->context.uc_link = &main_co->context;
+    co->context.uc_link = &current->context;
+    // co->context.uc_link = &main_co->context;
     co->context.uc_stack.ss_flags = 0;
     
     makecontext(&co->context, (void (*)(void))co->func,1,co->arg);
@@ -123,7 +123,7 @@ struct co* next_co(){
         return next_co();
     }
     struct co* co = co_pool[choose];
-    if(co->status==CO_DEAD||co->status==CO_NEW){
+    if(co->status==CO_DEAD){
         return next_co();
     }
 
