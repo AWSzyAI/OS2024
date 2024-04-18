@@ -119,6 +119,7 @@ void co_wait(struct co *co) {
     co->status = CO_DEAD;
     refresh_co_pool();
     free(co);
+    debug_co_pool();
     return;
 }
 
