@@ -50,7 +50,16 @@ int co_pool_count = 0;
 void debug_co_pool(){
     debug("[stack]: ----------\n");
     for(int i=co_pool_count-1;i>=0;i--){
-        debug("%d %s %s\n",i,co_pool[i]->name,co_pool[i]->status==CO_DEAD?"CO_DEAD":"CO_ALIVE");
+        debug("%d %s ",i,co_pool[i]->name);
+        if(co_pool[i]->status==CO_NEW){
+            debug("CO_NEW\n");
+        }else if(co_pool[i]->status==CO_RUNNING){
+            debug("CO_RUNNING\n");
+        }else if(co_pool[i]->status==CO_WAITING){
+            debug("CO_WAITING\n");
+        }else if(co_pool[i]->status==CO_DEAD){
+            debug("CO_DEAD\n");
+        }
     }
     debug("[stack]: ----------\n");
 }
@@ -112,34 +121,29 @@ struct co* next_co(){
     if(co->status==CO_DEAD){
         return next_co();
     }
+    if(co->status==CO_RUNNING){
+        return next_co();
+    }
     return co;
 }
 
 
-void co_exit() {
+
+//当前协程需要等待，直到 co 协程的执行完成才能继续执行 (类似于 pthread_join)
+void co_wait(struct co *co) {
+    assert(co != NULL);
+    debug("co_wait(%s)\n",co->name);
+    
+    while(co->status!=CO_DEAD){
+        co_yield();
+    }
+    
     assert(current);
     debug("free(%s)\n", current->name);
     current->status = CO_DEAD;
     refresh_co_pool();
     free(current);
     debug_co_pool();
-    return;
-}
-
-//当前协程需要等待，直到 co 协程的执行完成才能继续执行 (类似于 pthread_join)
-void co_wait(struct co *co) {
-    assert(co != NULL);
-    debug("co_wait(%s)\n",co->name);
-
-    co->func(co->arg);
-    debug("%s->func() Done, %s\n",co->name,"CO_DEAD");
-    co->status = CO_DEAD;
-        
-    while(co->status!=CO_DEAD){
-        co_yield();
-    }
-    
-    co_exit();
     return;
 }
 
@@ -153,16 +157,16 @@ void co_yield() {
     // 选择下一个待运行的协程 (相当于修改 current)
     struct co* tmp = current;
     current = next_co();
+    current->status = CO_RUNNING;
     debug("%s\n",current->name);
     assert(current->name!=NULL);
-    // debug_co_pool();
+    debug_co_pool();
 
     // 保存当前协程的上下文,并切换到下一个协程的上下文
     if(current->status==CO_NEW){//context is empty
         debug("CO_NEW\n");
-    }  
-    tmp->status = CO_WAITING;
-    current->status = CO_RUNNING;
+    }
+    
     swapcontext(&tmp->context, &current->context);   
 }
 
