@@ -141,7 +141,7 @@ void co_yield() {
     current = next_co();
     debug("%s\n",current->name);
     assert(current->name!=NULL);
-    debug_co_pool();
+    // debug_co_pool();
 
     // 保存当前协程的上下文,并切换到下一个协程的上下文
     if(current->status==CO_NEW){//context is empty
@@ -175,7 +175,7 @@ void co_init() {
     // 将主线程协程设置为当前协程
     current = main_co;
     co_pool[co_pool_count++] = main_co;
-    // debug_co_pool();
+    debug_co_pool();
     srand(time(NULL));
 }
 
