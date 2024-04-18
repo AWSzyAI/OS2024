@@ -75,12 +75,15 @@ struct co *co_start(const char *name, void (*func)(void *), void *arg) {
     co->func = func;
     co->arg = arg;
     co->status = CO_NEW;
+
+    // 创建协程上下文
     getcontext(&co->context);
     co->context.uc_stack.ss_sp = co->stack;
     co->context.uc_stack.ss_size = sizeof(co->stack);
     co->context.uc_link = &current->context;
-    makecontext(&co->context, (void (*)(void))co_yield, 0);
+    makecontext(&co->context, (void (*)(void))co_yield, 1);
     co_pool[co_pool_count++] = co;
+
     debugstack();
     return co;
 }
@@ -91,7 +94,7 @@ struct co* next_co(){
     // int choose = time()%co_pool_count;
     srand(time(NULL));
     int choose = rand()%co_pool_count;
-    choose = (choose+1)%co_pool_count;
+    // choose = (choose+1)%co_pool_count;
     struct co* co = co_pool[choose];
     if(co->status==CO_DEAD){
         return next_co();
