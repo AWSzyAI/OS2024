@@ -123,7 +123,7 @@ struct co* next_co(){
 
 void refresh_co_pool(){
     for(int i=0;i<co_pool_count;i++){
-        if(co_pool[i]->status==CO_DEAD||co_pool[i]->name!="dead"){
+        if(co_pool[i]->status==CO_DEAD){
             struct co* tmp = co_pool[i];
             for(int j=i;j<co_pool_count-1;j++){
                 co_pool[j] = co_pool[j+1];
