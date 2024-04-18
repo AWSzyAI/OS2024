@@ -138,6 +138,9 @@ void co_wait(struct co *co) {
 void co_yield() {
     assert(current);
     //co_yield() main->Thread-1
+
+    makecontext(&current->context, (void (*)(void))current->func, 1);
+
     debug("co_yield() %s->",current->name);
     current->status = CO_WAITING;
     // 选择下一个待运行的协程 (相当于修改 current)
