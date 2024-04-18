@@ -33,8 +33,9 @@ static void test_1() {
     struct co *thd1 = co_start("thread-1", work, "X");//创建一个线程
     struct co *thd2 = co_start("thread-2", work, "Y");
 
-    co_wait(thd1);//开始执行
-    co_wait(thd2);
+    co_wait(thd1);//从（main）开始执行,直到thread-1 CO_DEAD，回到（main）
+    co_wait(thd2);//从（main）开始执行,直到thread-2 CO_DEAD，回到（main）
+                  //over
 
 //    printf("\n");
 }
