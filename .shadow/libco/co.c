@@ -93,7 +93,7 @@ struct co *co_start(const char *name, void (*func)(void *), void *arg) {
     
     co->func = func;
     co->arg = arg;
-    co->status = CO_NEW;
+    co->status = CO_NEW;//新创建，还未执行过,不应该被co_yield()调用 ，例如predictor & consumer
     co->stack[STACK_SIZE-1] = 0;
 
     // 创建协程上下文
@@ -134,12 +134,9 @@ void co_wait(struct co *co) {
     
     assert(co != NULL);
     debug("co_wait(%s)\n",co->name);
-    if(co->status==CO_DEAD){
-        return;
-    }
-    current->status = CO_WAITING;
+
     co->status = CO_RUNNING;
-    swapcontext(&current->context, &co->context);
+    co_yield();
 
     debug("free(%s)\n", current->name);
     current->status = CO_DEAD;
