@@ -67,13 +67,7 @@ void debug_co_pool(){
     debug("└─────────────────────────┘\n");
     
 }
-void refresh_co_pool(){
-    for(int i=0;i<co_pool_count;i++){
-        if(co_pool[i]->status==CO_DEAD||co_pool[i]==NULL){
-            co_pool[i] = &dead_co;
-        }
-    }
-}
+
 int exist_alive(){
     for(int i=1;i<co_pool_count;i++){
         if(!(co_pool[i]->status==CO_WAITING)){
@@ -127,7 +121,18 @@ struct co* next_co(){
     return co;
 }
 
-
+void refresh_co_pool(){
+    for(int i=0;i<co_pool_count;i++){
+        if(co_pool[i]->status==CO_DEAD||co_pool[i]->name!="dead"){
+            struct co* tmp = co_pool[i];
+            for(int j=i;j<co_pool_count-1;j++){
+                co_pool[j] = co_pool[j+1];
+            }
+            debug("free(%s)\n", tmp->name);
+            free(tmp);
+        }
+    }
+}
 
 //当前协程需要等待，直到 co 协程的执行完成才能继续执行 (类似于 pthread_join)
 void co_wait(struct co *co) {
@@ -141,11 +146,11 @@ void co_wait(struct co *co) {
     co->status = CO_RUNNING;
     co_yield();
 
-    debug("free(%s)\n", current->name);
-    current->status = CO_DEAD;
+    
+    // current->status = CO_DEAD;
     refresh_co_pool();
-    free(current);
-    // debug_co_pool();
+    // free(current);
+    
     return;
 }
 
