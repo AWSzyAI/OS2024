@@ -120,9 +120,9 @@ struct co *co_start(const char *name, void (*func)(void *), void *arg) {
 
 struct co* next_co(){
     int choose = rand()%co_pool_count;
-    // if(exist_alive()&&choose==0){
-    //     return next_co();
-    // }
+    if(exist_alive()&&choose==0){
+        return next_co();
+    }
     struct co* co = co_pool[choose];
     if(co->status==CO_DEAD){
         return next_co();
