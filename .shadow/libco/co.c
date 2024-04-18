@@ -137,14 +137,6 @@ void co_wait(struct co *co) {
     assert(co != NULL);
     debug("co_wait(%s)\n",co->name);
     
-    while(co->status!=CO_DEAD){
-        // if(co->status==CO_NEW){
-        //     co->func(co->arg);
-        //     co->status = CO_DEAD;
-        // }
-        co_yield();
-    }
-    
     assert(current);
     debug("free(%s)\n", current->name);
     current->status = CO_DEAD;
