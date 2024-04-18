@@ -127,7 +127,7 @@ void co_wait(struct co *co) {
     
     co->status = CO_WAITING;
 
-    // co_yield();
+    co_yield();
 
     debug("free(%s)\n", current->name);
     current->status = CO_DEAD;
