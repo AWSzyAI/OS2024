@@ -80,7 +80,7 @@ void refresh_co_pool(){
 }
 int exist_alive(){
     for(int i=1;i<co_pool_count;i++){
-        if(co_pool[i]->status!=CO_DEAD){
+        if(!(co_pool[i]->status==CO_WAITING)){
             return 1;
         }
     }
