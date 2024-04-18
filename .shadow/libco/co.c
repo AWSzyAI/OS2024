@@ -149,8 +149,6 @@ void co_wait(struct co *co) {
 
 
 void co_yield() {
-    assert(current);
-
     debug("co_yield() %s->",current->name);
     current->status = CO_WAITING;
     // 选择下一个待运行的协程 (相当于修改 current)
@@ -158,9 +156,7 @@ void co_yield() {
     current = next_co();
     current->status = CO_RUNNING;
     debug("%s\n",current->name);
-    assert(current->name!=NULL);
     debug_co_pool();
-
     // 保存当前协程的上下文,并切换到下一个协程的上下文
     swapcontext(&tmp->context, &current->context);   
 }
