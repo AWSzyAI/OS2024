@@ -121,7 +121,7 @@ struct co* next_co(){
         return next_co();
     }
     struct co* co = co_pool[choose];
-    if(co->status==CO_DEAD){
+    if(co->status==CO_DEAD||co->status==CO_NEW){
         return next_co();
     }
     if(co->status==CO_RUNNING){
@@ -136,8 +136,12 @@ struct co* next_co(){
 void co_wait(struct co *co) {
     assert(co != NULL);
     debug("co_wait(%s)\n",co->name);
+    if(co->status==CO_DEAD){
+        return;
+    }
     co_yield();
     
+
     debug("free(%s)\n", current->name);
     current->status = CO_DEAD;
     refresh_co_pool();
