@@ -157,7 +157,7 @@ void co_yield() {
     }
     debug("%s->func\n",current->name);
     // current->func(current->arg);
-    swapcontext(&tmp->context, &current->context);
+    // swapcontext(&tmp->context, &current->context);
 }
 
 
