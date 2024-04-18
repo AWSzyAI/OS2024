@@ -151,7 +151,7 @@ void co_yield() {
         current->status = CO_RUNNING;
         debug("[Run] %s->func\n",current->name);
         swapcontext(&tmp->context, &current->context);   
-        // current->func(current->arg);
+        current->func(current->arg);
     }else{//current->status==CO_WAITING / CO_RUNNING
         if(current->status==CO_WAITING){
             debug("CO_WAITING\n");
@@ -160,7 +160,7 @@ void co_yield() {
         }
         current->status = CO_RUNNING;
         swapcontext(&tmp->context, &current->context);   
-        // current->func(current->arg);
+        current->func(current->arg);
     }   
 }
 
