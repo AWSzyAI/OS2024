@@ -41,6 +41,7 @@ struct co {
 };
 
 struct co* current=NULL;
+struct co* main_co=NULL;
 struct co dead_co={
     .name = "dead",
     .status = CO_DEAD
@@ -104,7 +105,8 @@ struct co *co_start(const char *name, void (*func)(void *), void *arg) {
     getcontext(&co->context);
     co->context.uc_stack.ss_sp = co->stack;
     co->context.uc_stack.ss_size = sizeof(co->stack);
-    co->context.uc_link = &current->context;
+    // co->context.uc_link = &current->context;
+    co->context.uc_link = main_co->context;
     co->context.uc_stack.ss_flags = 0;
     
     makecontext(&co->context, (void (*)(void))co->func,1,co->arg);
@@ -180,6 +182,7 @@ void co_init() {
     main_co->stack[STACK_SIZE-1] = 0;
     getcontext(&main_co->context);
     co_pool[co_pool_count++] = main_co;
+    
     
     // struct co *main_co = co_start("main",NULL,NULL);
     
