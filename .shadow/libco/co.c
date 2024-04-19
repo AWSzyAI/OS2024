@@ -79,7 +79,6 @@ void wrapper_func(void *arg){
     co->func(co->arg);
     co->status = CO_DEAD;
     debug_co_stack();
-    co_yield();
 }
 
 struct co *co_start(const char *name, void (*func)(void *), void *arg) {
