@@ -44,7 +44,7 @@ struct co dead_co={
 };
 struct co* co_stack[128];  
 int co_stack_count = 0;
-void debug_co_pool(){
+void debug_co_stack(){
     debug("├─────────────────────────┤\n");
     for(int i=co_stack_count-1;i>=0;i--){
         char buffer[20];
@@ -96,7 +96,7 @@ struct co *co_start(const char *name, void (*func)(void *), void *arg) {
     //func(arg)被 co_start() 调用，从头开始运行    
     makecontext(&co->context, (void (*)(void))co->func,1,co->arg);
     co_stack[co_stack_count++] = co;
-    debug_co_pool();   
+    debug_co_stack();   
     return co;
 }
 
@@ -136,9 +136,10 @@ void co_wait(struct co *co) {
         return;
     }
     current->status = CO_WAITING;
-    co->status = CO_RUNNING;
-    swapcontext(&current->context, &co->context);
-
+    co->status = CO_WAITING;
+    debug_co_stack();
+    co_yield();
+    
     debug("free(%s)\n", current->name);
     current->status = CO_DEAD;
     refresh_co_stack();
@@ -154,7 +155,7 @@ void co_yield() {
     current = next_co();
     current->status = CO_RUNNING;
     debug("%s\n",current->name);
-    debug_co_pool();
+    debug_co_stack();
     // 保存当前协程的上下文,并切换到下一个协程的上下文
     swapcontext(&tmp->context, &current->context);   
 }
@@ -179,7 +180,7 @@ void co_init() {
 
     // 将主线程协程设置为当前协程
     current = main_co;
-    debug_co_pool();
+    debug_co_stack();
     srand(time(NULL));
 }
 
