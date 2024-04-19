@@ -154,6 +154,12 @@ void co_wait(struct co *co) {
     }
     // current->status = CO_WAITING;
     co->status = CO_WAITING;                                debug_co_stack();
+    // 保存当前协程的上下文,并切换到 co 协程的上下文
+    current = co;
+    current->status = CO_RUNNING;
+    swapcontext(&current->context, &co->context);
+    debug_co_stack();
+    
     while(co->status!=CO_DEAD){
         co_yield();
     }
