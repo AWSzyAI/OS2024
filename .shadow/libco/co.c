@@ -153,9 +153,12 @@ void co_wait(struct co *co) {
         co_yield();
     }
 
-    debug("free(%s)\n", co->name);
+    debug("free(%s)\n", co->name);    
     co->status = CO_DEAD;
+    debug_co_stack();
     refresh_co_stack();
+    debug("refresh_co_stack()\n")
+    debug_co_stack();
     return;
 }
 
