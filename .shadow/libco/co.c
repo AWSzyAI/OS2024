@@ -131,6 +131,7 @@ void refresh_co_stack(){
                 co_stack[j] = co_stack[j+1];
             }
             co_stack_count--;
+            debug_co_stack();
             free(tmp);
         }
     }
