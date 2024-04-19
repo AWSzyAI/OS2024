@@ -158,8 +158,9 @@ void co_wait(struct co *co) {
     while(co->status!=CO_DEAD){
         co_yield();
     }
+
     refresh_co_stack();
-    return;
+    
 }
 
 
