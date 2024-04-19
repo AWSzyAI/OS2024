@@ -55,7 +55,7 @@ void debug_co_stack(){
         }else if(co_stack[i]->status==CO_RUNNING){
             debug("♻️     │\n");
         }else if(co_stack[i]->status==CO_WAITING){
-            debug("⏱️     │\n");
+            debug("⌛️     │\n");
         }else if(co_stack[i]->status==CO_DEAD){
             debug("💀     │\n");
         }
