@@ -205,11 +205,4 @@ __attribute__((destructor))
 void fini() {
     debug("fini\n");
     free(current);
-    free(main_co);
-    for(int i=0;i<co_stack_count;i++){
-        free(co_stack[i]);
-    }
-    debug_co_stack();
-    debug("fini over\n");
-
 }
