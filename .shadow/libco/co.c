@@ -101,7 +101,6 @@ struct co *co_start(const char *name, void (*func)(void *), void *arg) {
     
     //func(arg)被 co_start() 调用，从头开始运行    
     makecontext(&co->context, (void (*)(void))wrapper_func,1,co);
-    
     co_stack[co_stack_count++] = co;
     debug_co_stack();   
     return co;
@@ -158,7 +157,7 @@ void co_wait(struct co *co) {
         co_yield();
     }
 
-    // debug_co_stack();
+    debug_co_stack();
     // debug("free(%s)\n", co->name);    
     refresh_co_stack();
     // debug("refresh_co_stack()\n");
