@@ -73,7 +73,6 @@ int exist_alive_co(){
     return 0;
 }
 
-//wrap一层，使得func(arg)执行完后，co->status==CO_DEAD
 void wrapper_func(void *arg){
     struct co* co = (struct co*)arg;
     co->func(co->arg);
