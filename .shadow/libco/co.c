@@ -158,12 +158,7 @@ void co_wait(struct co *co) {
     while(co->status!=CO_DEAD){
         co_yield();
     }
-
-    // debug_co_stack();
-    // debug("free(%s)\n", co->name);    
     refresh_co_stack();
-    // debug("refresh_co_stack()\n");
-    // debug_co_stack();
     return;
 }
 
@@ -210,4 +205,11 @@ __attribute__((destructor))
 void fini() {
     debug("fini\n");
     free(current);
+    free(main_co);
+    for(int i=0;i<co_stack_count;i++){
+        free(co_stack[i]);
+    }
+    debug_co_stack();
+    debug("fini over\n");
+
 }
