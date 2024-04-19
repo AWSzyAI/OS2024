@@ -77,7 +77,7 @@ void wrapper_func(void *arg){
     struct co* co = (struct co*)arg;
     co->func(co->arg);
     co->status = CO_DEAD;
-
+    debug_co_stack();
 }
 
 struct co *co_start(const char *name, void (*func)(void *), void *arg) {
@@ -157,9 +157,8 @@ void co_wait(struct co *co) {
         co_yield();
     }
 
-    debug_co_stack();
+    // debug_co_stack();
     // debug("free(%s)\n", co->name);    
-    co->status = CO_DEAD;
     refresh_co_stack();
     // debug("refresh_co_stack()\n");
     // debug_co_stack();
