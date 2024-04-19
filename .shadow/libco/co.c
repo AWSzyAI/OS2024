@@ -123,7 +123,7 @@ struct co* next_co(){
     return co;
 }
 void refresh_co_stack(){
-    
+    debug("refresh_co_stack()\n");
     for(int i=0;i<co_stack_count;i++){
         if(co_stack[i]->status==CO_DEAD||co_stack[i]==NULL){
             struct co* tmp = co_stack[i];
@@ -131,11 +131,9 @@ void refresh_co_stack(){
                 co_stack[j] = co_stack[j+1];
             }
             co_stack_count--;
-            debug("free(%s)\n",tmp->name);
             free(tmp);
         }
     }
-    debug("refresh_co_stack()\n");
 }
 
 // 当在main中调用co_wait(co)时，将check一次co->status==CO_DEAD是否为真，如果为真，free(co)
@@ -156,7 +154,7 @@ void co_wait(struct co *co) {
         co_yield();
     }
 
-    // debug("free(%s)\n", co->name);    
+    debug("free(%s)\n", co->name);    
     co->status = CO_DEAD;
     // debug_co_stack();
     refresh_co_stack();
