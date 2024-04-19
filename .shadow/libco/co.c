@@ -132,6 +132,8 @@ void refresh_co_stack(){
             }
             co_stack_count--;
             debug_co_stack();
+            assert(tmp!=NULL);
+            debug("free(%s)\n",tmp->name);
             free(tmp);
         }
     }
@@ -155,9 +157,9 @@ void co_wait(struct co *co) {
         co_yield();
     }
 
+    debug_co_stack();
     debug("free(%s)\n", co->name);    
     co->status = CO_DEAD;
-    // debug_co_stack();
     refresh_co_stack();
     // debug("refresh_co_stack()\n");
     // debug_co_stack();
