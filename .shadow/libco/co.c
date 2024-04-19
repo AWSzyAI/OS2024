@@ -148,7 +148,8 @@ void refresh_co_stack(){
 //当前协程需要等待，直到 co 协程的执行完成才能继续执行 (类似于 pthread_join)
 void co_wait(struct co *co) {    
     assert(co != NULL);                                     debug("co_wait(%s)\n",co->name);
-    if(co->status==CO_DEAD||co==NULL){
+    if(co->status==CO_DEAD){
+        refresh_co_stack();
         return;
     }
     // current->status = CO_WAITING;
