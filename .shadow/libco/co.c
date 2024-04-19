@@ -138,8 +138,10 @@ void co_wait(struct co *co) {
     current->status = CO_WAITING;
     co->status = CO_WAITING;
     debug_co_stack();
-    co_yield();
-    
+    if(co->status!=CO_DEAD){
+        co_yield();
+    }
+
     debug("free(%s)\n", current->name);
     current->status = CO_DEAD;
     refresh_co_stack();
