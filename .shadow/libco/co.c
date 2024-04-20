@@ -18,13 +18,15 @@
     #define debug(...)
 #endif
 
+
+
 enum co_state{
     CO_NEW,     // 新创建，还未执行过
     CO_RUNNING, // 已经执行过
     CO_WAITING, // 在 co_wait 上等待
     CO_DEAD     // 已经结束，但还未释放资源
 };
-#define STACK_SIZE 16384
+#define STACK_SIZE 8192
 struct co {
     const char *    name;// 协程的名字,用于调试,可选,可以为NULL
     void            (*func)(void *);
