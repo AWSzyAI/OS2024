@@ -151,7 +151,7 @@ void refresh_co_stack(struct co *co){
 void co_wait(struct co *co) {    
     assert(co != NULL);                                     debug("co_wait(%s)\n",co->name);
     if(co->status==CO_DEAD){
-        refresh_co_stack();
+        refresh_co_stack(co);
         return;
     }
     co->status = CO_WAITING;                                debug_co_stack();
