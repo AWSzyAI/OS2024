@@ -124,20 +124,26 @@ struct co* next_co(){
     }
     return co;
 }
-void refresh_co_stack(){
+void refresh_co_stack(struct co *co){
     debug("refresh_co_stack()\n");
-    for(int i=0;i<co_stack_count;i++){
-        if(co_stack[i]->status==CO_DEAD||co_stack[i]==NULL){
-            struct co* tmp = co_stack[i];
-            for(int j=i;j<co_stack_count-1;j++){
-                co_stack[j] = co_stack[j+1];
-            }
-            co_stack_count--;
-            debug_co_stack();
-            assert(tmp!=NULL);
-            debug("free(%s)-------------------------------------------------------\n\n\n\n\n\n",tmp->name);
-            free(tmp);
+
+
+    int i=0;
+    for(;i<co_stack_count;i++){
+        if(co_stack[i]==co){
+            break;
         }
+    }
+    if(co_stack[i]->status==CO_DEAD||co_stack[i]==NULL){
+        struct co* tmp = co_stack[i];
+        for(int j=i;j<co_stack_count-1;j++){
+            co_stack[j] = co_stack[j+1];
+        }
+        co_stack_count--;
+        debug_co_stack();
+        assert(tmp!=NULL);
+        debug("free(%s)-------------------------------------------------------\n\n\n\n\n\n",tmp->name);
+        free(tmp);
     }
 }
 
@@ -152,7 +158,7 @@ void co_wait(struct co *co) {
     while(co->status!=CO_DEAD){
         co_yield();
     }
-    refresh_co_stack();
+    refresh_co_stack(co);
 }
 
 
