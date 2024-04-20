@@ -135,7 +135,7 @@ void refresh_co_stack(){
             co_stack_count--;
             debug_co_stack();
             assert(tmp!=NULL);
-            debug("free(%s)\n",tmp->name);
+            debug("free(%s)\n\n\n\n\n",tmp->name);
             free(tmp);
         }
     }
