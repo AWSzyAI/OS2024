@@ -81,6 +81,11 @@ void wrapper_func(void *arg){
     debug_co_stack();
 }
 
+//bug about the warpper:
+//when thread-2 first ended and then thread-1 ended
+//co_wait()will remove thread-1 and thread-2
+
+
 struct co *co_start(const char *name, void (*func)(void *), void *arg) {
     //co会被return，所以需要malloc();来保存co的数据。
     struct co *co = malloc(sizeof(struct co));
@@ -149,8 +154,10 @@ void refresh_co_stack(struct co *co){
 
 
 void co_wait(struct co *co) {    
-    assert(co != NULL);                                     debug("co_wait(%s)\n",co->name);
+    assert(co != NULL);
+    debug("co_wait(%s)\n",co->name);
     if(co->status==CO_DEAD){
+        debug("co_wait(%s) 💀\n",co->name);
         refresh_co_stack(co);
         return;
     }
