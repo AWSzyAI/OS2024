@@ -119,9 +119,9 @@ struct co* next_co(){
     if(co->status==CO_DEAD){
         return next_co();
     }
-    if(co->status==CO_RUNNING){
-        return next_co();
-    }
+    // if(co->status==CO_RUNNING){
+    //     return next_co();
+    // }
     return co;
 }
 void refresh_co_stack(struct co *co){
