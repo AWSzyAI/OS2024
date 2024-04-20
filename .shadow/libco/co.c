@@ -61,6 +61,7 @@ void debug_co_stack(){
         }
     }
     debug("└─────────────────────────┘\n");
+    
 }
 
 int exist_alive_co(){
@@ -140,10 +141,14 @@ void refresh_co_stack(){
     }
 }
 
+// 当在main中调用co_wait(co)时，将check一次co->status==CO_DEAD是否为真，如果为真，free(co)
+// 否则co_yield()到其他co中，直到co->func(co->arg)执行完，栈指针到底，赋值使得co->status==CO_DEAD
+// 然后回到co_wait(co)中原来的位置，再check一遍
+
+//当前协程需要等待，直到 co 协程的执行完成才能继续执行 (类似于 pthread_join)
 void co_wait(struct co *co) {    
     assert(co != NULL);                                     debug("co_wait(%s)\n",co->name);
     co->status = CO_WAITING;                                debug_co_stack();
-    co_yield();
     while(co->status!=CO_DEAD){
         co_yield();
     }
