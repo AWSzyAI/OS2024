@@ -169,6 +169,7 @@ void co_yield() {
 
 __attribute__((constructor))
 void co_init() {
+    srand(time(NULL));
     // 创建一个协程来代表主线程
     struct co *main_co = malloc(sizeof(struct co));
     main_co->name = "main";
@@ -178,20 +179,12 @@ void co_init() {
     main_co->stack[STACK_SIZE-1] = 0;
     getcontext(&main_co->context);
     co_stack[co_stack_count++] = main_co;
-    
-    
-    // struct co *main_co = co_start("main",NULL,NULL);
-    
-
-    // 将主线程协程设置为当前协程
     current = main_co;
     debug_co_stack();
-    srand(time(NULL));
 }
-
-
 __attribute__((destructor))
 void fini() {
     debug("fini\n");
-    free(current);
+    if(!current)free(current);
+    if(!main_co)free(main_co);
 }
