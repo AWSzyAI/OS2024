@@ -181,10 +181,13 @@ void co_init() {
     co_stack[co_stack_count++] = main_co;
     current = main_co;
     debug_co_stack();
+    
 }
+
+
 __attribute__((destructor))
 void fini() {
     debug("fini\n");
     if(!current)free(current);
-    if(!main_co)free(main_co);
+    free(main_co);
 }
