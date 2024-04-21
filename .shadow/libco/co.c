@@ -111,6 +111,7 @@ void wrapper_func(void *arg){
 struct co *co_start(const char *name, void (*func)(void *), void *arg) {
     //co会被return，所以需要malloc();来保存co的数据。
     struct co *co = malloc(sizeof(struct co));
+    debug("co(%s) = %p\n",name, arg); 
     assert(co != NULL);
     co->name = name;
     debug("co_start(%s):%s\n",co->name,"CO_NEW");
