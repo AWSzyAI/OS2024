@@ -91,9 +91,8 @@ void debug_co(struct co *co){
 void wrapper_func(void *arg){
     debug("wrapper_func()\n");
     debug("arg = %p\n", arg); 
-    debug_co(arg);
     struct co* co = (struct co*)arg;
-    debug_co(co);
+    // debug_co(co);
 
     co->func(co->arg);
     co->status = CO_DEAD;
