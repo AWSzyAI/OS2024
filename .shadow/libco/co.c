@@ -51,13 +51,13 @@ void debug_co_stack(){
         snprintf(buffer, sizeof(buffer), "%d %s", i, co_stack[i]->name);
         debug("│ %-16s ", buffer);
         if(co_stack[i]->status==CO_NEW){
-            debug("🌱   %p  │\n",co_stack[i]);
+            debug("🌱   %p │\n",co_stack[i]);
         }else if(co_stack[i]->status==CO_RUNNING){
-            debug("✅   %p  │\n",co_stack[i]);
+            debug("✅   %p │\n",co_stack[i]);
         }else if(co_stack[i]->status==CO_WAITING){
-            debug("⌛️   %p  │\n",co_stack[i]);
+            debug("⌛️   %p │\n",co_stack[i]);
         }else if(co_stack[i]->status==CO_DEAD){
-            debug("💀   %p  │\n",co_stack[i]);
+            debug("💀   %p │\n",co_stack[i]);
         }
     }
     debug("└──────────────────────────────────────┘\n");
