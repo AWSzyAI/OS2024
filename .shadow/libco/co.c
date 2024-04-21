@@ -199,7 +199,7 @@ void co_yield() {
     //     refresh_co_stack(current);
     //     co_yield();
     // }
-    if(current->status==CO_RUNNING)current->status = CO_WAITING;
+    if(current->status!=CO_DEAD)current->status = CO_WAITING;
     // 选择下一个待运行的协程 (相当于修改 current)
     struct co* tmp = current;
     current = next_co();
