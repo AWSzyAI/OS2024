@@ -51,13 +51,13 @@ void debug_co_stack(){
         snprintf(buffer, sizeof(buffer), "%d %s", i, co_stack[i]->name);
         debug("│ %-16s ", buffer);
         if(co_stack[i]->status==CO_NEW){
-            debug("🌱   %p │\n",co_stack[i]);
+            debug("🌱   %p \n",co_stack[i]);
         }else if(co_stack[i]->status==CO_RUNNING){
-            debug("✅   %p │\n",co_stack[i]);
+            debug("✅   %p \n",co_stack[i]);
         }else if(co_stack[i]->status==CO_WAITING){
-            debug("⌛️   %p │\n",co_stack[i]);
+            debug("⌛️   %p \n",co_stack[i]);
         }else if(co_stack[i]->status==CO_DEAD){
-            debug("💀   %p │\n",co_stack[i]);
+            debug("💀   %p \n",co_stack[i]);
         }
     }
     debug("└──────────────────────────────────────┘\n");
@@ -208,7 +208,7 @@ void co_yield() {
 
 __attribute__((constructor))
 void co_init() {
-    srand(time(NULL));
+    srand(time(NULL));//
     struct co *main_co = malloc(sizeof(struct co));
     main_co->name = "main";
     main_co->status = CO_RUNNING; // 主线程已经在运行
