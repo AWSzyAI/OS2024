@@ -82,8 +82,14 @@ void wrapper_func(void *arg){
 }
 
 //bug about the warpper:
+//after co-wait(threrad-1) and before co-wait(thread-2)
 //when thread-2 first ended and then thread-1 ended
-//co_wait()will remove thread-1 and thread-2
+//co_wait() should remove thread-1 and thread-2 because they are both dead
+//however, thread-1 truely CO_DEAD and thread-2 is still CO_WAITING
+//so, thread-2 and main keep switching
+//and the only oppotunity to make CO_DEAD is in wrapper_func
+// how to fix it?
+
 
 
 struct co *co_start(const char *name, void (*func)(void *), void *arg) {
@@ -171,6 +177,11 @@ void co_wait(struct co *co) {
 
 void co_yield() {
     debug("co_yield() %s->",current->name);
+    if(current->status==CO_DEAD){
+        debug("💀\n");
+        // refresh_co_stack(current);
+        return;
+    }
     current->status = CO_WAITING;
     // 选择下一个待运行的协程 (相当于修改 current)
     struct co* tmp = current;
