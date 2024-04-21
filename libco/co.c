@@ -42,25 +42,25 @@ struct co dead_co={
     .name = "dead",
     .status = CO_DEAD
 };
-struct co* co_stack[128];  
+struct co* co_stack[64];  
 int co_stack_count = 0;
 void debug_co_stack(){
-    debug("├─────────────────────────┤\n");
+    debug("├──────────────────────────────────────┤\n");
     for(int i=co_stack_count-1;i>=0;i--){
         char buffer[20];
         snprintf(buffer, sizeof(buffer), "%d %s", i, co_stack[i]->name);
         debug("│ %-16s ", buffer);
         if(co_stack[i]->status==CO_NEW){
-            debug("🌱     │\n");
+            debug("🌱   %p │\n",co_stack[i]);
         }else if(co_stack[i]->status==CO_RUNNING){
-            debug("♻️     │\n");
+            debug("✅   %p │\n",co_stack[i]);
         }else if(co_stack[i]->status==CO_WAITING){
-            debug("⌛️     │\n");
+            debug("⌛️   %p │\n",co_stack[i]);
         }else if(co_stack[i]->status==CO_DEAD){
-            debug("💀     │\n");
+            debug("💀   %p │\n",co_stack[i]);
         }
     }
-    debug("└─────────────────────────┘\n");
+    debug("└──────────────────────────────────────┘\n");
     
 }
 
@@ -73,17 +73,47 @@ int exist_alive_co(){
     return 0;
 }
 
+void debug_co(struct co *co){
+    debug("co(%s):%s\n",co->name,co->status==CO_NEW?"CO_NEW":co->status==CO_RUNNING?"CO_RUNNING":co->status==CO_WAITING?"CO_WAITING":co->status==CO_DEAD?"CO_DEAD":"UNKNOWN");
+    if(co->func!=NULL){
+        debug("✅%s->func\n",co->name);
+    }else{
+        debug("❌%s->func\n",co->name);
+    }
+    if(co->arg!=NULL){
+        debug("✅%s->arg\n",co->name);
+    }else{
+        debug("❌%s->arg\n",co->name);
+    }
+}
+
 //wrap一层，使得func(arg)执行完后，co->status==CO_DEAD
 void wrapper_func(void *arg){
+    debug("wrapper_func(%p)\n",arg);
     struct co* co = (struct co*)arg;
+    debug("co(%p)\n",co);
+    debug_co_stack();
+    // debug_co(co);
     co->func(co->arg);
     co->status = CO_DEAD;
     debug_co_stack();
 }
 
+//bug about the warpper:
+//after co-wait(threrad-1) and before co-wait(thread-2)
+//when thread-2 first ended and then thread-1 ended
+//co_wait() should remove thread-1 and thread-2 because they are both dead
+//however, thread-1 truely CO_DEAD and thread-2 is still CO_WAITING
+//so, thread-2 and main keep switching
+//and the only oppotunity to make CO_DEAD is in wrapper_func
+// how to fix it?
+
+
+
 struct co *co_start(const char *name, void (*func)(void *), void *arg) {
     //co会被return，所以需要malloc();来保存co的数据。
     struct co *co = malloc(sizeof(struct co));
+    debug("co(%s) = %p\n",name, co); 
     assert(co != NULL);
     co->name = name;
     debug("co_start(%s):%s\n",co->name,"CO_NEW");
@@ -100,7 +130,8 @@ struct co *co_start(const char *name, void (*func)(void *), void *arg) {
     co->context.uc_link = &current->context;
     co->context.uc_stack.ss_flags = 0;
     
-    //func(arg)被 co_start() 调用，从头开始运行    
+    debug("co(%s) = %p\n",co->name, co); 
+    debug("makecontext(&co->context, (void (*)(void))wrapper_func,1,%p);\n",co);
     makecontext(&co->context, (void (*)(void))wrapper_func,1,co);
     
     co_stack[co_stack_count++] = co;
@@ -110,55 +141,59 @@ struct co *co_start(const char *name, void (*func)(void *), void *arg) {
 
 
 
-struct co* next_co(){
-    int choose = rand()%co_stack_count;
-    if(exist_alive_co()&&choose==0){
-        return next_co();
-    }
-    struct co* co = co_stack[choose];
-    if(co->status==CO_DEAD){
-        return next_co();
-    }
-    if(co->status==CO_RUNNING){
-        return next_co();
-    }
-    return co;
-}
-void refresh_co_stack(){
+
+void refresh_co_stack(struct co *co){
     debug("refresh_co_stack()\n");
-    for(int i=0;i<co_stack_count;i++){
-        if(co_stack[i]->status==CO_DEAD||co_stack[i]==NULL){
-            struct co* tmp = co_stack[i];
-            for(int j=i;j<co_stack_count-1;j++){
-                co_stack[j] = co_stack[j+1];
-            }
-            co_stack_count--;
-            debug_co_stack();
-            assert(tmp!=NULL);
-            debug("free(%s)\n",tmp->name);
-            free(tmp);
+
+
+    int i=0;
+    for(;i<co_stack_count;i++){
+        if(co_stack[i]==co){
+            break;
         }
     }
+    if(co_stack[i]->status==CO_DEAD||co_stack[i]==NULL){
+        struct co* tmp = co_stack[i];
+        for(int j=i;j<co_stack_count-1;j++){
+            co_stack[j] = co_stack[j+1];
+        }
+        co_stack_count--;
+        debug_co_stack();
+        assert(tmp!=NULL);
+        debug("free(%s)-------------------------------------------------------\n\n\n\n\n\n",tmp->name);
+        free(tmp);
+    }
 }
 
-// 当在main中调用co_wait(co)时，将check一次co->status==CO_DEAD是否为真，如果为真，free(co)
-// 否则co_yield()到其他co中，直到co->func(co->arg)执行完，栈指针到底，赋值使得co->status==CO_DEAD
-// 然后回到co_wait(co)中原来的位置，再check一遍
 
-//当前协程需要等待，直到 co 协程的执行完成才能继续执行 (类似于 pthread_join)
 void co_wait(struct co *co) {    
-    assert(co != NULL);                                     debug("co_wait(%s)\n",co->name);
+    assert(co != NULL);
+    debug("co_wait(%s)\n",co->name);
+    if(co->status==CO_DEAD){
+        refresh_co_stack(co);
+        return;
+    }
     co->status = CO_WAITING;                                debug_co_stack();
     while(co->status!=CO_DEAD){
         co_yield();
     }
-    refresh_co_stack();
+    refresh_co_stack(co);
 }
 
-
+struct co* next_co(){
+    int choose = rand()%co_stack_count;
+    // if(exist_alive_co()&&choose==0){
+    //     return next_co();
+    // }
+    struct co* co = co_stack[choose];
+    if(co->status==CO_DEAD){
+        return next_co();
+    }
+    return co;
+}
 void co_yield() {
     debug("co_yield() %s->",current->name);
-    current->status = CO_WAITING;
+    if(current->status!=CO_DEAD)current->status = CO_WAITING;
     // 选择下一个待运行的协程 (相当于修改 current)
     struct co* tmp = current;
     current = next_co();
@@ -173,29 +208,25 @@ void co_yield() {
 
 __attribute__((constructor))
 void co_init() {
-    // 创建一个协程来代表主线程
+    srand(time(NULL));
     struct co *main_co = malloc(sizeof(struct co));
     main_co->name = "main";
     main_co->status = CO_RUNNING; // 主线程已经在运行
-    main_co->func = NULL; // 主线程不需要关联任何函数
-    main_co->arg = NULL;
+    // main_co->func = NULL; // 主线程不需要关联任何函数
+    // main_co->arg = NULL;
     main_co->stack[STACK_SIZE-1] = 0;
-    getcontext(&main_co->context);
+    // getcontext(&main_co->context);
+    
     co_stack[co_stack_count++] = main_co;
-    
-    
-    // struct co *main_co = co_start("main",NULL,NULL);
-    
-
-    // 将主线程协程设置为当前协程
     current = main_co;
     debug_co_stack();
-    srand(time(NULL));
+    
 }
 
 
 __attribute__((destructor))
 void fini() {
     debug("fini\n");
-    free(current);
+    if(!current)free(current);
+    free(main_co);
 }
