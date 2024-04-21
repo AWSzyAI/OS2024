@@ -177,10 +177,12 @@ void co_wait(struct co *co) {
 
 void co_yield() {
     debug("co_yield() %s->",current->name);
-    if(current->status==CO_DEAD){
-        co_yield();
-    }
-    current->status = CO_WAITING;
+    // if(current->status==CO_DEAD){
+    //     debug("💀\n");
+    //     refresh_co_stack(current);
+    //     co_yield();
+    // }
+    if(current->status==CO_RUNNING)current->status = CO_WAITING;
     // 选择下一个待运行的协程 (相当于修改 current)
     struct co* tmp = current;
     current = next_co();
