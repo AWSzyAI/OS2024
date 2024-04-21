@@ -64,14 +64,7 @@ void debug_co_stack(){
     
 }
 
-int exist_alive_co(){
-    for(int i=1;i<co_stack_count;i++){
-        if(!(co_stack[i]->status==CO_WAITING)){
-            return 1;
-        }
-    }
-    return 0;
-}
+
 
 void debug_co(struct co *co){
     debug("co(%s):%s\n",co->name,co->status==CO_NEW?"CO_NEW":co->status==CO_RUNNING?"CO_RUNNING":co->status==CO_WAITING?"CO_WAITING":co->status==CO_DEAD?"CO_DEAD":"UNKNOWN");
@@ -99,27 +92,13 @@ void wrapper_func(void *arg){
     debug_co_stack();
 }
 
-//bug about the warpper:
-//after co-wait(threrad-1) and before co-wait(thread-2)
-//when thread-2 first ended and then thread-1 ended
-//co_wait() should remove thread-1 and thread-2 because they are both dead
-//however, thread-1 truely CO_DEAD and thread-2 is still CO_WAITING
-//so, thread-2 and main keep switching
-//and the only oppotunity to make CO_DEAD is in wrapper_func
-// how to fix it?
-
-
-
 struct co *co_start(const char *name, void (*func)(void *), void *arg) {
     //co会被return，所以需要malloc();来保存co的数据。
     struct co *co = malloc(sizeof(struct co));
-    debug("co(%s) = %p\n",name, co); 
     assert(co != NULL);
-    co->name = name;
-    debug("co_start(%s):%s\n",co->name,"CO_NEW");
-    
+    co->name = name; debug("[co_start(🌱)] co(%s):%p\n",co->name,co);
     co->func = func;
-    co->arg = arg;
+    co->arg  = arg;
     co->status = CO_NEW;
     co->stack[STACK_SIZE-1] = 0;
 
@@ -130,17 +109,12 @@ struct co *co_start(const char *name, void (*func)(void *), void *arg) {
     co->context.uc_link = &current->context;
     co->context.uc_stack.ss_flags = 0;
     
-    debug("co(%s) = %p\n",co->name, co); 
     debug("makecontext(&co->context, (void (*)(void))wrapper_func,1,%p);\n",co);
-    makecontext(&co->context, (void (*)(void))wrapper_func,1,co);
+    makecontext(&co->context, (void (*)(void))wrapper_func,1,co);debug("co(%s) = %p\n",co->name, co); 
     
-    co_stack[co_stack_count++] = co;
-    debug_co_stack();   
+    co_stack[co_stack_count++] = co;debug_co_stack();   
     return co;
 }
-
-
-
 
 void refresh_co_stack(struct co *co){
     debug("refresh_co_stack()\n");
@@ -166,20 +140,26 @@ void refresh_co_stack(struct co *co){
 }
 
 
-void co_wait(struct co *co) {    
-    assert(co != NULL);
-    debug("co_wait(%s)\n",co->name);
+void co_wait(struct co *co) {    assert(co != NULL);debug("[co_wait()] co_wait(%s)\n",co->name);
     if(co->status==CO_DEAD){
         refresh_co_stack(co);
         return;
     }
-    co->status = CO_WAITING;                                debug_co_stack();
+    co->status = CO_WAITING;     debug_co_stack();
     while(co->status!=CO_DEAD){
+        debug("[co_wait(%s)]waiting......\n",co->name);
         co_yield();
     }
     refresh_co_stack(co);
 }
-
+int exist_alive_co(){
+    for(int i=1;i<co_stack_count;i++){
+        if(!(co_stack[i]->status==CO_WAITING)){
+            return 1;
+        }
+    }
+    return 0;
+}
 struct co* next_co(){
     int choose = rand()%co_stack_count;
     // if(exist_alive_co()&&choose==0){
@@ -191,20 +171,15 @@ struct co* next_co(){
     }
     return co;
 }
-void co_yield() {
-    debug("co_yield() %s->",current->name);
+void co_yield() {                      debug("co_yield() %s->",current->name);
     if(current->status!=CO_DEAD)current->status = CO_WAITING;
-    // 选择下一个待运行的协程 (相当于修改 current)
     struct co* tmp = current;
     current = next_co();
-    current->status = CO_RUNNING;
-    debug("%s\n",current->name);
+    current->status = CO_RUNNING;      debug("%s\n",current->name);
     debug_co_stack();
     // 保存当前协程的上下文,并切换到下一个协程的上下文
     swapcontext(&tmp->context, &current->context);   
 }
-
-
 
 __attribute__((constructor))
 void co_init() {
