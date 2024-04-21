@@ -179,7 +179,7 @@ void co_yield() {
     debug("co_yield() %s->",current->name);
     if(current->status==CO_DEAD){
         debug("💀\n");
-        // refresh_co_stack(current);
+        refresh_co_stack(current);
         return;
     }
     current->status = CO_WAITING;
