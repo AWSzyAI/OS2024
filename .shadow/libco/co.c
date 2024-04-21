@@ -141,20 +141,7 @@ struct co *co_start(const char *name, void (*func)(void *), void *arg) {
 
 
 
-struct co* next_co(){
-    int choose = rand()%co_stack_count;
-    if(exist_alive_co()&&choose==0){
-        return next_co();
-    }
-    struct co* co = co_stack[choose];
-    if(co->status==CO_DEAD){
-        return next_co();
-    }
-    // if(co->status==CO_RUNNING){
-    //     return next_co();
-    // }
-    return co;
-}
+
 void refresh_co_stack(struct co *co){
     debug("refresh_co_stack()\n");
 
@@ -193,14 +180,19 @@ void co_wait(struct co *co) {
     refresh_co_stack(co);
 }
 
-
+struct co* next_co(){
+    int choose = rand()%co_stack_count;
+    // if(exist_alive_co()&&choose==0){
+    //     return next_co();
+    // }
+    struct co* co = co_stack[choose];
+    if(co->status==CO_DEAD){
+        return next_co();
+    }
+    return co;
+}
 void co_yield() {
     debug("co_yield() %s->",current->name);
-    // if(current->status==CO_DEAD){
-    //     debug("💀\n");
-    //     refresh_co_stack(current);
-    //     co_yield();
-    // }
     if(current->status!=CO_DEAD)current->status = CO_WAITING;
     // 选择下一个待运行的协程 (相当于修改 current)
     struct co* tmp = current;
