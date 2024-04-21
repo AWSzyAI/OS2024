@@ -42,7 +42,7 @@ struct co dead_co={
     .name = "dead",
     .status = CO_DEAD
 };
-struct co* co_stack[128];  
+struct co* co_stack[512];  
 int co_stack_count = 0;
 void debug_co_stack(){
     debug("├─────────────────────────┤\n");
