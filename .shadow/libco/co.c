@@ -77,11 +77,13 @@ void debug_co(struct co *co){
     debug("co(%s):%s\n",co->name,co->status==CO_NEW?"CO_NEW":co->status==CO_RUNNING?"CO_RUNNING":co->status==CO_WAITING?"CO_WAITING":co->status==CO_DEAD?"CO_DEAD":"UNKNOWN");
     if(co->func!=NULL){
         debug("✅%s->func\n",co->name);
-        return;
+    }else{
+        debug("❌%s->func\n",co->name);
     }
     if(co->arg!=NULL){
         debug("✅%s->arg\n",co->name);
-        return;
+    }else{
+        debug("❌%s->arg\n",co->name);
     }
 }
 
