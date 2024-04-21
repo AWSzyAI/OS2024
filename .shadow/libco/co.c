@@ -53,11 +53,11 @@ void debug_co_stack(){
         if(co_stack[i]->status==CO_NEW){
             debug("🌱   %p  │\n",co_stack[i]);
         }else if(co_stack[i]->status==CO_RUNNING){
-            debug("✅     │\n");
+            debug("✅   %p  │\n",co_stack[i]);
         }else if(co_stack[i]->status==CO_WAITING){
-            debug("⌛️     │\n");
+            debug("⌛️   %p  │\n",co_stack[i]);
         }else if(co_stack[i]->status==CO_DEAD){
-            debug("💀     │\n");
+            debug("💀   %p  │\n",co_stack[i]);
         }
     }
     debug("└─────────────────────────┘\n");
