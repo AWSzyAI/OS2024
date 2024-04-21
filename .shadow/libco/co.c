@@ -201,7 +201,7 @@ void co_yield() {
     debug("%s\n",current->name);
     debug_co_stack();
     // 保存当前协程的上下文,并切换到下一个协程的上下文
-    swapcontext(&current->context,&tmp->context);   
+    swapcontext(&tmp->context, &current->context);   
 }
 
 
