@@ -73,22 +73,23 @@ int exist_alive_co(){
     return 0;
 }
 
+void debug_co(struct co *co){
+    debug("co(%s):%s\n",co->name,co->status==CO_NEW?"CO_NEW":co->status==CO_RUNNING?"CO_RUNNING":co->status==CO_WAITING?"CO_WAITING":"CO_DEAD");
+    if(co->func!=NULL){
+        debug("✅%s->func\n",co->name);
+        return;
+    }
+    if(co->arg!=NULL){
+        debug("✅%s->arg\n",co->name);
+        return;
+    }
+}
+
 //wrap一层，使得func(arg)执行完后，co->status==CO_DEAD
 void wrapper_func(void *arg){
     debug("wrapper_func()\n");
     struct co* co = (struct co*)arg;
-    if(co==NULL){
-        debug("co==NULL\n");
-        return;
-    }
-    if(co->func==NULL){
-        debug("%s->func==NULL\n",co->name);
-        return;
-    }
-    if(co->arg==NULL){
-        debug("%s->arg==NULL\n",co->name);
-        return;
-    }
+    debug_co(co);
 
     co->func(co->arg);
     co->status = CO_DEAD;
@@ -104,10 +105,7 @@ void wrapper_func(void *arg){
 //and the only oppotunity to make CO_DEAD is in wrapper_func
 // how to fix it?
 
-//producer-2中
-//struct co *thd2 = co_start("producer-2", producer, queue);
-//makecontext(&co->context, (void (*)(void))wrapper_func,1,co);传入的co为NULL
-//why
+
 
 struct co *co_start(const char *name, void (*func)(void *), void *arg) {
     //co会被return，所以需要malloc();来保存co的数据。
