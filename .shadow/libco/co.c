@@ -96,7 +96,7 @@ struct co *co_start(const char *name, void (*func)(void *), void *arg) {
     //co会被return，所以需要malloc();来保存co的数据。
     struct co *co = malloc(sizeof(struct co));
     assert(co != NULL);
-    co->name = name; debug("[co_start(🌱)] co(%s):%p\n",co->name,co);
+    co->name = name; debug("🟩 co_start(%s):%p\n",co->name,co);
     co->func = func;
     co->arg  = arg;
     co->status = CO_NEW;
@@ -109,15 +109,15 @@ struct co *co_start(const char *name, void (*func)(void *), void *arg) {
     co->context.uc_link = &current->context;
     co->context.uc_stack.ss_flags = 0;
     
-    debug("makecontext(&co->context, (void (*)(void))wrapper_func,1,%p);\n",co);
-    makecontext(&co->context, (void (*)(void))wrapper_func,1,co);debug("co(%s) = %p\n",co->name, co); 
+    debug("🟩 makecontext(&co->context, (void (*)(void))wrapper_func,1,%p);\n",co);
+    makecontext(&co->context, (void (*)(void))wrapper_func,1,co);debug("🟩 co(%s) = %p\n",co->name, co); 
     
     co_stack[co_stack_count++] = co;debug_co_stack();   
     return co;
 }
 
 void refresh_co_stack(struct co *co){
-    debug("refresh_co_stack()\n");
+    debug("🟥 refresh_co_stack()\n");
 
 
     int i=0;
@@ -134,20 +134,20 @@ void refresh_co_stack(struct co *co){
         co_stack_count--;
         debug_co_stack();
         assert(tmp!=NULL);
-        debug("free(%s)-------------------------------------------------------\n\n\n\n\n\n",tmp->name);
+        debug("🟥 free(%s)-------------------------------------------------------\n\n\n\n\n\n",tmp->name);
         free(tmp);
     }
 }
 
 
-void co_wait(struct co *co) {    assert(co != NULL);debug("[co_wait()] co_wait(%s)\n",co->name);
+void co_wait(struct co *co) {    assert(co != NULL);debug("🟨 co_wait(%s)\n",co->name);
     if(co->status==CO_DEAD){
         refresh_co_stack(co);
         return;
     }
     co->status = CO_WAITING;     debug_co_stack();
     while(co->status!=CO_DEAD){
-        debug("[co_wait(%s)]waiting......\n",co->name);
+        debug("🟨 waiting(%s)......\n",co->name);
         co_yield();
     }
     refresh_co_stack(co);
@@ -173,7 +173,7 @@ struct co* next_co(){
     }
     return co;
 }
-void co_yield() {                      debug("co_yield() %s->",current->name);
+void co_yield() {                      debug("🟦 co_yield() %s->",current->name);
     if(current->status!=CO_DEAD)current->status = CO_WAITING;
     struct co* tmp = current;
     current = next_co();
