@@ -212,11 +212,11 @@ void co_init() {
     struct co *main_co = malloc(sizeof(struct co));
     main_co->name = "main";
     main_co->status = CO_RUNNING; // 主线程已经在运行
-    main_co->func = NULL; // 主线程不需要关联任何函数
-    main_co->arg = NULL;
+    // main_co->func = NULL; // 主线程不需要关联任何函数
+    // main_co->arg = NULL;
     main_co->stack[STACK_SIZE-1] = 0;
-    getcontext(&main_co->context);
-    makecontext(&main_co->context, NULL, 0);
+    // getcontext(&main_co->context);
+    
     co_stack[co_stack_count++] = main_co;
     current = main_co;
     debug_co_stack();
