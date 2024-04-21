@@ -163,7 +163,6 @@ void co_wait(struct co *co) {
     assert(co != NULL);
     debug("co_wait(%s)\n",co->name);
     if(co->status==CO_DEAD){
-        debug("co_wait(%s) 💀\n",co->name);
         refresh_co_stack(co);
         return;
     }
