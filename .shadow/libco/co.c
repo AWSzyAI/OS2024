@@ -130,7 +130,7 @@ struct co *co_start(const char *name, void (*func)(void *), void *arg) {
     
     debug("co(%s) = %p\n",co->name, co); 
     //func(arg)被 co_start() 调用，从头开始运行    
-    makecontext(&co->context, (void (*)(void))wrapper_func,1,co);
+    makecontext(&co->context, (void (*)(void))wrapper_func,1,&co);
     
     co_stack[co_stack_count++] = co;
     debug_co_stack();   
