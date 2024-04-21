@@ -178,9 +178,7 @@ void co_wait(struct co *co) {
 void co_yield() {
     debug("co_yield() %s->",current->name);
     if(current->status==CO_DEAD){
-        debug("💀\n");
-        refresh_co_stack(current);
-        return;
+        co_yield();
     }
     current->status = CO_WAITING;
     // 选择下一个待运行的协程 (相当于修改 current)
