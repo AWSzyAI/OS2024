@@ -88,6 +88,7 @@ void debug_co(struct co *co){
 //wrap一层，使得func(arg)执行完后，co->status==CO_DEAD
 void wrapper_func(void *arg){
     debug("wrapper_func()\n");
+    debug("arg = %p\n", arg); 
     struct co* co = (struct co*)arg;
     debug_co(co);
 
