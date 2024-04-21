@@ -111,7 +111,7 @@ void wrapper_func(void *arg){
 struct co *co_start(const char *name, void (*func)(void *), void *arg) {
     //co会被return，所以需要malloc();来保存co的数据。
     struct co *co = malloc(sizeof(struct co));
-    debug("co(%s) = %p\n",name, arg); 
+    debug("co(%s) = %p\n",name, co); 
     assert(co != NULL);
     co->name = name;
     debug("co_start(%s):%s\n",co->name,"CO_NEW");
@@ -128,6 +128,7 @@ struct co *co_start(const char *name, void (*func)(void *), void *arg) {
     co->context.uc_link = &current->context;
     co->context.uc_stack.ss_flags = 0;
     
+    debug("co(%s) = %p\n",co->name, co); 
     //func(arg)被 co_start() 调用，从头开始运行    
     makecontext(&co->context, (void (*)(void))wrapper_func,1,co);
     
