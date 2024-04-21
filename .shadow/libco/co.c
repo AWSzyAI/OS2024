@@ -209,7 +209,6 @@ void co_yield() {
 __attribute__((constructor))
 void co_init() {
     srand(time(NULL));
-    // 创建一个协程来代表主线程
     struct co *main_co = malloc(sizeof(struct co));
     main_co->name = "main";
     main_co->status = CO_RUNNING; // 主线程已经在运行
@@ -217,6 +216,7 @@ void co_init() {
     main_co->arg = NULL;
     main_co->stack[STACK_SIZE-1] = 0;
     getcontext(&main_co->context);
+    makecontext(&main_co->context, NULL, 0);
     co_stack[co_stack_count++] = main_co;
     current = main_co;
     debug_co_stack();
