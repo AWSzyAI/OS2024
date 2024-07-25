@@ -4,6 +4,7 @@
 !Makefile
 !*.c
 !*.h
+!log.txt
 
 
 
