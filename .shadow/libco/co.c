@@ -47,6 +47,8 @@ int co_stack_count = 0;
 
 
 void debug_co_stack(){
+    int on=0;
+    if(!on)return;
     debug("├──────────────────────────────────────┤\n");
     for(int i=co_stack_count-1;i>=0;i--){
         char buffer[20];
@@ -70,19 +72,19 @@ void debug_co_stack(){
 
 void debug_co(struct co *co){
     int on=0;
-    if(on){
-        debug("co(%s):%s\n",co->name,co->status==CO_NEW?"CO_NEW":co->status==CO_RUNNING?"CO_RUNNING":co->status==CO_WAITING?"CO_WAITING":co->status==CO_DEAD?"CO_DEAD":"UNKNOWN");
-        if(co->func!=NULL){
-            debug("✅%s->func\n",co->name);
-        }else{
-            debug("❌%s->func\n",co->name);
-        }
-        if(co->arg!=NULL){
-            debug("✅%s->arg\n",co->name);
-        }else{
-            debug("❌%s->arg\n",co->name);
-        }
+    if(!on)return;
+    debug("co(%s):%s\n",co->name,co->status==CO_NEW?"CO_NEW":co->status==CO_RUNNING?"CO_RUNNING":co->status==CO_WAITING?"CO_WAITING":co->status==CO_DEAD?"CO_DEAD":"UNKNOWN");
+    if(co->func!=NULL){
+        debug("✅%s->func\n",co->name);
+    }else{
+        debug("❌%s->func\n",co->name);
     }
+    if(co->arg!=NULL){
+        debug("✅%s->arg\n",co->name);
+    }else{
+        debug("❌%s->arg\n",co->name);
+    }
+    
     
 }
 
