@@ -24,11 +24,11 @@ typedef struct co {
 
 int g_count = 0; // 添加对 g_count 的定义
 
-static ucontext_t main_context; // 声明主协程的上下文
+static ucontext_t main_context; // 声明主协程的上下文，移动到init的时候？
 
 static co *current_co = NULL;
 
-static void co_func_wrapper() {
+static void co_func_wrapper() {//把func(arg) & status & 切换 wrap在一起
     current_co->func(current_co->arg);
     current_co->status = CO_DEAD;
     current_co = NULL;
@@ -47,7 +47,7 @@ co *co_start(const char *name, void (*func)(void *), void *arg) {
     new_co->context.uc_stack.ss_sp = new_co->stack;
     new_co->context.uc_stack.ss_size = STACK_SIZE;
     new_co->context.uc_link = &main_context; // 设置返回主协程
-    makecontext(&(new_co->context), co_func_wrapper, 0);
+    makecontext(&(new_co->context), co_func_wrapper, 0);//被切换到时从co_func_wrapper函数开始执行
 
     return new_co;
 }

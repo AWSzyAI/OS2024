@@ -114,7 +114,7 @@ struct co *co_start(const char *name, void (*func)(void *), void *arg) {
     debug("🟩 makecontext(&co->context, (void (*)(void))wrapper_func,1,%p);\n",co);
     makecontext(&co->context, (void (*)(void))wrapper_func,1,co);debug("🟩 co(%s) = %p\n",co->name, co); 
     
-    co_stack[co_stack_count++] = co;debug_co_stack();   
+    co_stack[co_stack_count++] = co; debug_co_stack();   
     return co;
 }
 
@@ -149,7 +149,7 @@ void co_wait(struct co *co) {    assert(co != NULL);debug("🟨 co_wait(%s)\n",c
     }
     co->status = CO_WAITING;     debug_co_stack();
     while(co->status!=CO_DEAD){
-        debug("🟨 waiting(%s)......\n",co->name);
+        debug("🟨 (%s) is waiting(%s)......\n",current->name,co->name);
         co_yield();
     }
     refresh_co_stack(co);
@@ -187,11 +187,12 @@ void co_yield() {                      debug("🟦 co_yield() %s->",current->nam
 
 __attribute__((constructor))
 void co_init() {
-    srand(time(NULL));//
+    srand(time(NULL));
+    //主协程
     struct co *main_co = malloc(sizeof(struct co));
     main_co->name = "main";
-    main_co->status = CO_RUNNING; // 主线程已经在运行
-    // main_co->func = NULL; // 主线程不需要关联任何函数
+    main_co->status = CO_RUNNING; // 主协程已经在运行
+    // main_co->func = NULL; // 主协程不需要关联任何函数
     // main_co->arg = NULL;
     main_co->stack[STACK_SIZE-1] = 0;
     // getcontext(&main_co->context);
