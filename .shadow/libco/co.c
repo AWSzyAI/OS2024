@@ -154,7 +154,7 @@ void co_wait(struct co *co) {    assert(co != NULL);debug("🟨 co_wait(%s)\n",c
         debug("🟨 (%s) is waiting(%s)......\n",current->name,co->name);
         co_yield();
     }
-    refresh_co_stack(co);
+    // refresh_co_stack(co);
 }
 int exist_alive_co(){
     for(int i=1;i<co_stack_count;i++){
@@ -166,10 +166,10 @@ int exist_alive_co(){
 }
 struct co* next_co(){
     int choose = rand()%co_stack_count;
-    // ?
-    if(exist_alive_co()&&choose==0){
-        return next_co();
-    }
+    // 除非全部死光，否则不允许回到主协程，一抽到主协程就立马切换到下一个协程
+    // if(exist_alive_co()&&choose==0){
+    //     return next_co();
+    // }
     // ?
     struct co* co = co_stack[choose];
     if(co->status==CO_DEAD){
