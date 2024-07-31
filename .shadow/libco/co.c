@@ -191,7 +191,8 @@ void co_yield() {
     if(current->status!=CO_DEAD)current->status = CO_WAITING;
     struct co* tmp = current;
     current = next_co();
-    current->status = CO_RUNNING;      debug("%s\n",current->name);
+    current->status = CO_RUNNING;      
+    // debug("%s\n",current->name);
     debug_co_stack();
     // 保存当前协程的上下文,并切换到下一个协程的上下文
     swapcontext(&tmp->context, &current->context);   
