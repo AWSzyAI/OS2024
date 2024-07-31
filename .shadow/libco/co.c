@@ -140,6 +140,7 @@ void refresh_co_stack(struct co *co){
         free(tmp);
         // current = main_co;
         co_yield();
+        fflush(stdout);
     }
 }
 
