@@ -138,6 +138,7 @@ void refresh_co_stack(struct co *co){
         assert(tmp!=NULL);
         debug("🟥 free(%s)-------------------------------------------------------\n\n\n\n\n\n",tmp->name);
         free(tmp);
+        current = main_co;
     }
 }
 
