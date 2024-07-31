@@ -148,7 +148,7 @@ void refresh_co_stack(struct co *co){
         free(tmp);
         // current = main_co;
         co_yield();
-        fflush(stdout);
+        
     }
 }
 
@@ -162,7 +162,8 @@ void co_wait(struct co *co) {    assert(co != NULL);
     co->status = CO_WAITING;     debug_co_stack();
     while(co->status!=CO_DEAD){
         //如果注释掉这个debug就会导致
-
+        //co_wait(co)后，co->status==CO_DEAD，但是co->name还是存在
+        fflush(stdout);
         // debug("🟨 (%s) is waiting(%s)......\n",current->name,co->name);
         co_yield();
     }
