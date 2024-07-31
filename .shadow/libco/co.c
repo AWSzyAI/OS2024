@@ -160,7 +160,7 @@ void co_wait(struct co *co) {    assert(co != NULL);debug("🟨 co_wait(%s)\n",c
     }
     co->status = CO_WAITING;     debug_co_stack();
     while(co->status!=CO_DEAD){
-        // debug("🟨 (%s) is waiting(%s)......\n",current->name,co->name);
+        debug("🟨 (%s) is waiting(%s)......\n",current->name,co->name);
         co_yield();
     }
     refresh_co_stack(co);
