@@ -91,14 +91,14 @@ void debug_co(struct co *co){
 
 //wrap一层，使得func(arg)执行完后，co->status==CO_DEAD
 void wrapper_func(void *arg){
-    debug("wrapper_func(%p)\n",arg);
+    // debug("wrapper_func(%p)\n",arg);
     struct co* co = (struct co*)arg;
-    debug("co(%p)\n",co);
-    debug_co_stack();
+    // debug("co(%p)\n",co);
+    // debug_co_stack();
     // debug_co(co);
     co->func(co->arg);
     co->status = CO_DEAD;
-    debug_co_stack();
+    // debug_co_stack();
 }
 
 struct co *co_start(const char *name, void (*func)(void *), void *arg) {
