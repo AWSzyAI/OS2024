@@ -162,7 +162,8 @@ void co_wait(struct co *co) {    assert(co != NULL);
     co->status = CO_WAITING;     debug_co_stack();
     while(co->status!=CO_DEAD){
         //如果注释掉这个debug就会导致
-        debug("🟨 (%s) is waiting(%s)......\n",current->name,co->name);
+
+        // debug("🟨 (%s) is waiting(%s)......\n",current->name,co->name);
         co_yield();
     }
     refresh_co_stack(co);
