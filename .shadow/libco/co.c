@@ -105,7 +105,8 @@ struct co *co_start(const char *name, void (*func)(void *), void *arg) {
     //co会被return，所以需要malloc();来保存co的数据。
     struct co *co = malloc(sizeof(struct co));
     assert(co != NULL);
-    co->name = name; debug("🟩 co_start(%s):%p\n",co->name,co);
+    co->name = name; 
+    // debug("🟩 co_start(%s):%p\n",co->name,co);
     co->func = func;
     co->arg  = arg;
     co->status = CO_NEW;
@@ -118,7 +119,7 @@ struct co *co_start(const char *name, void (*func)(void *), void *arg) {
     co->context.uc_link = &current->context;
     co->context.uc_stack.ss_flags = 0;
     
-    debug("🟩 makecontext(&co->context, (void (*)(void))wrapper_func,1,%p);\n",co);
+    // debug("🟩 makecontext(&co->context, (void (*)(void))wrapper_func,1,%p);\n",co);
     makecontext(&co->context, (void (*)(void))wrapper_func,1,co);debug("🟩 co(%s) = %p\n",co->name, co); 
     
     co_stack[co_stack_count++] = co; debug_co_stack();   
@@ -185,7 +186,8 @@ struct co* next_co(){
     }
     return co;
 }
-void co_yield() {                      debug("🟦 co_yield() %s->",current->name);
+void co_yield() {                      
+    // debug("🟦 co_yield() %s->",current->name);
     if(current->status!=CO_DEAD)current->status = CO_WAITING;
     struct co* tmp = current;
     current = next_co();
