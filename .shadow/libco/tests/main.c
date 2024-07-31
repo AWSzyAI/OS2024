@@ -120,7 +120,7 @@ static void test_2() {
 }
 
 int main() {
-    setbuf(stdout, NULL);
+    setbuf(stdout, NULL);//不使用中间缓冲区，将标准输出流 stdout 设置为无缓冲模式。
 
     printf("Test #1. Expect: (X|Y){0, 1, 2, ..., 199}\n");
     test_1();

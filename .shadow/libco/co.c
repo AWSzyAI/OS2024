@@ -38,12 +38,14 @@ struct co {
 
 struct co* current=NULL;
 struct co* main_co=NULL;
-struct co dead_co={
+struct co dead_co={ 
     .name = "dead",
     .status = CO_DEAD
 };
 struct co* co_stack[64];  
 int co_stack_count = 0;
+
+
 void debug_co_stack(){
     debug("├──────────────────────────────────────┤\n");
     for(int i=co_stack_count-1;i>=0;i--){
