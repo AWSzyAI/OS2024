@@ -154,7 +154,7 @@ void co_wait(struct co *co) {    assert(co != NULL);debug("🟨 co_wait(%s)\n",c
         debug("🟨 (%s) is waiting(%s)......\n",current->name,co->name);
         co_yield();
     }
-    // refresh_co_stack(co);
+    refresh_co_stack(co);
 }
 int exist_alive_co(){
     for(int i=1;i<co_stack_count;i++){
