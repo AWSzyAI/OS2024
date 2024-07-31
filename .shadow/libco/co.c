@@ -13,8 +13,8 @@
     ❌ CFLAGS += -ULOCAL_MACHINE
 */
 #ifdef LOCAL_MACHINE
-    #define debug(...)
-    // #define debug(...) printf(__VA_ARGS__)
+    // #define debug(...)
+    #define debug(...) printf(__VA_ARGS__)
 #else
     #define debug(...)
 #endif
