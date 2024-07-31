@@ -136,7 +136,7 @@ void refresh_co_stack(struct co *co){
         co_stack_count--;
         debug_co_stack();
         assert(tmp!=NULL);
-        debug("🟥 free(%s)-------------------------------------------------------\n\n\n\n\n\n",tmp->name);
+        debug("🟥 free(%s) at (%s)-------------------------------------------------------\n\n\n\n\n\n",tmp->name,current->name);
         free(tmp);
         // current = main_co;
         co_yield();
