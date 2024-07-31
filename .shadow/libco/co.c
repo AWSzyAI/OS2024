@@ -120,7 +120,8 @@ struct co *co_start(const char *name, void (*func)(void *), void *arg) {
     co->context.uc_stack.ss_flags = 0;
     
     // debug("🟩 makecontext(&co->context, (void (*)(void))wrapper_func,1,%p);\n",co);
-    makecontext(&co->context, (void (*)(void))wrapper_func,1,co);debug("🟩 co(%s) = %p\n",co->name, co); 
+    makecontext(&co->context, (void (*)(void))wrapper_func,1,co);
+    // debug("🟩 co(%s) = %p\n",co->name, co); 
     
     co_stack[co_stack_count++] = co; debug_co_stack();   
     return co;
