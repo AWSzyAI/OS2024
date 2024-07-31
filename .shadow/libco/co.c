@@ -127,7 +127,7 @@ struct co *co_start(const char *name, void (*func)(void *), void *arg) {
 }
 
 void refresh_co_stack(struct co *co){
-    debug("🟥 refresh_co_stack()\n");
+    // debug("🟥 refresh_co_stack()\n");
 
 
     int i=0;
@@ -144,7 +144,7 @@ void refresh_co_stack(struct co *co){
         co_stack_count--;
         debug_co_stack();
         assert(tmp!=NULL);
-        debug("🟥 free(%s) at (%s)-------------------------------------------------------\n\n\n\n\n\n",tmp->name,current->name);
+        // debug("🟥 free(%s) at (%s)-------------------------------------------------------\n\n\n\n\n\n",tmp->name,current->name);
         free(tmp);
         // current = main_co;
         co_yield();
@@ -160,6 +160,7 @@ void co_wait(struct co *co) {    assert(co != NULL);debug("🟨 co_wait(%s)\n",c
     }
     co->status = CO_WAITING;     debug_co_stack();
     while(co->status!=CO_DEAD){
+        //如果注释掉这个debug就会导致
         debug("🟨 (%s) is waiting(%s)......\n",current->name,co->name);
         co_yield();
     }
